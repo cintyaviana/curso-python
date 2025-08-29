@@ -1,47 +1,48 @@
+
 # Entrada de dados
-# nome = input("Qual o seu nome?")
-# idade = int(input("Qual a sua idade?"))
-# altura = float(input("Qual a sua altura?"))
+nome = input("Qual o seu nome?")
+idade = int(input("Qual a sua idade?"))
+altura = float(input("Qual a sua altura?"))
 
-# print("A aluna", nome, "tem", idade, "anos de idade e está com", altura,"de altura.")
-# print ('*' * 50)
+print("A aluna", nome, "tem", idade,
+      "anos de idade e está com", altura, "de altura.")
+print('*' * 50)
 
-# resultado = 'Nome: {0:20}, idade: {1}, altura: {2:10.2f}'
+resultado = 'Nome: {0:20}, idade: {1}, altura: {2:10.2f}'
 
-# """ Uma string, em python pode ser considerado o menor conjunto de dados com o qual a linguagem pode Lidar.
+""" Uma string, em python pode ser considerado o menor conjunto de dados com o qual a linguagem pode Lidar.
 
-#     Um conjunto de dados, em python, é definido por 2 características fundamentais:
-#     1 - o dado do conjunto
-#     2 - a posição que esse valor ocupa
+    Um conjunto de dados, em python, é definido por 2 características fundamentais:
+    1 - o dado do conjunto
+    2 - a posição que esse valor ocupa
 
-#     Índices posicionais em ordem crescente: 0, 1, 2, 3, 4 ...
-#                0123456789
-#     Exemplo = 'jabuticaba'
+    Índices posicionais em ordem crescente: 0, 1, 2, 3, 4 ...
+               0123456789
+    Exemplo = 'jabuticaba'
 
-#     1 - o dado do conjunto = jabuticaba
+    1 - o dado do conjunto = jabuticaba
 
+"""
+
+print(resultado.format(nome, idade, altura))
+
+"""
+    Posição 0 - Nome: {0:20} : a variável nome poderá ter até 20 caracter. 0123456789...20
+                                                               Cintya Viana
+    Posição 1 - idade: {1} : a variável idade ocupa o índice posicional de 2ª posição. 012
+                                                                           034
+    Posição 2 - altura: {2:10.2f} : a variável altura ocupa o índice posicional de 3ª posição e pode ter até 10 caracter. 0123 --10
+                                                                                                              1.61
+    .2f = 2 float = 2 casas decimais
+
+    OBS: Se inverter o primeiro caracter em ordem diferente essa 0,1,2...etc vai dar erro.
+
+    ex: resultado = 'Nome: {1:20}, idade: {2}, altura: {0:10.2f}'
 # """
 
-# print(resultado.format(nome, idade, altura))
-
-# """
-#     Posição 0 - Nome: {0:20} : a variável nome poderá ter até 20 caracter. 0123456789...20
-#                                                                Cintya Viana
-#     Posição 1 - idade: {1} : a variável idade ocupa o índice posicional de 2ª posição. 012
-#                                                                            034
-#     Posição 2 - altura: {2:10.2f} : a variável altura ocupa o índice posicional de 3ª posição e pode ter até 10 caracter. 0123 --10
-#                                                                                                               1.61
-#     .2f = 2 float = 2 casas decimais
-
-#     OBS: Se inverter o primeiro caracter em ordem diferente essa 0,1,2...etc vai dar erro.
-
-#     ex: resultado = 'Nome: {1:20}, idade: {2}, altura: {0:10.2f}'
-
-# """
-
-# print()
-# print("------------------------------------------------------")
-# print()
+print()
+print("------------------------------------------------------")
+print()
 
 # Operadores Aritméticos
 
