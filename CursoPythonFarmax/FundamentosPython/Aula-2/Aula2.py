@@ -9,7 +9,7 @@
 # resultado = 'Nome: {0:20}, idade: {1}, altura: {2:10.2f}'
 
 # """ Uma string, em python pode ser considerado o menor conjunto de dados com o qual a linguagem pode Lidar.
-    
+
 #     Um conjunto de dados, em python, é definido por 2 características fundamentais:
 #     1 - o dado do conjunto
 #     2 - a posição que esse valor ocupa
@@ -24,9 +24,9 @@
 
 # print(resultado.format(nome, idade, altura))
 
-# """ 
+# """
 #     Posição 0 - Nome: {0:20} : a variável nome poderá ter até 20 caracter. 0123456789...20
-#                                                                Cintya Viana  
+#                                                                Cintya Viana
 #     Posição 1 - idade: {1} : a variável idade ocupa o índice posicional de 2ª posição. 012
 #                                                                            034
 #     Posição 2 - altura: {2:10.2f} : a variável altura ocupa o índice posicional de 3ª posição e pode ter até 10 caracter. 0123 --10
@@ -51,6 +51,7 @@ n3 = 20
 n4 = 50
 n5 = 39
 n6 = 10
+n7 = 11
 
 op1 = n1 / n2               # Divisão Real (float)
 op2 = n1 // n2              # Divisão inteiro (int)
@@ -77,12 +78,12 @@ n4 = 50
 n5 = 39
 n6 = 10
 
-n1 += 2               
-n2 -+ 10              
-n3 *= 5               
-n4 /= 5              
+n1 += 2
+n2 - + 10
+n3 *= 5
+n4 /= 5
 n5 //= 2
-n6 **= 2               
+n6 **= 2
 
 print("n1", n1, type(n1))
 print("n2", n2, type(n2))
@@ -104,7 +105,7 @@ print()
 """ < : verifica se o primeiro operador é menor que o segundo operador"""
 """<= : verifica se o primeiro operador é menor ou igual que o segundo operador"""
 
-#Operadores Lógicos
+# Operadores Lógicos
 
 """ and : Operador E lógico. Resulta True somense se as duas condições envolvidas forem True, caso contrário, resulta False. """
 """ or : Operador OU lógico. Resulta True se pelo menos uma das condições envolvidas for True, resulta em False quando as duas condições forem False"""
@@ -115,13 +116,13 @@ n2 = 30
 n3 = 20
 n4 = 50
 
-op1 = n1 == 100                                 #True
-op2 = n2 <= n1                                  #True
-op3 = n3 % 2 == 0                               #True
-op4 = n4 < n2                                   #False
-op5 = n2 != 31 and n3 > 0                       #True
-op6 = n4 > 50 or n3 == 20                       #True
-op7 = (n2 >= 3 and n4 % 5 == 0) or n3 != 20     #True
+op1 = n1 == 100  # True
+op2 = n2 <= n1  # True
+op3 = n3 % 2 == 0  # True
+op4 = n4 < n2  # False
+op5 = n2 != 31 and n3 > 0  # True
+op6 = n4 > 50 or n3 == 20  # True
+op7 = (n2 >= 3 and n4 % 5 == 0) or n3 != 20  # True
 
 print("op1", op1)
 print("op2", op2)
@@ -152,7 +153,3 @@ print()
 # print()
 # print("------------------------------------------------------")
 # print()
-
-
-
-
