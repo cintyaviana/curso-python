@@ -136,20 +136,35 @@ print()
 print("------------------------------------------------------")
 print()
 
-# n1 = 100
-# n2 = "Curso"
-# n3 = 12.5
+n1 = 100
+n2 = "Curso"
+n3 = 12.5
 
-# op1 = type (n1) is int
-# op2 = type (n2) is not str
-# op3 = type (n3) is not float
-# op4 = type (n1) is float or n3 > 3
+op1 = type(n1) is int
+op2 = type(n2) is not str
+op3 = type(n3) is not float
+op4 = type(n1) is float or n3 > 3
 
-# print ('op1:', op1)
-# print ('op2:', op2)
-# print ('op3:', op3)
-# print ('op4:', op4)
+print('op1:', op1)
+print('op2:', op2)
+print('op3:', op3)
+print('op4:', op4)
 
-# print()
-# print("------------------------------------------------------")
-# print()
+print()
+print("------------------------------------------------------")
+print()
+
+# aqui, estamos observando se existe uma instacia de classe que classifica este dado como um tipo específico
+n1 = isinstance(n1, int)
+n2 = isinstance(n2, str)
+n3 = not isinstance(n3, float)
+n4 = not isinstance(n1, float) and (n3 > 0)
+
+print('n1:', n1)
+print('n2:', n2)
+print('n3:', n3)
+print('n4:', n4)
+
+print()
+print("------------------------------------------------------")
+print()
