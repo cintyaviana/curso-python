@@ -1,7 +1,0 @@
-
-"""Atalho alt + z : para fazer quebras de linhas"""
-
-"""Atalho CTRL + ; : para comentar o scrip"""
-
-
-""" ctrl + s : salva o projeto"""
