@@ -11,16 +11,13 @@ import random  # Importar a biblioteca 'random'
 
 Senha = ""  # Variável que vai receber a informação da senha
 
-for i in range(5):  # Loop para gerar os números
+for i in range(4):  # Loop para gerar os números
     # Gerar um número aleatório entre 0,9 através da função random.randint(0,9)
     DigitoAleatorio = random.randint(0, 9)
 
     # Converter o número gerado para texto (string)
     DigitoTexto = str(DigitoAleatorio)
 
-    # 6. Adicionar o dígito em texto na nossa string 'senha'
-    #    Usamos o operador '+' para juntar (concatenar) as strings
-    Senha = Senha + DigitoTexto
+    Senha = Senha + DigitoTexto  # Adicionar o dígito em texto na nossa string 'senha'
 
-# 7. Imprimir a senha final
 print(f"A senha gerada é: {Senha}")

@@ -9,7 +9,8 @@ nomes = []  # Lista para armazenar os nomes
 for i in range(5):  # Coletar os nomes
     nome = input(f"Digite o nome {i+1}: ")
 
-    nomes.append(nome)  # Adicionar o nome na lista
+    nomes.append(nome)
+    # Adicionar o nome na lista
 
 ''' O comando .append adicionar um novo item ao final da lista '''
 
