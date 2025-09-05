@@ -9,8 +9,10 @@ print("A aluna", nome, "tem", idade,
 print('*' * 50)
 
 resultado = 'Nome: {0:20}, idade: {1}, altura: {2:10.2f}'
+print(resultado.format(nome, idade, altura))
 
-""" Uma string, em python pode ser considerado o menor conjunto de dados com o qual a linguagem pode Lidar.
+""" 
+    Uma string, em python pode ser considerado o menor conjunto de dados com o qual a linguagem pode Lidar.
 
     Um conjunto de dados, em python, é definido por 2 características fundamentais:
     1 - o dado do conjunto
@@ -21,29 +23,27 @@ resultado = 'Nome: {0:20}, idade: {1}, altura: {2:10.2f}'
     Exemplo = 'jabuticaba'
 
     1 - o dado do conjunto = jabuticaba
-
 """
-
-print(resultado.format(nome, idade, altura))
 
 """
     Posição 0 - Nome: {0:20} : a variável nome poderá ter até 20 caracter. 0123456789...20
-                                                               Cintya Viana
+                                                                           Cintya Viana
     Posição 1 - idade: {1} : a variável idade ocupa o índice posicional de 2ª posição. 012
-                                                                           034
+                                                                                       34
     Posição 2 - altura: {2:10.2f} : a variável altura ocupa o índice posicional de 3ª posição e pode ter até 10 caracter. 0123 --10
-                                                                                                              1.61
+                                                                                                                          1.61
     .2f = 2 float = 2 casas decimais
 
     OBS: Se inverter o primeiro caracter em ordem diferente essa 0,1,2...etc vai dar erro.
 
     ex: resultado = 'Nome: {1:20}, idade: {2}, altura: {0:10.2f}'
-# """
+"""
 
 print()
 print("------------------------------------------------------")
 print()
 
+# -----------------------------------------------------------------------------------------------------------------------
 # Operadores Aritméticos
 
 n1 = 100
@@ -70,6 +70,7 @@ print()
 print("------------------------------------------------------")
 print()
 
+# -----------------------------------------------------------------------------------------------------------------------
 # Operadores Aritméticos reduzidos
 
 n1 = 100
@@ -80,7 +81,7 @@ n5 = 39
 n6 = 10
 
 n1 += 2
-n2 - + 10
+n2 -= 10
 n3 *= 5
 n4 /= 5
 n5 //= 2
@@ -97,20 +98,25 @@ print()
 print("------------------------------------------------------")
 print()
 
+# -----------------------------------------------------------------------------------------------------------------------
 # Operadores Relacionais
 
-"""== : verifica se dois operadores são iguais"""
-"""!= : verifica se dois operadores são diferentes"""
-"""> : verifica se o primeiro operador é maior que o segundo operador"""
-""" >= : verifica se o primeiro operador é maior ou igual que o segundo operador"""
-""" < : verifica se o primeiro operador é menor que o segundo operador"""
-"""<= : verifica se o primeiro operador é menor ou igual que o segundo operador"""
+"""
+    == : verifica se dois operadores são iguais
+    != : verifica se dois operadores são diferentes
+    > : verifica se o primeiro operador é maior que o segundo operador
+    >= : verifica se o primeiro operador é maior ou igual que o segundo operador
+    < : verifica se o primeiro operador é menor que o segundo operador
+    <= : verifica se o primeiro operador é menor ou igual que o segundo operador
+"""
 
 # Operadores Lógicos
 
-""" and : Operador E lógico. Resulta True somense se as duas condições envolvidas forem True, caso contrário, resulta False. """
-""" or : Operador OU lógico. Resulta True se pelo menos uma das condições envolvidas for True, resulta em False quando as duas condições forem False"""
-""" not : Inverte o resultado lógico"""
+""" 
+    and : Operador E lógico. Resulta True somense se as duas condições envolvidas forem True, caso contrário, resulta False. 
+    or : Operador OU lógico. Resulta True se pelo menos uma das condições envolvidas for True, resulta em False quando as duas condições forem False
+    not : Inverte o resultado lógico
+"""
 
 n1 = 100
 n2 = 30
@@ -156,6 +162,7 @@ print("------------------------------------------------------")
 print()
 
 # aqui, estamos observando se existe uma instacia de classe que classifica este dado como um tipo específico
+
 n1 = isinstance(n1, int)
 n2 = isinstance(n2, str)
 n3 = not isinstance(n3, float)

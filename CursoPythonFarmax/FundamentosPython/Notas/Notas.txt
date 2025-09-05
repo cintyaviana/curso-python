@@ -1,8 +1,15 @@
-Atalho alt + z : para fazer quebras de linhas
+> Atalho alt + z : para fazer quebras de linhas
 
-Atalho CTRL + ; : para comentar o scrip
+> Atalho CTRL + ; : para comentar o scrip
 
- ctrl + s : salva o projeto
+> ctrl + s : salva o projeto
 
- ctrl + ' (aspas simples)
+> ctrl + ' (aspas simples)
 
+> Cmd ativa o promt de comando
+    --version : para ver a versão do Python Cor
+    -V : para ver a versão do Python Cor
+
+> Cd : vai entrando nas camadas das pastas
+
+> Mkdim : Cria nova pasta no VC Code
