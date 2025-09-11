@@ -34,7 +34,7 @@ altura3 = float(input("Altura (m): "))
 print()
 print("*" * 60)
 
-# Exibindo as informações
+# Exibindo as informações - forma 1
 print("--- Segue informações coletadas ---")
 
 print()
@@ -46,6 +46,16 @@ print("Pessoa 2 se chama:  %-15s, Idade: %5d anos, Peso: %8.1f kg, Altura: %8.2f
       (nome2, idade2, peso2, altura2))
 print("Pessoa 3 se chama:  %-15s, Idade: %5d anos, Peso: %8.1f kg, Altura: %8.2f m" %
       (nome3, idade3, peso3, altura3))
+
+# Exibindo as informações - forma 2
+""" Exibição dos dados alinhados usando interpolação (%)"""
+print("n/=== Dados Cadastrados ===")
+print("%-15s %5s %8s %8s" % ("Nome", "Idade", "Peso", "Altura"))
+print("-" * 40)
+print("%-15s %55d %8.1f %8.2f" % (nome1, idade1, peso1, altura1))
+print("%-15s %55d %8.1f %8.2f" % (nome2, idade2, peso2, altura2))
+print("%-15s %55d %8.1f %8.2f" % (nome3, idade3, peso3, altura3))
+
 
 # Notas:
 
@@ -141,7 +151,7 @@ altura3 = float(input("Altura (m): "))
 
 print()
 
-# Exibindo as informações usando o
+# Exibindo as informações usando o f-strings
 print("--- Segue informações coletadas ---")
 print("*" * 60)
 print(
@@ -150,63 +160,3 @@ print(
     f"Nome: {nome2:<15} Idade: {idade2:>5} Peso: {peso2:>8.1f} Altura: {altura2:>8.1f}")
 print(
     f"Nome: {nome3:<15} Idade: {idade3:>5} Peso: {peso3:>8.1f} Altura: {altura3:>8.1f}")
-
-
-# -----------------------------------------------------------------------------------------------------------------------
-# Laboratório 2
-
-"""
-    Suponha que em um caixa eletrônico existam cédulas disponíveis de 5, 10, 20 e 50 reais. Usando operações de divisão inteira e resto da divisão, escrever um programa que solicite ao usuário um valor para saque e, a partir deste valor, armazenar em variáveis e apresentar na tela a quantidade de cada cédula para compor o valor do saque.
-
-    Obs.: Considerar neste exercício que os valores sejam sempre múltiplos de 5. Considerar também a menor quantidade possível de cédulas.
-    
-"""
-
-# Boas Vindas
-print("Bem-vindo(a) ao Banco do Brasil")
-
-while True:
-
-    valorSaque = int(
-        input("Digite o valor do saque desejado (múltiplo de 5): "))
-
-    if valorSaque > 0 and valorSaque % 5 == 0:
-        break  # Sai do loop se o valor for válido
-    else:
-        print("O valor informado é inválido:")
-
-# Validação da quantidade de notas
-notas50 = valorSaque // 50
-resto = valorSaque % 50
-
-notas20 = resto // 20
-resto = resto % 20
-
-notas10 = resto // 10
-resto = resto % 10
-
-notas5 = resto // 5
-
-# 6. Exibir o resultado.
-
-mensagemSaida = "Você receberá as seguintes notas:"
-
-# Validação de quais notas foram maiores que 0 para formar a resposta ao usuário
-if notas50 > 0:
-    mensagemSaida += " %d Nota(s) de R$ 50,00" % notas50
-if notas20 > 0:
-    mensagemSaida += ", %d  Nota(s) de R$ 20,00" % notas20
-if notas10 > 0:
-    mensagemSaida += ", %d Nota(s) de R$ 10,00" % notas10
-if notas5 > 0:
-    mensagemSaida += ", %d  Nota(s) de R$ 5,00" % notas5
-
-# Construção final da respostas
-mensagemSaida += ". Obrigado por usar o caixa do Banco do Brasil!"
-
-# Exibição da resposta ao usuário
-print(mensagemSaida)
-
-""" 
-    Nota: O while é uma estrutura de repetição em Python, conhecida como laço de repetição condicional. Ele executa um bloco de código repetidamente enquanto uma condição for verdadeira.
-"""

@@ -12,7 +12,7 @@ import random  # Importar a biblioteca 'random'
 Senha = ""  # Variável que vai receber a informação da senha
 
 for i in range(4):  # Loop para gerar os números
-    # Gerar um número aleatório entre 0,9 através da função random.randint(0,9)
+    # Gerar um número aleatório entre 0 e 9 através da função random.randint(0,9)
     DigitoAleatorio = random.randint(0, 9)
 
     # Converter o número gerado para texto (string)

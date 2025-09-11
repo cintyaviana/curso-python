@@ -82,7 +82,7 @@ mistos = ['São Paulo', 322, True, 75.2]
 
 print(nomes)
 print(type(nomes))
-print(nomes[0])               # primeiro elemento
+print(nomes[0])              # primeiro elemento
 print(nomes[-1])             # último elemento
 print(nomes[-2])             # penúltimo elemento
 print(nomes[len(nomes)-1])   # último elemento
@@ -104,15 +104,18 @@ Posição =  0,   1,  2,  3, 4, 5
 """
 
 print(type(numeros))
-print(numeros)          # Retorna todos as posiçõe da lista
-print(numeros[2:])      # Retorna os elementos da posição 2 até o final
-# Retorna os elementos da posição 2 até a posição 3, pois o 4 é excludente
+print(numeros)
+# Retorna todos as posições da lista
+print(numeros[2:])
+# Retorna os elementos da posição 2 até o final
 print(numeros[2:4])
-# Retorna os elementos da posição 2 até o final, pois tem mmenos que 8 posições na lista
+# Retorna os elementos da posição 2 até a posição 3, pois o 4 é excludente
 print(numeros[2:8])
-print(numeros[:5])      # Retorna os elementos da posição inicial até a 4
+# Retorna os elementos da posição 2 até o final, pois tem mmenos que 8 posições na lista
+print(numeros[:5])
+# Retorna os elementos da posição inicial até a 4
 
-
+# ------------------------------------------------------------------------------------------------------------------
 # Troca de elementos de uma lista
 
 print(numeros)
@@ -133,6 +136,7 @@ numeros.sort()  # Ordena a lista em ordem crescente
 numeros.pop(1)  # Remove e retorna o elemento na posição indicada
 numeros.remove(5.5)  # Remove a primeira ocorrência do valor indicado
 
+# ------------------------------------------------------------------------------------------------------------------
 # Tuplas
 
 """As tuplas são exatamente como as listas, exceto pelo fato de que seus elementos, uma vez inseridos, permanecem naquela posição, ou seja, não podem ser alterados ou substituídos.
@@ -157,13 +161,19 @@ Alterar elementos.
 
 x = dias.count('ter')  # retorna o número de ocorrências do elemento informado
 
-y = dias.index('seg')  # retorna a primeira posição do elemento informado
+y = dias.index('seg')  # retorna a posição do elemento informado
 
 
 """A obtenção do número de elementos é realizada pela função len():"""
 
 quantidade = len(dias)
 
+print(x)
+print(y)
+print(quantidade)
+
+
+# ------------------------------------------------------------------------------------------------------------------
 # Dicionários
 
 """
@@ -185,12 +195,14 @@ pessoa = {
 A variável pessoa possui três propriedades (três elementos). Cada propriedade (elemento) possui uma chave e um valor, conforme apresentado:
 
 chave	valor
+---------------
 nome	Fulano
 idade	30
 altura	1.7
 
  """
 
+# ------------------------------------------------------------------------------------------------------------------
 # Buscas em dicionários
 """
 Analogamente ao que aconteceu com as listas, para obter o valor de um elemento do dicionário com base na chave basta colocar a chave como item de busca: pessoa['nome']
@@ -204,3 +216,248 @@ print(pessoa['nome'])
 print(pessoa.keys())
 print(pessoa.values())
 print(pessoa.items())
+
+"""
+E o resultado desta execução é apresentado a seguir:
+
+{ 'nome': 'Carlos', 'idade': 30, 'altura': 1.75}
+Carlos
+dict_keys(['nome', 'idade', 'altura'])
+dict_values(['Carlos', 30, 1.75])
+dict_items([('nome', 'Carlos'), ('idade', 30), ('altura', 1.75)])
+
+Pode-se observar que a definição de um dicionário é feita com o uso de chaves, e cada elemento é um par chave / valor separados por ':' (dois pontos).
+"""
+
+# ------------------------------------------------------------------------------------------------------------------
+# Combinando Dicionários e Listas
+
+"""
+Dicionários podem ser elementos de listas, o que é útil para representar uma coleção de objetos com atributos, como a lista de pessoas no exemplo a seguir.
+"""
+
+# dicionários como elementos de listas
+pessoas = [
+    {'nome': 'Carlos', 'idade': 30},
+    {'nome': 'Sergio', 'idade': 23},
+    {'nome': 'Ana Maria', 'idade': 25}
+]
+
+# Apresentado o primeiro elemento
+print(pessoas[0])
+
+# Apresentando o valor da chave 'nome' presente no primeiro elemento
+print(pessoas[0]['nome'])
+
+
+"""No próximo exemplo é apresentado um dicionário onde o valor de uma propriedade é uma lista:"""
+
+curso = {
+    'descricao': 'Análise de Sistemas',
+    'disciplinas': [
+        'Lógica de programação',
+        'Banco de Dados',
+        'Scrum',
+        'Programação Avançada'
+    ]
+}
+
+print(curso)
+print(curso['disciplinas'][2])
+
+
+"""
+{'descricao': 'Análise de Sistemas', 'disciplinas': ['Lógica de programação', 'Banco de Dados', 'Scrum', 'Programação Avançada']}
+
+Scrum
+"""
+
+# ------------------------------------------------------------------------------------------------------------------
+# Estrutura de repetição for
+
+
+"""
+Dentre as estruturas de repetição, a estrutura for é adequada para situações em que a quantidade de repetições é conhecida previamente. Nesta lição serão mostrados exemplos de utilização desta estrutura.
+
+Percorrendo uma lista
+
+Uma das formas mais comuns de utilização da estrutura for é a realização de buscas em listas. Aqui existe a possibilidade de se realizar algum tratamento diferenciado em cada elemento da estrutura
+
+"""
+
+colecao = [1, 3, 4, 7, 10]
+posicao = 0
+for x in colecao:
+    print('Elemento na posição', posicao, '=', x)
+    posicao += 1
+
+"""
+No exemplo, a variável x representa, sequencialmente, cada elemento da variável colecao a cada passo da repetição.
+
+O resultado da execução deste código é mostrado a seguir:
+
+Elemento na posição 0 = 1
+Elemento na posição 1 = 3
+Elemento na posição 2 = 4
+Elemento na posição 3 = 7
+Elemento na posição 4 = 10
+
+"""
+
+# ------------------------------------------------------------------------------------------------------------------
+# A função range()
+
+"""
+Em muitas situações a estrutura de repetição é usada para outros propósitos diferentes de manipular coleções – apenas para repetir trechos de código. Para cenários como esse, o Python disponibiliza a função range().
+
+Esta função possui diferentes formas de execução, variando a quantidade de parâmetros. Os exemplos a seguir ilustram o uso desta função:
+"""
+
+c1 = range(10)  # produz uma sequencia numérica de 0 a 9, com passo 1
+
+
+"""
+O parâmetro informado na função range() não entra na sequência – ele é apenas o limite superior. O exemplo a seguir mostra a estrutura for usando a função range():
+"""
+
+for x in range(10):
+    print(x)
+
+
+"""
+Resultado:
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+"""
+
+"""
+O exemplo a seguir mostra a função range() com dois parâmetros. O primeiro parâmetro é o primeiro elemento da sequência:
+"""
+
+for x in range(-3, 10):
+    print(x)
+
+"""
+Resultado:
+-3
+-2
+-1
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+"""
+
+"""
+Quando a função for for usada com três parâmetros, seus valores são:
+range(valor_inicial, limite, passo)
+
+O terceiro parâmetro indica o passo usado na sequência.
+"""
+
+for x in range(3, 10, 2):  # o terceiro parâmetro é o passo (step)
+    print(x)
+
+"""
+Resultado:
+3
+5
+7
+9
+"""
+
+"""
+É possível também executar esta função em uma ordem numérica decrescente:
+"""
+
+for x in range(12, 2, -1):  # o terceiro parâmetro é o passo (step)
+    print(x)
+
+
+""""
+Resultado:
+12
+11
+10
+9
+8
+7
+6
+5
+4
+3
+"""
+
+"""
+Combinando for com else
+É possível combinar a estrutura for com o comando else. Neste caso, o else é executado quando a estrutura de repetição finalizar.
+"""
+
+for x in range(5):
+    print(x)
+else:
+    print('Final da estrutura de repetição')
+
+"""
+Resultado:
+0
+1
+2
+3
+4
+Final da estrutura de repetição
+"""
+
+# ------------------------------------------------------------------------------------------------------------------
+
+# Estrutura for em dicionários
+"""
+Sabendo que um dicionário é formado por elementos compostos por chave e valor, é possível contemplar esta abordagem na elaboração da estrutura de repetição. Exemplo:
+"""
+
+notas = {
+    'Potuguês': 7,
+    'Matemática': 9,
+    'Lógica': 7,
+    'Algoritmo': 7
+}
+
+for chave, valor in notas.items():
+    print(f"{chave}: {valor}")
+
+"""
+Resultado da execução:
+Potuguês: 7
+Matemática: 9
+Lógica: 7
+Algoritmo: 7
+  
+"""
+
+"""
+Uso do for em cadeias de caracteres
+Muitas vezes temos a necessidade de analisar caracteres de uma string — por diversos motivos. O comando for pode perfeitamente ser usado para este fim.
+
+O exemplo a seguir percorre os caracteres de uma string e adiciona o caractere * entre eles:
+
+"""
+
+s = ''
+for ch in 'python':
+    s += ch + '*'
+
+print(s)
