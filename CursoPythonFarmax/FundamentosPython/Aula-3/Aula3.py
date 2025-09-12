@@ -64,217 +64,7 @@ print("------------------------------------------------------")
 print()
 
 # ------------------------------------------------------------------------------------------------------------------
-# Listas - conjunto de valores, definidos entre colchetes
-
-lista = []
-nomes = ['Carlos', 'Sergio', 'Ana Maria', 'Jose', 'Claudia']
-numeros = [5.5, 9, 14, 16, 1, 8]
-mistos = ['São Paulo', 322, True, 75.2]
-
-# ------------------------------------------------------------------------------------------------------------------
-# Buscas em índices
-
-""" 
-    Para buscar elementos em uma lista são utilizados os índices dos elementos. No python, o primeiro elemento possui índice 0.
-
-    Para buscar um elemento em uma lista pode-se usar índices com valores positivos ou negtivos. Se o índice for positivo, a localização é realizado a partir do zero para a direira, e se for negativo, para a esquerda.
-"""
-
-print(nomes)
-print(type(nomes))
-print(nomes[0])              # primeiro elemento
-print(nomes[-1])             # último elemento
-print(nomes[-2])             # penúltimo elemento
-print(nomes[len(nomes)-1])   # último elemento
-
-""" 
-    (len(nomes): A função len() retorna o número total de elementos na lista nomes. Por exemplo, se a lista tem 5 elementos, len(nomes) retornará 5, nesse caso, 5-1 = 4, ou seja posição 4 é o último elemento dessa lista
-"""
-
-# ------------------------------------------------------------------------------------------------------------------
-# Uso do operador Slice
-
-""" 
-A aplicação do operador slice consiste na utilização dos limites numéricos separados por : (dois pontos).
-
-[posição_inicial: limite]
-
-numeros = [5.5, 9, 14, 16, 1, 8]
-Posição =  0,   1,  2,  3, 4, 5
-"""
-
-print(type(numeros))
-print(numeros)
-# Retorna todos as posições da lista
-print(numeros[2:])
-# Retorna os elementos da posição 2 até o final
-print(numeros[2:4])
-# Retorna os elementos da posição 2 até a posição 3, pois o 4 é excludente
-print(numeros[2:8])
-# Retorna os elementos da posição 2 até o final, pois tem mmenos que 8 posições na lista
-print(numeros[:5])
-# Retorna os elementos da posição inicial até a 4
-
-# ------------------------------------------------------------------------------------------------------------------
-# Troca de elementos de uma lista
-
-print(numeros)
-temp = numeros[1]
-print(temp)
-numeros[1] = numeros[3]   # numeros = [1] = 9, troca por numeros = [3] = 16
-print(numeros)
-numeros[3] = temp
-print(numeros)
-
-# # Algumas operações sobre listas
-
-numeros.append(200)  # Adicionar um novo item ao final da lista
-numeros.clear()  # Limpa os elementos da lista
-num = numeros.copy()  # Retorna umja cópia da lista
-num = numeros.count()  # Retorna o número de elementos da lista
-numeros.sort()  # Ordena a lista em ordem crescente
-numeros.pop(1)  # Remove e retorna o elemento na posição indicada
-numeros.remove(5.5)  # Remove a primeira ocorrência do valor indicado
-
-# ------------------------------------------------------------------------------------------------------------------
-# Tuplas
-
-"""As tuplas são exatamente como as listas, exceto pelo fato de que seus elementos, uma vez inseridos, permanecem naquela posição, ou seja, não podem ser alterados ou substituídos.
-
-A definição de tuplas usa o caractere "parênteses" para reunir seus elementos.
-
-O exemplo a seguir ilustra a definição de uma tupla:
-"""
-
-dias = ('dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab')
-
-
-"""
-s métodos aplicados a uma tupla são bastante limitados, já que não podemos:
-
-Inserir elementos em posição intermediária;
-
-Remover elementos;
-
-Alterar elementos.
-"""
-
-x = dias.count('ter')  # retorna o número de ocorrências do elemento informado
-
-y = dias.index('seg')  # retorna a posição do elemento informado
-
-
-"""A obtenção do número de elementos é realizada pela função len():"""
-
-quantidade = len(dias)
-
-print(x)
-print(y)
-print(quantidade)
-
-
-# ------------------------------------------------------------------------------------------------------------------
-# Dicionários
-
-"""
-Apesar de pertencer à categoria de coleções, um dicionário não é exatamente como elas. Trata-se de um conjunto de propriedades, e não de elementos. Dicionários possuem propriedades que, juntas, compõem um objeto.
-
-Definição de dicionários
-Cada elemento de um dicionário é formado por uma chave e um valor (o que, de fato, caracteriza a definição de dicionário).
-
-O exemplo a seguir mostra a estrutura do dicionário:
-# dicionario representando as propriedades de uma pessoa
-# """
-pessoa = {
-    'nome': 'Fulano',
-    'idade': 30,
-    'altura': 1.75
-}
-
-"""
-A variável pessoa possui três propriedades (três elementos). Cada propriedade (elemento) possui uma chave e um valor, conforme apresentado:
-
-chave	valor
----------------
-nome	Fulano
-idade	30
-altura	1.7
-
- """
-
-# ------------------------------------------------------------------------------------------------------------------
-# Buscas em dicionários
-"""
-Analogamente ao que aconteceu com as listas, para obter o valor de um elemento do dicionário com base na chave basta colocar a chave como item de busca: pessoa['nome']
-
-O exemplo seguinte apresenta um código exibindo algumas informações de um dicionário:
-"""
-
-print(pessoa)
-print(pessoa['nome'])
-
-print(pessoa.keys())
-print(pessoa.values())
-print(pessoa.items())
-
-"""
-E o resultado desta execução é apresentado a seguir:
-
-{ 'nome': 'Carlos', 'idade': 30, 'altura': 1.75}
-Carlos
-dict_keys(['nome', 'idade', 'altura'])
-dict_values(['Carlos', 30, 1.75])
-dict_items([('nome', 'Carlos'), ('idade', 30), ('altura', 1.75)])
-
-Pode-se observar que a definição de um dicionário é feita com o uso de chaves, e cada elemento é um par chave / valor separados por ':' (dois pontos).
-"""
-
-# ------------------------------------------------------------------------------------------------------------------
-# Combinando Dicionários e Listas
-
-"""
-Dicionários podem ser elementos de listas, o que é útil para representar uma coleção de objetos com atributos, como a lista de pessoas no exemplo a seguir.
-"""
-
-# dicionários como elementos de listas
-pessoas = [
-    {'nome': 'Carlos', 'idade': 30},
-    {'nome': 'Sergio', 'idade': 23},
-    {'nome': 'Ana Maria', 'idade': 25}
-]
-
-# Apresentado o primeiro elemento
-print(pessoas[0])
-
-# Apresentando o valor da chave 'nome' presente no primeiro elemento
-print(pessoas[0]['nome'])
-
-
-"""No próximo exemplo é apresentado um dicionário onde o valor de uma propriedade é uma lista:"""
-
-curso = {
-    'descricao': 'Análise de Sistemas',
-    'disciplinas': [
-        'Lógica de programação',
-        'Banco de Dados',
-        'Scrum',
-        'Programação Avançada'
-    ]
-}
-
-print(curso)
-print(curso['disciplinas'][2])
-
-
-"""
-{'descricao': 'Análise de Sistemas', 'disciplinas': ['Lógica de programação', 'Banco de Dados', 'Scrum', 'Programação Avançada']}
-
-Scrum
-"""
-
-# ------------------------------------------------------------------------------------------------------------------
 # Estrutura de repetição for
-
 
 """
 Dentre as estruturas de repetição, a estrutura for é adequada para situações em que a quantidade de repetições é conhecida previamente. Nesta lição serão mostrados exemplos de utilização desta estrutura.
@@ -282,7 +72,6 @@ Dentre as estruturas de repetição, a estrutura for é adequada para situaçõe
 Percorrendo uma lista
 
 Uma das formas mais comuns de utilização da estrutura for é a realização de buscas em listas. Aqui existe a possibilidade de se realizar algum tratamento diferenciado em cada elemento da estrutura
-
 """
 
 colecao = [1, 3, 4, 7, 10]
@@ -301,28 +90,24 @@ Elemento na posição 1 = 3
 Elemento na posição 2 = 4
 Elemento na posição 3 = 7
 Elemento na posição 4 = 10
-
 """
 
 # ------------------------------------------------------------------------------------------------------------------
 # A função range()
 
 """
-Em muitas situações a estrutura de repetição é usada para outros propósitos diferentes de manipular coleções – apenas para repetir trechos de código. Para cenários como esse, o Python disponibiliza a função range().
+Em muitas situações a estrutura de repetição é usada para outros propósitos diferentes de manipular coleções, apenas para repetir trechos de código. Para cenários como esse, o Python disponibiliza a função range().
 
 Esta função possui diferentes formas de execução, variando a quantidade de parâmetros. Os exemplos a seguir ilustram o uso desta função:
 """
-
 c1 = range(10)  # produz uma sequencia numérica de 0 a 9, com passo 1
 
-
 """
-O parâmetro informado na função range() não entra na sequência – ele é apenas o limite superior. O exemplo a seguir mostra a estrutura for usando a função range():
+O parâmetro informado na função range() não entra na sequência, ele é apenas o limite superior. O exemplo a seguir mostra a estrutura for usando a função range():
 """
 
 for x in range(10):
     print(x)
-
 
 """
 Resultado:
@@ -363,8 +148,7 @@ Resultado:
 """
 
 """
-Quando a função for for usada com três parâmetros, seus valores são:
-range(valor_inicial, limite, passo)
+Quando a função "for" for usada com três parâmetros, seus valores são: range(valor_inicial, limite, passo)
 
 O terceiro parâmetro indica o passo usado na sequência.
 """
@@ -387,7 +171,6 @@ Resultado:
 for x in range(12, 2, -1):  # o terceiro parâmetro é o passo (step)
     print(x)
 
-
 """"
 Resultado:
 12
@@ -402,6 +185,7 @@ Resultado:
 3
 """
 
+# ------------------------------------------------------------------------------------------------------------------
 """
 Combinando for com else
 É possível combinar a estrutura for com o comando else. Neste caso, o else é executado quando a estrutura de repetição finalizar.
@@ -423,7 +207,6 @@ Final da estrutura de repetição
 """
 
 # ------------------------------------------------------------------------------------------------------------------
-
 # Estrutura for em dicionários
 """
 Sabendo que um dicionário é formado por elementos compostos por chave e valor, é possível contemplar esta abordagem na elaboração da estrutura de repetição. Exemplo:
@@ -445,15 +228,15 @@ Potuguês: 7
 Matemática: 9
 Lógica: 7
 Algoritmo: 7
-  
 """
 
+# ------------------------------------------------------------------------------------------------------------------
+# Uso do for em cadeias de caracteres
+
 """
-Uso do for em cadeias de caracteres
 Muitas vezes temos a necessidade de analisar caracteres de uma string — por diversos motivos. O comando for pode perfeitamente ser usado para este fim.
 
 O exemplo a seguir percorre os caracteres de uma string e adiciona o caractere * entre eles:
-
 """
 
 s = ''
@@ -461,3 +244,96 @@ for ch in 'python':
     s += ch + '*'
 
 print(s)
+
+# ------------------------------------------------------------------------------------------------------------------
+# O comando pass
+
+"""
+Existem momentos em que o programa deve ser escrito, mas ainda não foi definido o bloco a ser executado pelo for. Como o comando não pode ser escrito sem um bloco, pode-se usar o comando pass. Este comando não tem nenhuma utilidade prática, mas ajuda no desenvolvimento do código impedindo que apresente erros.
+"""
+
+for x in range(5):
+    pass
+
+"""
+Vale ressaltar que este comando pode ser usado em outras estruturas também, como o comando if, outras estruturas de repetição e até mesmo em classes.
+"""
+
+# ------------------------------------------------------------------------------------------------------------------
+# Estrutura de repetição while
+
+"""
+Visão geral da lição
+Nesta lição será apresentada outra opção de estrutura de repetição: a estrutura while. Ela possui suas vantagens em relação à estrutura for, o que justifica seu uso. As vantagens serão explanadas nos tópicos seguintes.
+
+Uso da estrutura while
+Este modelo de estrutura de repetição é adequado para os cenários onde não se sabe a quantidade de repetições a ser executada, ou seja, sabe-se quando começa, mas não se tem informação de quando irá terminar.
+
+Ela pode ser usada no lugar da estrutura for, porém não é a melhor opção.
+
+O exemplo a seguir ilustra um uso da estrutura while:
+"""
+
+x = 0
+while x < 10:
+    print(x)
+    x += 1
+print('Fim do programa.')
+
+"""ou"""
+
+x = 0
+while x < 10:
+    print(x)
+    x += 1
+else:
+    print('Fim do programa.')
+
+"""
+Assim como a estrutura for, a estrutura while também permite o uso do comando else.
+
+Nos dois exemplos o resultado é o mesmo:
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+Fim do programa.
+
+# ------------------------------------------------------------------------------------------------------------------
+# Os comandos break e continue
+
+Ao longo da execução de uma estrutura de repetição é possível interrompê-la ou suspendê-la para atender a alguma regra imposta ao programa. Para casos como estes, pode-se usar os comandos break e/ou continue.
+
+break: interrompe a execução da estrutura de repetição. O programa continua sua execução a partir da próxima instrução após a estrutura;
+
+continue: pausa a estrutura de repetição, seguindo para o próximo passo da mesma estrutura.
+
+O exemplo a seguir mostra o uso adequado da estrutura de repetição while, juntamente com os comandos break e continue. Trata-se de um exemplo mais completo, e, portanto, será incluído um enunciado adequado:
+
+Neste exemplo, o usuário informa uma certa quantidade de números. O programa termina (a estrutura de repetição é interrompida) quando o usuário digitar o número 0 (zero). Se o número informado for negativo, este será ignorado. O programa apresentará a quantidade de números não negativos informados.
+"""
+
+soma = 0
+quantidade = 0
+
+while True:
+    numero = int(input('Informe um número: '))
+    if numero == 0:
+        break
+    if numero < 0:
+        continue
+    soma += numero
+    quantidade += 1
+
+print(f'Soma dos valores positivos informados: {soma}')
+print(f'Quantidade de valores positivos informados: {quantidade}')
+
+"""
+Neste exemplo pode-se destacar o uso dos comandos break e continue. break é usado para interromper o processo de solicitação de números para o usuário, e continue é usado para impedir que o valor negativo seja incluído na soma ou na quantidade.
+"""
