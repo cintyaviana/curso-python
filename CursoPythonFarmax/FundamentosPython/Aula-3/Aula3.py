@@ -17,14 +17,14 @@ if numero > 0:
     print('O número informado é positivo')
 print("Segunda instrução do bloco")
 
-""" Nesse caso, o primeiro print está dentro do If o outro fora, ou seja, o segundo print será executado dentro do contexto mesmo se no If retornar False"""
+""" Nesse caso, o primeiro print está dentro do If e o outro fora, ou seja, o segundo print será executado dentro do contexto mesmo se no If retornar False"""
 
 print()
 print("------------------------------------------------------")
 print()
 
 # -----------------------------------------------------------------------------------------------------------------------
-# Comando If ... Else
+# Comando IF ... ELSE
 
 numero = int(input('Forneça um valor inteiro: '))
 
@@ -43,7 +43,7 @@ print("------------------------------------------------------")
 print()
 
 # ------------------------------------------------------------------------------------------------------------------
-# Comando if...elif...else
+# Comando IF ... ELIF ... ELSE
 
 nome = input('Nome do associado: ')
 idade = int(input('Idade do Associado: '))

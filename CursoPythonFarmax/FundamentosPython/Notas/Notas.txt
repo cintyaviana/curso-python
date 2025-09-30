@@ -12,4 +12,4 @@
 
 > Cd : vai entrando nas camadas das pastas
 
-> Mkdim : Cria nova pasta no VC Code
+> mkdir : Cria nova pasta no VR Code

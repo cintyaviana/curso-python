@@ -1,5 +1,4 @@
 
-# -----------------------------------------------------------------------------------------------------------------------
 # Laboratório 2
 
 """
@@ -35,10 +34,9 @@ resto = resto % 10
 notas5 = resto // 5
 
 # 6. Exibir o resultado.
-
 mensagemSaida = "Você receberá as seguintes notas:"
 
-# Validação de quais notas foram maiores que 0 para formar a resposta ao usuário
+# Validação de quais notas foram maiores que 0 para formar a resposta ao usuário.
 if notas50 > 0:
     mensagemSaida += " %d Nota(s) de R$ 50,00" % notas50
 if notas20 > 0:
@@ -55,5 +53,17 @@ mensagemSaida += ". Obrigado por usar o caixa do Banco do Brasil!"
 print(mensagemSaida)
 
 """ 
-    Nota: O while é uma estrutura de repetição em Python, conhecida como laço de repetição condicional. Ele executa um bloco de código repetidamente enquanto uma condição for verdadeira.
+    Nota: 
+    
+    O while é uma estrutura de repetição em Python, conhecida como laço de repetição condicional. Ele executa um bloco de código repetidamente enquanto uma condição for verdadeira.
 """
+
+# Validação de quais notas foram maiores que 0 para formar a resposta ao usuário usando f-strings.
+if notas50 > 0:
+    mensagemSaida += f" {notas50} nota(s) de R$ 50,00"
+if notas20 > 0:
+    mensagemSaida += f", {notas20} nota(s) de R$ 20,00"
+if notas10 > 0:
+    mensagemSaida += f", {notas10} nota(s) de R$ 10,00"
+if notas5 > 0:
+    mensagemSaida += f", {notas5} nota(s) de R$ 5,00"

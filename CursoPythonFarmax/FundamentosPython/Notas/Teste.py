@@ -1,35 +1,50 @@
-print('Um novo exemplo')
+# Boas Vindas
+print("Bem-vindo(a) ao Banco do Brasil")
+
+while True:
+
+    valorSaque = int(
+        input("Digite o valor do saque desejado (múltiplo de 5): "))
+
+    if valorSaque > 0 and valorSaque % 5 == 0:
+        break  # Sai do loop se o valor for válido
+    else:
+        print("O valor informado é inválido:")
+
+# Validação da quantidade de notas
+notas50 = valorSaque // 50
+resto = valorSaque % 50
+
+notas20 = resto // 20
+resto = resto % 20
+
+notas10 = resto // 10
+resto = resto % 10
+
+notas5 = resto // 5
+
+# 6. Exibir o resultado.
+mensagemSaida = "Você receberá as seguintes notas:"
+
+# Validação de quais notas foram maiores que 0 para formar a resposta ao usuário.
+if notas50 > 0:
+    mensagemSaida += f" {notas50} Nota(s) de R$ 50,00"
+if notas20 > 0:
+    mensagemSaida += f", {notas20} Nota(s) de R$ 20,00"
+if notas10 > 0:
+    mensagemSaida += f", {notas10} Nota(s) de R$ 10,00"
+if notas5 > 0:
+    mensagemSaida += f", {notas5} Nota(s) de R$ 5,00"
+
+# Construção final da respostas
+mensagemSaida += ". Obrigado por usar o caixa do Banco do Brasil!"
+
+# Exibição da resposta ao usuário
+print(mensagemSaida)
+
+""" 
+    Nota: O while é uma estrutura de repetição em Python, conhecida como laço de repetição condicional. Ele executa um bloco de código repetidamente enquanto uma condição for verdadeira.
+"""
 
 
-def preco_final(preco, **kwargs):
-    # o uso do parametro **kwargs é uma boa pratica quando
-    # queremos fazer uso de um parametro variavel que recebe
-    # como valor, argumentos baseados em pares key:value
-
-    p_taxa = 0
-    p_imposto = 0
-
-    v_taxa = kwargs.get('taxa')
-    if v_taxa:
-        # aqui, estamos definindo a seguinte operação:
-        p_taxa = preco * v_taxa/100
-        # a verificação da percentagem da v_taxa em relação
-        # ao valor dado ao argumento preco
-
-    v_imposto = kwargs.get('imposto')
-    if v_imposto:
-        p_imposto = preco * v_imposto/100
-
-    return preco - p_taxa - p_imposto
-
-
-# praticar a chamada da função
-valorLiquido1 = preco_final(1000)
-valorLiquido2 = preco_final(1000, taxa=10)
-valorLiquido3 = preco_final(1000, imposto=18)
-valorLiquido4 = preco_final(1000, taxa=10, imposto=18)
-
-print(f'Valor liquido 1: {valorLiquido1}')
-print(f'Valor liquido 2: {valorLiquido2}')
-print(f'Valor liquido 3: {valorLiquido3}')
-print(f'Valor liquido 4: {valorLiquido4}')
+# Validação de quais notas foram maiores que 0 para formar a resposta ao usuário usando f-strings.
