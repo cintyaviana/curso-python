@@ -1,49 +1,39 @@
 
-# Classe e Objetos
+# passo 1: definição da classe
+class Veiculo:
 
-"""
-    DEFINIÇÃO DE CLASSE: classe - de acordo com o paradigma(forma) de programação orientada a objetos "diz" que: classe é um elemento lógico descritivo - onde descrevemos tudo aquilo que, em algum momento, faremos uso para algum proposito
+    # 2 passo: declarar as propriedades da classe
+    marca = ''
+    modelo = ''
+    ano = 0
 
-    DEFINIÇÃO DE OBJETO: objeto - de acordo com o paradigma(forma) de programação orientada a objetos diz que: objeto é derivado - a partir de uma classe - determinando que tudo aquilo que, nela, classe, está descrito, agora, pode ser usado para seus respectivos propositos
-"""
+# passo 3: defini o método-construtor da classe -> método é uma função; recebe este novo nome por ser declarada/descrita dentro de uma classe. O método construtor da classe é definido com o uso da expressão __init__()
 
-
-class Automovel:  # aqui, temos a definição da classe - uso da palavra reservada class junto do nome dado a classe - Automovel
-
-    # marca = '' # neste contexto, a variavel funciona e esta declarada de forma simples. ESTA DECLARAÇÃO, APESAR DE FUNCIONAR, PODE TRAZER VULNERABILIDADE PARA O PROGRAMA. TAMBÉM É CONSIDERADO, PARA O CONTEXTO DE CLASSES, UMA PRATICA DUVIDOSA - NÃO É BOM! POR ISSO, EVITAMOS, NESTE CONTEXTO, SEU USO.
-
-    # --- DEFINIÇÃO DA PROPRIEDADE marca; ABAIXO, A "PROPRIEDADE" marca ESTA SENDO DEFINIDA COMO UM MÉTODO/FUNÇÃO; PORTANTO, precisamos "trasformar" este método/função numa propriedade.
-
-    """ 
-        Aqui, estamos fazendo o uso da estrutura de acesso get - que diz o seguinte: "vou acessar a propriedade- dentro do método e retornar este acesso para que ela receba algum valor.
-    """
-    @property  # este é um decorator/decorador ; este é o decorator que transforma o método marca() na propriedade/varaivel marca
-    def marca(self) -> str:
-        return self._marca
+# ainda, dentro da definição do método/função construtor da classe, vamos descrever 3 parametros para ele - junto do comando, palavra reservada self
 
     def __init__(self, marca: str, modelo: str, ano: int):
+        # as declarações marca, modelo, ano PERTECEM AO MÉTODO/FUNÇÃO CONSTRUTOR DA CLASSE - MESMO TENDO A NOMENCLATURA IDENTICA AS PROPRIEDADES DA CLASSE.
+
+        # passo 4: acessar as propriedades pertencentes a classe e, aqui, dentro do método/função construtor da classe, inicializa-las com os valores dos parametros
+
+        # aqui, abaixo, a variavel/... marca PERTENCE a classe; esta propriedade esta sendo acessando dentro do metodo construtor, por isso é necessario fazer uso do comando self - ajuda a "contextualziar" o uso de uma propriedade - descrita fora do método - dentro dele, método
+
+        # neste passo, atribuimos como valor para a propriedade marca qualquer valor/argumento que for dado ao parametro marca - que pertence ao método
         self.marca = marca
         self.modelo = modelo
         self.ano = ano
 
-        """toda e qualquer função declarada dentro de uma classe ganha uma nova
-        nomenclatura, passa a ser chamada de: MÉTODO
-        
-        __init__(): MÉTODO/FUNÇÃO declarada como o CONSTRUTOR DA CLASSE; seu proposito é:
-        quando precisarmos gerar, a partir desta classe, um objeto, é esta função/método
-        que devemos chamar a sua execução para que o objeto, derivado desta classe, passe
-        a existir
 
-        self: palavra reservada/comando que determina o "contexto de uso" de um elemento lógico que está sendo usado dentro de um método mas não faz parte dele
+# passo 5: gerando o objeto -para este proposito, vamos criar uma variavel para receber como valor a instancia da classe Veiculo
+# aqui, estamos praticando a instancia da classe Veiculo; esta instancia é criada a partir da "chamada" do método-contrutor da classe; portanto, quando escrevemos : "Veiculo()", na verdade, estamos chamando o método construtor à sua execução
+vel1 = Veiculo('VW', 'Gol', 1992)
+vel2 = Veiculo('Fiat', '147', 1978)
+vel3 = Veiculo('Chevrolet', 'Opala', 1975)
+vel4 = Veiculo('Toyota', 'Corolla', 2025)
 
-        marca, modelo, ano: são parâmetros do método/função
-
-        self.marca = marca: 
-            self.marca -> esta é uma variavel DE CLASSE que foi declarada dentro da função/método; 
-            marca -> este é o parametro do método/função construtor da classe.
-        
-        Quando o método/função construtor for chamado a sua execução, este parametro DEVE receber algum ARGUMENTO/VALOR; este valor recebido será atribuido a variavel de mesmo nome! 
-        
-        O mesmo de nome da variavel e do parametro do método/função é definido de forma proposital - para que não ocorra equívoco no momento da atribuição de valores entre variaveis e parametros
-
-        """
+# passo 6: exibir os carros
+print('===== CARROS DA GARAGEM DO LUIS =====')
+print('Veiculo 1:', vel1.marca, vel1.modelo, vel1.ano)
+print('Veiculo 2:', vel2.marca, vel2.modelo, vel2.ano)
+print('Veiculo 3:', vel3.marca, vel3.modelo, vel3.ano)
+print('Veiculo 4:', vel4.marca, vel4.modelo, vel4.ano)
