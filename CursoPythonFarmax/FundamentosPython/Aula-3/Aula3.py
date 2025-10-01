@@ -9,7 +9,7 @@ if numero > 0:
 """ Os dois prints está dentro dessa condição If"""
 
 print()
-print("------------------------------------------------------")
+print("-" * 100)
 print()
 
 numero = int(input('Forneça um valor inteiro: '))
@@ -20,7 +20,7 @@ print("Segunda instrução do bloco")
 """ Nesse caso, o primeiro print está dentro do If e o outro fora, ou seja, o segundo print será executado dentro do contexto mesmo se no If retornar False"""
 
 print()
-print("------------------------------------------------------")
+print("-" * 100)
 print()
 
 # -----------------------------------------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ else:
         print('O número não é maior que 10.')
 
 print()
-print("------------------------------------------------------")
+print("-" * 100)
 print()
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ print("Associoado:", nome)
 print("Valor a ser pago:", ingresso)
 
 print()
-print("------------------------------------------------------")
+print("-" * 100)
 print()
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -69,9 +69,9 @@ print()
 """
 Dentre as estruturas de repetição, a estrutura for é adequada para situações em que a quantidade de repetições é conhecida previamente. Nesta lição serão mostrados exemplos de utilização desta estrutura.
 
-Percorrendo uma lista
+# Percorrendo uma lista
 
-Uma das formas mais comuns de utilização da estrutura for é a realização de buscas em listas. Aqui existe a possibilidade de se realizar algum tratamento diferenciado em cada elemento da estrutura
+Uma das formas mais comuns de utilização da estrutura "for" é a realização de buscas em listas. Aqui existe a possibilidade de se realizar algum tratamento diferenciado em cada elemento da estrutura
 """
 
 colecao = [1, 3, 4, 7, 10]
@@ -81,17 +81,15 @@ for x in colecao:
     posicao += 1
 
 """
-No exemplo, a variável x representa, sequencialmente, cada elemento da variável colecao a cada passo da repetição.
+No exemplo, a variável x representa, sequencialmente, cada elemento da variável "colecao" a cada passo da repetição.
 
 O resultado da execução deste código é mostrado a seguir:
-
 Elemento na posição 0 = 1
 Elemento na posição 1 = 3
 Elemento na posição 2 = 4
 Elemento na posição 3 = 7
 Elemento na posição 4 = 10
 """
-
 # ------------------------------------------------------------------------------------------------------------------
 # A função range()
 
@@ -105,7 +103,6 @@ c1 = range(10)  # produz uma sequencia numérica de 0 a 9, com passo 1
 """
 O parâmetro informado na função range() não entra na sequência, ele é apenas o limite superior. O exemplo a seguir mostra a estrutura for usando a função range():
 """
-
 for x in range(10):
     print(x)
 
@@ -263,13 +260,9 @@ Vale ressaltar que este comando pode ser usado em outras estruturas também, com
 # Estrutura de repetição while
 
 """
-Visão geral da lição
-Nesta lição será apresentada outra opção de estrutura de repetição: a estrutura while. Ela possui suas vantagens em relação à estrutura for, o que justifica seu uso. As vantagens serão explanadas nos tópicos seguintes.
+Ela possui suas vantagens em relação à estrutura for, o que justifica seu uso.
 
-Uso da estrutura while
 Este modelo de estrutura de repetição é adequado para os cenários onde não se sabe a quantidade de repetições a ser executada, ou seja, sabe-se quando começa, mas não se tem informação de quando irá terminar.
-
-Ela pode ser usada no lugar da estrutura for, porém não é a melhor opção.
 
 O exemplo a seguir ilustra um uso da estrutura while:
 """
@@ -313,8 +306,6 @@ Ao longo da execução de uma estrutura de repetição é possível interrompê-
 break: interrompe a execução da estrutura de repetição. O programa continua sua execução a partir da próxima instrução após a estrutura;
 
 continue: pausa a estrutura de repetição, seguindo para o próximo passo da mesma estrutura.
-
-O exemplo a seguir mostra o uso adequado da estrutura de repetição while, juntamente com os comandos break e continue. Trata-se de um exemplo mais completo, e, portanto, será incluído um enunciado adequado:
 
 Neste exemplo, o usuário informa uma certa quantidade de números. O programa termina (a estrutura de repetição é interrompida) quando o usuário digitar o número 0 (zero). Se o número informado for negativo, este será ignorado. O programa apresentará a quantidade de números não negativos informados.
 """

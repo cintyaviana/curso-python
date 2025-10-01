@@ -11,7 +11,7 @@ import random  # Importar a biblioteca 'random'
 ListaCompleta = []  # Lista para armazenar os dados aleatórios
 MaioresQue10 = []  # Lista para armazenar os valores > 10
 
-for i in range(100):  # Loop para gerar os nomes
+for i in range(100):  # Loop para gerar os números
     # Gerar um número aleatório entre 1 e 100 através da função random.randint(0,100)
     NumeroAleatorio = random.randint(0, 100)
 

@@ -1,5 +1,4 @@
 
-# ------------------------------------------------------------------------------------------------------------------
 # Listas - conjunto de valores, definidos entre colchetes
 
 import random as rn
@@ -147,7 +146,7 @@ print(x)
 print(y)
 print(quantidade)
 
-print(dias[2])  # aqio, é o slice da tupla
+print(dias[2])  # aqui, é o slice da tupla
 umaLista = list(dias)  # temos uma tupla transformada numa lista
 print('Uma tupla transformada numa lista?', umaLista)
 
@@ -183,21 +182,21 @@ Então, temos:
 """
 
 pessoa = {
-    'nome': 'Fulano',
+    'nome': 'Carlos',
     'idade': 30,
     'altura': 1.75,
     1: '3'
 }
 
 """
-A variável pessoa possui três propriedades (três elementos). Cada propriedade (elemento) possui uma chave e um valor, conforme apresentado:
+A variável pessoa possui 4 propriedades (4 elementos). Cada propriedade (elemento) possui uma chave e um valor, conforme apresentado:
 
 chave	valor
 ---------------
 nome	Fulano
 idade	30
 altura	1.7
-
+1       3
  """
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -214,18 +213,19 @@ print(pessoa)
 # o operador de slice continua o mesmo; mas o fatiamento se dá a partir do elemento 'key/chave' do dicionário
 print(pessoa['nome'])
 print(pessoa[1])
-print(pessoa.keys())  # aqui, ser]ão exibidos as keys do dicionário
-print(pessoa.values())  # aqui, ser]ão exibidos as values do dicionário
-print(pessoa.items())  # aqui, serão]ão exibidos as itens do dicionário
+print(pessoa.keys())  # aqui, serão exibidos as keys do dicionário
+print(pessoa.values())  # aqui, serão exibidos as values do dicionário
+print(pessoa.items())  # aqui, serãão exibidos as itens do dicionário
 
 """
 E o resultado desta execução é apresentado a seguir:
 
-{ 'nome': 'Carlos', 'idade': 30, 'altura': 1.75}
+{ 'nome': 'Carlos', 'idade': 30, 'altura': 1.75, '1': 3}
 Carlos
+3
 dict_keys(['nome', 'idade', 'altura'])
-dict_values(['Carlos', 30, 1.75])
-dict_items([('nome', 'Carlos'), ('idade', 30), ('altura', 1.75)])
+dict_values(['Carlos', 30, 1.75,3])
+dict_items([('nome', 'Carlos'), ('idade', 30), ('altura', 1.75),(1: '3')])
 
 Pode-se observar que a definição de um dicionário é feita com o uso de chaves, e cada elemento é um par chave / valor separados por ':' (dois pontos).
 """
@@ -275,7 +275,7 @@ Scrum
 # Funções
 
 """
-"Uma função, nada mais é do que um bloco de instruções lógicas que são agrupadas para cumprir algum tipo de tarefa, a ela, função, indicada. No python, temos funções nativas - como por exemplo print(), random(), entre outras; além dessa característica, python nos dá a possibilidade de construir nossas próprias funções."
+"Uma função, nada mais é do que um bloco de instruções lógicas que são agrupadas para cumprir algum tipo de tarefa, a essa, função, indicada. No python, temos funções nativas - como por exemplo print(), random(), entre outras; além dessa característica, python nos dá a possibilidade de construir nossas próprias funções."
 """
 
 """

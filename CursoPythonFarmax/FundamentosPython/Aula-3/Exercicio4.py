@@ -14,8 +14,7 @@
     Usar o ano para determinar o número de dias do mês de fevereiro.
 """
 
-
-import calendar  # mportar a biblioteca 'calendar' para usar a função de ano bissexto
+import calendar  # Importar a biblioteca 'calendar' para usar a função de ano bissexto
 
 # 2. Criar uma lista com os dias de cada mês
 # Por padrão, fevereiro tem 28 dias
