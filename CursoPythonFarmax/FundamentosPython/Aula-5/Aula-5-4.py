@@ -1,49 +1,63 @@
 
-# Classe e Objetos
+# passo 1
+class ContaBancaria:
+    titular = ""
+    saldo = 0.0
+    # passo 2
 
-"""
-    DEFINIÇÃO DE CLASSE: classe - de acordo com o paradigma(forma) de programação orientada a objetos "diz" que: classe é um elemento lógico descritivo - onde descrevemos tudo aquilo que, em algum momento, faremos uso para algum proposito
+    def __init__(self, titular: str, saldo_inicial: float = 0.0):
+        self.titular = titular
+        self.saldo = saldo_inicial
 
-    DEFINIÇÃO DE OBJETO: objeto - de acordo com o paradigma(forma) de programação orientada a objetos diz que: objeto é derivado - a partir de uma classe - determinando que tudo aquilo que, nela, classe, está descrito, agora, pode ser usado para seus respectivos propositos
-"""
+    # passo 3: definição de um método/função que representa o depósito de valor na conta
+    def depositar(self, valor: float):
+        if valor <= 0:
+            print('Deposito inválido')
+        else:
+            # aqui, vamos acessar a propriedade saldo e atribuir à ela o valor dado ao parametro valor
+            self.saldo += valor
+            print(f'Depósito de R${valor:.2f} realizado com sucesso!')
+
+    # passo 4: aqui, vamos acessar a propriedade saldo e atribuir à ela o valor dado ao parametro valor
+    def sacar(self, valor: float):
+        if valor > self.saldo:
+            print('Saldo insuficiente!')
+        else:
+            self.saldo -= valor
+            print(f'Saque de R${valor:.2f} realizado com sucesso!')
+
+    # passo 5: método/função que representa a consulta de saldo da conta
+    def consultar_saldo(self):
+        return f'Saldo atual: R${self.saldo:.2f}'
 
 
-class Automovel:  # aqui, temos a definição da classe - uso da palavra reservada class junto do nome dado a classe - Automovel
+print()
+print('Correntista 1')
+# passo 6: gerando o objeto
+correntista1 = ContaBancaria('Hubert', 10000)
+# consultar o saldo inicial
+print(correntista1.titular)
+print(correntista1.consultar_saldo())
+# passo 7: fazer uso do objeto para acessar o método de deposito
+correntista1.depositar(2850)
+# passo8: consultar o saldo depois do deposito
+print(correntista1.consultar_saldo())
 
-    # marca = '' # neste contexto, a variavel funciona e esta declarada de forma simples. ESTA DECLARAÇÃO, APESAR DE FUNCIONAR, PODE TRAZER VULNERABILIDADE PARA O PROGRAMA. TAMBÉM É CONSIDERADO, PARA O CONTEXTO DE CLASSES, UMA PRATICA DUVIDOSA - NÃO É BOM! POR ISSO, EVITAMOS, NESTE CONTEXTO, SEU USO.
+correntista1.sacar(12000)
+print(correntista1.consultar_saldo())
 
-    # --- DEFINIÇÃO DA PROPRIEDADE marca; ABAIXO, A "PROPRIEDADE" marca ESTA SENDO DEFINIDA COMO UM MÉTODO/FUNÇÃO; PORTANTO, precisamos "trasformar" este método/função numa propriedade.
+# ======================================================================================
 
-    """ 
-        Aqui, estamos fazendo o uso da estrutura de acesso get - que diz o seguinte: "vou acessar a propriedade- dentro do método e retornar este acesso para que ela receba algum valor.
-    """
-    @property  # este é um decorator/decorador ; este é o decorator que transforma o método marca() na propriedade/varaivel marca
-    def marca(self) -> str:
-        return self._marca
+print()
+print('Correntista 2')
+correntista2 = ContaBancaria('Vinícius', 23500)
+# consultar o saldo inicial
+print(correntista2.titular)
+print(correntista2.consultar_saldo())
+# passo 7: fazer uso do objeto para acessar o método de deposito
+correntista2.depositar(28513630)
+# passo8: consultar o saldo depois do deposito
+print(correntista2.consultar_saldo())
 
-    def __init__(self, marca: str, modelo: str, ano: int):
-        self.marca = marca
-        self.modelo = modelo
-        self.ano = ano
-
-        """toda e qualquer função declarada dentro de uma classe ganha uma nova
-        nomenclatura, passa a ser chamada de: MÉTODO
-        
-        __init__(): MÉTODO/FUNÇÃO declarada como o CONSTRUTOR DA CLASSE; seu proposito é:
-        quando precisarmos gerar, a partir desta classe, um objeto, é esta função/método
-        que devemos chamar a sua execução para que o objeto, derivado desta classe, passe
-        a existir
-
-        self: palavra reservada/comando que determina o "contexto de uso" de um elemento lógico que está sendo usado dentro de um método mas não faz parte dele
-
-        marca, modelo, ano: são parâmetros do método/função
-
-        self.marca = marca: 
-            self.marca -> esta é uma variavel DE CLASSE que foi declarada dentro da função/método; 
-            marca -> este é o parametro do método/função construtor da classe.
-        
-        Quando o método/função construtor for chamado a sua execução, este parametro DEVE receber algum ARGUMENTO/VALOR; este valor recebido será atribuido a variavel de mesmo nome! 
-        
-        O mesmo de nome da variavel e do parametro do método/função é definido de forma proposital - para que não ocorra equívoco no momento da atribuição de valores entre variaveis e parametros
-
-        """
+correntista2.sacar(20000)
+print(correntista2.consultar_saldo())
