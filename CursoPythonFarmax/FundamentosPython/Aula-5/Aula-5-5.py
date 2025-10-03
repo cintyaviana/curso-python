@@ -24,7 +24,7 @@ class Aluno:
         self.notas.append(nota)
 
 
-aluno1 = Aluno('Gabriel', [8.5, 9.9, 10.0])
+aluno1 = Aluno('Gabriel', [8.5, 9.9, 10.0])  # instaciar classe
 print(aluno1.nome, aluno1.notas)
 print('Media: ', aluno1.media())
 print('Aprovado: ', aluno1.aprovado())
