@@ -31,8 +31,8 @@ class Veiculo:
     # 4º passo: definir o metodo para exibir os valores das propriedades/atributos
 
     def exibicao(self):
-        return f'{self.placa} - {self.modelo} '
+        return f'Veículo: {self.modelo} - Placa: {self.placa}'
 
 
-# v1 = Veiculo('KMN 6D39', 'Chevrolet Onix Plus')
-# print(v1.exibicao())
+v1 = Veiculo('Chevrolet Onix Plus', 'KMN 6D39', )
+print(v1.exibicao())

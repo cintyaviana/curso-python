@@ -13,3 +13,5 @@
 > Cd : vai entrando nas camadas das pastas
 
 > mkdir : Cria nova pasta no VR Code
+
+> pip install : para instalar bibliotecas

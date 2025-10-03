@@ -8,10 +8,10 @@ class VeiculoMotorizado(Veiculo):
         self.__capacidade_tanque = capacidade_tanque
 
     def exibicao(self) -> str:
-        return super().exibicao() + f' | Tanque {self.__capacidade_tanque} litros'
+        return super().exibicao() + f' | Tanque: {self.__capacidade_tanque} L'
 
 
-v1 = VeiculoMotorizado('KMN 6D39', 'Chevrolet Onix Plus', 44)
+v1 = VeiculoMotorizado('Chevrolet Onix Plus', 'KMN 6D39', 44)
 
 # exibir estes valores
 print(v1.exibicao())

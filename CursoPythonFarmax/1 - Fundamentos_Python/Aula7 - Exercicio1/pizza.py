@@ -44,5 +44,5 @@ class Pizza:
         return f'{self.tamanho} - {self.sabor} | R$: {self.preco}'
 
 
-# pedido1 = Pizza('Portuguesa', 'Grande', 59.99)
-# print(pedido1.exibicao())
+pedido1 = Pizza('Grande', 'Portuguesa', 59.99)
+print(pedido1.exibicao())
