@@ -1,31 +1,4 @@
 
-"""
-Exercício 1 - Classe Produto
-
-* PREMISSA - PROBLEMA A SER RESOLVIDO
-Crie uma classe chamada Produto que represente um item de estoque.
-
-*TENHO QUE OBSERVAR QUAIS SÃO AS REGRAS/ORBRIGATORIEDADES MINIMAS QUE MEU PROJETO DEVE OBEDECER
-A classe deve conter:
-
-Atributos/variáveis
-nome (string): nome do produto.
-preço (float): preço unitário.
-quantidade (int): quantidade em estoque.
-
-Construtor: que receba todos os atributos na criação do objeto.
-___init__
-
-Métodos:
-valor_total() -> retorna o valor total em estoque (preço * quantidade).
-repor(qtd) -> aumenta a quantidade em estoque.
-vender(qtd) -> diminui a quantidade em estoque (não pode ficar negativo; caso a quantidade pedida seja maior que o estoque, exiba uma mensagem adequada).
-aplicar_desconto(porcentagem) -> aplica um desconto no preço do produto.
-
-"""
-
-# Criação da classe
-
 
 class Produto:
     nome = ''

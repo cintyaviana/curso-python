@@ -1,4 +1,3 @@
-
 """
 Exercício 2 - Classe Livro
 Crie uma classe chamada Livro que represente um livro em uma biblioteca.

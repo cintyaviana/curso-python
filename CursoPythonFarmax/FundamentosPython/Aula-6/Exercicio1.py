@@ -1,6 +1,12 @@
 
 class Produto:
 
+    def __init__(self, nome: str, preco: float, quantidade: int):
+        # Acessar os atributos da classe e oferecer para eles, como valor os parâmetros do método construtor.
+        self.nome = nome
+        self.preco = preco
+        self.quantidade = quantidade
+
     @property
     def nome(self):
         return self.__nome
@@ -24,12 +30,6 @@ class Produto:
     @quantidade.setter
     def quantidade(self, p_quantidade: int):
         self.__quantidade = p_quantidade
-
-    def __init__(self, nome: str, preco: float, quantidade: int):
-        # Acessar os atributos da classe e oferecer para eles, como valor os parâmetros do método construtor.
-        self.nome = nome
-        self.preco = preco
-        self.quantidade = quantidade
 
     def valor_total(self) -> float:
         return self.preco * self.quantidade
