@@ -110,3 +110,14 @@ if __name__ == '__main__':
     print(df_analise_final_projeto.describe())
     print('-'*150)
     print()
+
+    COLUNAS_IMPOSTOS_VISUALIZACAO = [
+        'data', 'nota_fiscal', 'cod_sku', 'custo_total', 'impostos_total']
+
+    # CORREÇÃO: Usar df_analise_final_projeto que contém a coluna 'impostos_total'
+    print('Primeiras 10 linhas das colunas de Nota Fiscal, SKU e Imposto Total')
+    print('-'*150)
+    print(df_analise_final_projeto[COLUNAS_IMPOSTOS_VISUALIZACAO].head(10))
+    print("\n" + '-'*150)
+
+    meses = sorted(df_analise_final_projeto['mes'].dropna().unique())
