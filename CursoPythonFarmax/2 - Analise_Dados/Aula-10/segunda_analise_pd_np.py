@@ -6,7 +6,6 @@ import os  # Necessário para a solução de caminho
 
 # 1 - PASSO: CARREGAR OS DADOS
 NOME_DO_ARQUIVO = 'vendas.xlsx'
-df = None
 
 DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
 
@@ -162,7 +161,8 @@ IQR: é o contexto lógico que mede a dispersão dos dados, ou seja, o quanto os
 """
 
 print('----- Operação 11 - Uso do pivot_table -----')
-tabela_dinamica = pd.pivot_table(df, index=['Rep'], values=['Price'], columns=['Product'], aggfunc=[np.min], fill_value = 0)
+tabela_dinamica = pd.pivot_table(df, index=['Rep'], values=['Price'], columns=[
+                                 'Product'], aggfunc=[np.min], fill_value=0)
 
 print('\nTabela dinamica com o menor preço por representante e produto\n')
 print(tabela_dinamica)
