@@ -31,10 +31,6 @@ print('-'*50)
 
 print('================ ALGUMAS OPECAÇÕES COM MATRIZ======================')
 
-# importar o recurso numpy para as operações com dados
-# import pandas as pd  # aqui, a lib pandas recebe um apelido convencional
-# import numpy as np  # aqui, a lib numpy recebe um apelido convencional
-
 # agora, serão criadas duas matrizes -ambas receberão valores distintos array(): é uma função/método - com origem no numpy - para criar vetores/arrays de valores
 matriz1 = np.array([[2, 4], [5, -6]])
 matriz2 = np.array([[9, -4], [3, 5]])
@@ -98,12 +94,7 @@ print('Transposição da matriz1:', transposta)
 print()
 print('-'*50)
 
-
 print('================== OPERAÇÕES COM NUMPY/PANDAS ==================')
-
-# importar o recurso numpy para as operações com dados
-# import pandas as pd  # aqui, a lib pandas recebe um apelido convencional
-# import numpy as np  # aqui, a lib numpy recebe um apelido convencional
 
 # Definir um recurso que passaremos a conhecer como Series: nada mais é do que uma matriz unidimensional, ou seja, de uma única colua
 umaSerie = pd.Series([1, 2, 3, np.nan, 6, 8, 'Ola'])
@@ -118,7 +109,7 @@ algumasDatas = pd.date_range('20251001', periods=6)
 print(algumasDatas)
 
 """
-date_range(): cria um conjunto de dados baseado num intervalo de valores com a caracteristica de datas; alem disso, temos 2 parametros
+date_range(): cria um conjunto de dados baseado em num intervalo de valores com a caracteristica de datas; alem disso, temos 2 parâmetros
 
 20251001: este é o parametro que estabelece o ponto inicial do intervalo de valores de data. 2023-10-01 (ano, mês, dia)
 

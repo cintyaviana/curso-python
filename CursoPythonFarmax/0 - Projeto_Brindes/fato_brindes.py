@@ -1,22 +1,17 @@
 
-# importar os recursos necessários
+# ==========================================================
+# IMPORTAÇÃO DOS RECURSOS
+# ==========================================================
 
-# Biblioteca para trabalhar com caminhos de arquivos
+# Biblioteca para trabalhar com caminhos de arquivos. Permite manipulação de caminhos de forma orientada a objetos.
 from pathlib import Path
-
-# Biblioteca oferece o objeto array de alto desempenho e ferramentas para computação científica e operações numéricas eficientes, especialmente com vetores e matrizes.
-import numpy as np
 
 # Biblioteca oferece estruturas de dados flexíveis (como DataFrame e Series) e ferramentas para manipulação, limpeza e análise de dados tabulares.
 import pandas as pd
 
-# Biblioteca para a plotagem de graficos
-import matplotlib as plt
-
-# Biblioteca para a plotagem de graficos
-import seaborn as sb
-
-import calendar as cl
+# ====================================================================================
+# CRIAÇÃO DA FUNÇÃO QUE GERA O DF
+# ====================================================================================
 
 
 def get_fato_brindes():
@@ -28,271 +23,254 @@ def get_fato_brindes():
     dfBrindes = pd.read_excel(
         dataPath / 'fBrindes.xlsx')
 
-    # Criar uma coluna com o número do mês
+    # Converte para o Período Mensal (01/mês/ano)
+    dfBrindes['data'] = dfBrindes['data'].dt.to_period('M').dt.to_timestamp()
+
+    # Criar uma coluna (mes) com o número do mês em relação a coluna (data)
     dfBrindes['mes'] = dfBrindes['data'].dt.month
 
     # Retorna o DataFrame
     return dfBrindes
 
 # ====================================================================================
-# BLOCO DE ANÁLISE (Executado apenas se o arquivo for rodado diretamente)
+# BLOCO DE ANÁLISE: Executado apenas se o arquivo for rodado diretamente
 # ====================================================================================
 
 
 if __name__ == '__main__':
-    # 1. Carrega o DataFrame através da função
+
+    # Carrega o DataFrame através da função
     dfBrindes = get_fato_brindes()
 
-    # Exibir um determinado intervalo dos dados a partir do dataset
-    print('Primeiras 10 linhas do dfBrindes')
-    print(dfBrindes.head(10))
-    print("\n" + "-"*150)
+    # Exibir um determinado intervalo dos dados a partir do método head: primeiras linhas e o método tail: últimas linhas.
+    print('='*120)
+    print('🔗 Primeiras 5 linhas do dfBrindes')
+    print('='*120 + "\n")
+    print(dfBrindes.head(5))
+    print("\n")
 
-    # Exibir os nomes das colunas
-    print('Nome das colunas da fato dfBrindes')
+    print('='*120)
+    print('🔗 Últimas 5 linhas do dfBrindes')
+    print('='*120 + "\n")
+    print(dfBrindes.tail(5))
+    print("\n")
+
+    # Exibir os nomes das colunas e o tipo dos dados
+    print('='*120)
+    print('🔗 Nome das colunas do dfBrindes')
+    print('='*120 + "\n")
     print('Colunas: ', dfBrindes.dtypes)
-    print("\n" + "-"*150)
+    print("\n")
 
     # Exibir o resumo estatístico
-    print('Resumo estatístico da fato dfBrindes')
+    print('='*120)
+    print('🔗 Resumo estatístico do dfBrindes')
+    print('='*120 + "\n")
     print(dfBrindes.describe())
-    print('-'*150)
-    print()
+    print("\n")
+# ============================= EXIBIR TOP 5 SKU'S QUE MAIS FORAM DADOS COMO BRINDES ============================================
 
+    # Análise mensal
     # Variável de controle para as análises mensais
     meses = sorted(dfBrindes['mes'].dropna().unique())
-    dados_mensais = {}  # Dicionário para armazenar os resultados mensais
 
-    # ============================= EXIBIR OS 20 SKU'S QUE MAIS FORAM DADOS DE BRINDE ============================================
+    # Dicionário para armazenar os resultados mensais
+    dados_mensais_sku = {}
 
-    print('Top 20 SKUs que mais foram dados como brindes')
-    print('-'*150)
+    print('='*120)
+    print('🔗 Top 5 SKUs que mais foram dados como brindes no mês')
+    print('='*120 + "\n")
 
+    # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
+
+        # Soma a coluna quantidade de acordo com o mês sendo analisado
         total_mes = df_mes['quantidade'].sum()
+
+        # Transforma o número mês em nome
         nome_mes = df_mes['data'].dt.month_name(
             locale='pt_BR').iloc[0].capitalize()
 
+        # Soma a coluna quantidade de acordo com o SKU e o mês sendo analisado
         total_brindes_sku = df_mes.groupby(['cod_sku', 'descricao'])[
             ['quantidade']].sum()
-        total_brindes_sku['AV S/ Qt mensal'] = (
+
+        # Cria a coluna AV (Total por SKU / Total geral no mês em análise)
+        total_brindes_sku['(%) S/Qt mensal'] = (
             total_brindes_sku['quantidade'] / total_mes) * 100
-        dados_mensais[mes] = total_brindes_sku
 
-        top_20_brindes = total_brindes_sku.sort_values(
-            by='quantidade', ascending=False).head(20)
+        # Insere os dados na lista
+        dados_mensais_sku[mes] = total_brindes_sku
 
+        # Seleciona os 5 maiores SKU
+        top_brindes = total_brindes_sku.sort_values(
+            by='quantidade', ascending=False).head(5).round(2)
+
+        # Exibição dos dados
         print(f'\n📅 Mês: {nome_mes}')
-        print(top_20_brindes.round(2))
-        print("\n" + '-'*150)
+        print(top_brindes[['(%) S/Qt mensal']])
+        print("\n")
 
-    # ====================================== IDENTIFICAR SKUS COMUNS A TODOS OS MESES ===================================
-    # NOTA: O bloco abaixo usa a última versão de 'dados_mensais' do loop acima.
+    # Análise geral
+    # Concatena todos os DataFrames mensais em um único DataFrame
+    df_consolidado = pd.concat(dados_mensais_sku.values())
 
-    meses_numeros = sorted(dados_mensais.keys())
-    nomes_meses = ', '.join([cl.month_name[m].capitalize()
-                            for m in meses_numeros])
+    # Agrupa o consolidado para obter a soma TOTAL de quantidade por SKU
+    total_brindes_base_completa = df_consolidado.groupby(
+        level=[0, 1])['quantidade'].sum().reset_index()
+    # Note que o 'level=[0, 1]' agrupa pelos índices de 'cod_sku' e 'descricao'
 
-    print(
-        f'\n🔁 Top 20 SKUs comuns em todos os meses analisados ({nomes_meses}) e soma total:\n')
+    # Soma total de brindes em toda a base
+    total_geral = total_brindes_base_completa['quantidade'].sum()
 
-    skus_comuns = set.intersection(
-        *[set(df.index.get_level_values(0)) for df in dados_mensais.values()])
+    # Cria a coluna AV S/ Qt Total (participação na base completa)
+    total_brindes_base_completa['(%) S/Qt mensal'] = (
+        total_brindes_base_completa['quantidade'] / total_geral) * 100
 
-    if not skus_comuns:
-        print('⚠️ Nenhum SKU está presente em todos os meses analisados.')
-    else:
-        df_todos = pd.concat(dados_mensais.values())
-        total_geral_brindes = df_todos['quantidade'].sum()
-        df_filtrado = df_todos[df_todos.index.get_level_values(
-            0).isin(skus_comuns)]
+    # Seleciona o Top 5 da base completa
+    top_5_geral = total_brindes_base_completa.sort_values(
+        by='quantidade', ascending=False).head(5).round(2)
 
-        df_comuns_soma = (df_filtrado.groupby(
-            level=[0, 1])['quantidade'].sum())
-        df_comuns = df_comuns_soma.to_frame()
-        df_comuns['AV S/ Qt total'] = (df_comuns['quantidade'] /
-                                       total_geral_brindes) * 100
-
-        df_comuns_top_20 = (df_comuns.sort_values(
-            by='quantidade', ascending=False).head(20))
-
-        print(df_comuns_top_20.round(2))
-        print('-' * 150)
+    # Exibição dos dados
+    print('='*120)
+    print('🏆 TOP 5 GERAL: SKUs que mais foram dados como brinde')
+    print('='*120 + "\n")
+    print(top_5_geral[['cod_sku', 'descricao', '(%) S/Qt mensal']
+                      ].set_index(['cod_sku', 'descricao']))
+    print("\n" + "="*120 + "\n")
 
     # ============================= EXIBIR OS CENTROS DE CUSTO QUE MAIS DERAM BRINDE ============================================
 
-    print('Top Centros de Custos que mais deram brindes')
-    print('-'*150)
+    # Dicionário para armazenar os resultados mensais (CC)
+    dados_mensais_cc = {}
 
-    # É necessário redefinir 'dados_mensais' para a análise de Centros de Custo
-    dados_mensais = {}
+    print('='*120)
+    print('🔗 Top 5 Centros de Custos que mais deram brindes no mês')
+    print('='*120 + "\n")
 
+    # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
-        df_mes = dfBrindes[dfBrindes['mes'] == mes]
+        df_mes = dfBrindes[dfBrindes['mes'] == mes].copy()
+
+        # Soma a coluna quantidade de acordo com o mês sendo analisado
         total_mes = df_mes['quantidade'].sum()
+
+        # Transforma o número mês em nome
         nome_mes = df_mes['data'].dt.month_name(
             locale='pt_BR').iloc[0].capitalize()
 
-        # Agrupar por Centro de Custo (apenas um nível)
+        # Soma a coluna quantidade de acordo com o CC e o mês sendo analisado
         total_brindes_cc = df_mes.groupby(['centro_custo_ajustado'])[
             ['quantidade']].sum()
-        total_brindes_cc['AV S/ Qt mensal'] = (
+
+        # Cria a coluna AV (Total por CC / Total geral no mês em análise)
+        total_brindes_cc['(%) S/Qt mensal'] = (
             total_brindes_cc['quantidade'] / total_mes) * 100
-        dados_mensais[mes] = total_brindes_cc  # Salva o resultado do CC
 
-        top_20_brindes = total_brindes_cc.sort_values(
-            by='quantidade', ascending=False).head(20)
+        # Insere os dados na lista
+        dados_mensais_cc[mes] = total_brindes_cc
 
+        # Seleciona o Top 5 da base
+        top_5_brindes_cc = total_brindes_cc.sort_values(
+            by='quantidade', ascending=False).head(5).round(2)
+
+        # Exibição dos dados
         print(f'\n📅 Mês: {nome_mes}')
-        print(top_20_brindes.round(2))
-        print("\n" + '-'*150)
+        # Exibe apenas a coluna AV S/ Qt mensal
+        print(top_5_brindes_cc[['(%) S/Qt mensal']])
+        print("\n")
 
-    # ====================================== IDENTIFICAR CENTROS DE CUSTO COMUNS A TODOS OS MESES ===================================
-    # NOTA: Este bloco usa a última versão de 'dados_mensais' (Centros de Custo).
+    # Análise geral
+    # Concatena todos os DataFrames CC mensais
+    df_consolidado_cc = pd.concat(dados_mensais_cc.values())
 
-    meses_numeros = sorted(dados_mensais.keys())
-    nomes_meses = ', '.join([cl.month_name[m].capitalize()
-                            for m in meses_numeros])
+    # Agrupa o consolidado para obter a soma TOTAL de quantidade por CC
+    total_brindes_base_completa_cc = df_consolidado_cc.groupby(
+        level=[0])['quantidade'].sum().reset_index()
 
-    print(
-        f'\n🔁 Top Centros de Custo comuns em todos os meses analisados ({nomes_meses}) e soma total:\n')
+    # Reutiliza o total geral de quantidade calculado no Bloco 1
+    total_geral_cc = total_brindes_base_completa_cc['quantidade'].sum()
 
-    # A interseção é pelo Nível 0 (centro_custo_ajustado)
-    cc_comuns = set.intersection(
-        *[set(df.index.get_level_values(0)) for df in dados_mensais.values()])
+    # Cria a coluna AV S/ Qt Total (participação na base completa)
+    total_brindes_base_completa_cc['(%) S/Qt mensal'] = (
+        total_brindes_base_completa_cc['quantidade'] / total_geral_cc) * 100
 
-    if not cc_comuns:
-        print('⚠️ Nenhum Centro de Custo está presente em todos os meses analisados.')
-    else:
-        df_todos = pd.concat(dados_mensais.values())
-        total_geral_brindes = df_todos['quantidade'].sum()
-        df_filtrado = df_todos[df_todos.index.get_level_values(
-            0).isin(cc_comuns)]
+    # Seleciona o Top 5 da base completa
+    top_5_geral_cc = total_brindes_base_completa_cc.sort_values(
+        by='quantidade', ascending=False).head(5).round(2)
 
-        # Agrupar por APENAS o nível 0 (centro_custo_ajustado)
-        df_comuns_soma = (df_filtrado.groupby(level=[0])[
-                          'quantidade'].sum())  # CORREÇÃO DE NIVEL
-        df_comuns = df_comuns_soma.to_frame()
-        df_comuns['AV S/ Qt total'] = (df_comuns['quantidade'] /
-                                       total_geral_brindes) * 100
+    # Exibição dos dados
+    print('='*120)
+    print('🏆 TOP 5 GERAL: Centros de Custos que mais deram brindes')
+    print('='*120 + "\n")
+    print(top_5_geral_cc[['centro_custo_ajustado', '(%) S/Qt mensal']
+                         ].set_index('centro_custo_ajustado'))
+    print("\n")
 
-        df_comuns_top_20 = (df_comuns.sort_values(
-            by='quantidade', ascending=False).head(20))
-
-        print(df_comuns_top_20.round(2))
-        print('-' * 150)
-
-    # ============================= EXIBIR TOP 20 CLIENTE QUE MAIS RECEBERAM BRINDES ============================================
-
-    print('Top 20 Clientes que mais receberam brindes')
-    print('-'*150)
+    # ============================= EXIBIR TOP 5 CLIENTE QUE MAIS RECEBERAM BRINDES ============================================
+    print("="*120)
+    print('Top 5 Clientes que mais receberam brindes')
+    print("="*120)
 
     # Redefinir dados_mensais para a análise de Clientes
-    dados_mensais = {}
+    dados_mensais_cliente = {}
 
+    # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
+
+        # Soma a coluna quantidade de acordo com o mês sendo analisado
         total_mes = df_mes['quantidade'].sum()
+
+        # Transforma o número mês em nome
         nome_mes = df_mes['data'].dt.month_name(
             locale='pt_BR').iloc[0].capitalize()
 
-        # Agrupar por Cliente (cod_cliente, cliente)
-        total_brindes_cli = df_mes.groupby(['cod_cliente', 'cliente'])[
+        # Soma a coluna quantidade de acordo com o Cliente e o mês sendo analisado
+        total_brindes_cliente = df_mes.groupby(['cod_cliente', 'cliente'])[
             ['quantidade']].sum()
-        total_brindes_cli['AV S/ Qt mensal'] = (
-            total_brindes_cli['quantidade'] / total_mes) * 100
-        dados_mensais[mes] = total_brindes_cli  # Salva o resultado do Cliente
 
-        top_20_brindes = total_brindes_cli.sort_values(
-            by='quantidade', ascending=False).head(20)
+        # Cria a coluna AV (Total por Cliente / Total geral no mês em análise)
+        total_brindes_cliente['(%) S/Qt mensal'] = (
+            total_brindes_cliente['quantidade'] / total_mes) * 100
 
+        # Insere os dados na lista
+        dados_mensais_cliente[mes] = total_brindes_cliente
+
+        # Seleciona o Top 5 da base
+        top_5_brindes = total_brindes_cliente.sort_values(
+            by='quantidade', ascending=False).head(5).round(2)
+
+        # Exibição dos dados
         print(f'\n📅 Mês: {nome_mes}')
-        print(top_20_brindes.round(2))
-        print("\n" + '-'*150)
+        print(top_5_brindes[['(%) S/Qt mensal']])
+        print("\n")
 
-    # ====================================== IDENTIFICAR TOP 20 CLIENTES COMUNS A TODOS OS MESES ===================================
+    # Análise Geral
+    # Concatena todos os DataFrames CC mensais
+    df_consolidado_cliente = pd.concat(dados_mensais_cliente.values())
 
-    print('Top 20 Clientes que mais receberam brindes em comum aos meses')
-    print('-'*150)
+    # Agrupa o consolidado para obter a soma TOTAL de quantidade por Cliente
+    total_brindes_base_completa_cliente = df_consolidado_cliente.groupby(
+        level=[0, 1])['quantidade'].sum().reset_index()
 
-    meses_numeros = sorted(dados_mensais.keys())
-    nomes_meses = ', '.join([cl.month_name[m].capitalize()
-                            for m in meses_numeros])
+    # Reutiliza o total geral de quantidade calculado
+    total_geral_cliente = total_brindes_base_completa_cliente['quantidade'].sum(
+    )
 
-    print(
-        f'\n🔁 Top 20 clientes comuns em todos os meses analisados ({nomes_meses}) e soma total:\n')
+    # Cria a coluna AV S/ Qt Total (participação na base completa)
+    total_brindes_base_completa_cliente['(%) S/Qt mensal'] = (
+        total_brindes_base_completa_cliente['quantidade'] / total_geral_cliente) * 100
 
-    # A interseção é pelo Nível 0 (cod_cliente)
-    clientes_comuns = set.intersection(
-        *[set(df.index.get_level_values(0)) for df in dados_mensais.values()])
+    # Seleciona o Top 5 da base completa
+    top_5_geral_cli = total_brindes_base_completa_cliente.sort_values(
+        by='quantidade', ascending=False).head(5).round(2)
 
-    if not clientes_comuns:
-        print('⚠️ Nenhum Cliente está presente em todos os meses analisados.')
-    else:
-        df_todos = pd.concat(dados_mensais.values())
-        total_geral_brindes = df_todos['quantidade'].sum()
-        df_filtrado = df_todos[df_todos.index.get_level_values(
-            0).isin(clientes_comuns)]
-
-        # Agrupar por ambos os níveis (cod_cliente e cliente)
-        df_comuns_soma = (df_filtrado.groupby(
-            level=[0, 1])['quantidade'].sum())
-        df_comuns = df_comuns_soma.to_frame()
-        df_comuns['AV S/ Qt total'] = (df_comuns['quantidade'] /
-                                       total_geral_brindes) * 100
-
-        df_comuns_top_20 = (df_comuns.sort_values(
-            by='quantidade', ascending=False).head(20))
-
-        print(df_comuns_top_20.round(2))
-        print('-' * 150)
-
-    # ============================= NOVO BLOCO: EXIBIR OS 20 SKU'S COM MAIOR CUSTO TOTAL ============================================
-
-    # ============================= NOVO BLOCO: EXIBIR OS 20 SKU'S COM MAIOR CUSTO TOTAL (E CUSTO MÉDIO) =============================
-
-    print('Top 20 SKUs com MAIOR CUSTO TOTAL (Incluindo Custo Médio)')
-    print('-'*150)
-
-    # Re-inicializar dados_mensais para esta nova análise
-    dados_mensais_custo = {}
-
-    for mes in meses:
-        df_mes = dfBrindes[dfBrindes['mes'] == mes]
-        # Usar a soma do CUSTO TOTAL do mês como base
-        total_custo_mes = df_mes['custo_total'].sum()
-
-        # Garantir o nome do mês (reutilizando a lógica existente)
-        nome_mes = df_mes['data'].dt.month_name(
-            locale='pt_BR').iloc[0].capitalize()
-
-        # Agrupar por SKU, somando o 'custo_total' e a 'quantidade'
-        total_custo_sku = df_mes.groupby(['cod_sku', 'descricao']).agg(
-            custo_total=('custo_total', 'sum'),
-            # Adicionamos 'quantidade' para calcular a média
-            quantidade=('quantidade', 'sum')
-        )
-
-        # Calcular o CUSTO MÉDIO por SKU: custo_total / quantidade
-        # Para evitar divisão por zero, usamos .fillna(0) e tratamos a possibilidade.
-        total_custo_sku['custo_medio_sku'] = (
-            total_custo_sku['custo_total'] / total_custo_sku['quantidade']
-        ).fillna(0)  # Trata casos onde quantidade é zero
-
-        # Calcular a representatividade do custo por SKU no custo total do mês
-        total_custo_sku['AV S/ Custo mensal'] = (
-            total_custo_sku['custo_total'] / total_custo_mes) * 100
-
-        # Armazenar o resultado, se necessário para análises de custo comuns (Futuro)
-        dados_mensais_custo[mes] = total_custo_sku
-
-        # Ordenar pelo 'custo_total' (mantendo o foco no maior gasto total)
-        top_20_custo = total_custo_sku.sort_values(
-            by='custo_total', ascending=False).head(20)
-
-        print(f'\n📅 Mês: {nome_mes}')
-        print(top_20_custo.round(2))
-        print("\n" + '-'*150)
-
-    # ... O restante do seu código (SKUs comuns, Centros de Custo, Clientes) segue aqui
+    # Exibição dos dados
+    print('='*120)
+    print('🏆 TOP 5 GERAL: Clientes que mais receberam brindes (Consolidado)')
+    print('='*120 + "\n")
+    print(top_5_geral_cli[['cod_cliente', 'cliente', '(%) S/Qt mensal']
+                          ].set_index(['cod_cliente', 'cliente']))
+    print("\n" + "="*120 + "\n")

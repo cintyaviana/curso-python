@@ -1,0 +1,37 @@
+
+⚠️head = cabeça
+
+⚠️tail = calda
+
+⚠️describe = descrever
+
+⚠️types = tipos
+
+⚠️sorted = classificado -> É a função interna do Python que pega o array de valores únicos (o resultado da parte anterior) e os coloca em ordem crescente (se forem números ou strings, a ordem será numérica ou alfabética)
+
+⚠️unique = exclusivo -> É um método que retorna um array de valores únicos da Series restante (os dados sem repetição e sem valores nulos)
+
+⚠️dropna = gota -> É um método que remove todos os valores ausentes (Not a Number, ou NaN)
+
+⚠️month_name = nome mês -> É o método do Pandas (acessado através do acessor .dt para colunas de data/hora) que converte o valor numérico do mês (1-12) para o nome completo do mês (ex: "January", "February")
+
+⚠️locale='pt_BR' = localidade -> É o argumento passado para o método month_name(). Ele especifica que a conversão para o nome do mês deve ser feita usando o formato de idioma (locale) Português do Brasil. O resultado será, por exemplo, "janeiro", "fevereiro", etc.
+
+⚠️capitalize -> É o método de string do Python que transforma a primeira letra em maiúscula e deixa o restante em minúsculo. Por exemplo, transforma "janeiro" (que o Pandas retorna em minúsculo) em "Janeiro".
+
+⚠️iloc -> O .iloc é o indexador do Pandas que permite selecionar dados (linhas e colunas) em um DataFrame ou Series baseando-se puramente na POSIÇÃO INTEIRA (índice numérico), começando do zero.
+
+⚠️O .isin() é um método que você aplica a uma Series (uma coluna de um DataFrame) ou a um Index do Pandas. Ele verifica se cada elemento dessa Series ou Index está contido em uma coleção de valores que você fornece.
+    EX: 
+        import pandas as pd
+
+        df = pd.DataFrame({
+            'Fruta': ['Maçã', 'Banana', 'Uva', 'Pera', 'Laranja', 'Maçã']
+        })
+
+        frutas_favoritas = ['Maçã', 'Uva']
+
+        # Onde o .isin() é aplicado:
+        df['Fruta'].isin(frutas_favoritas)
+
+⚠️

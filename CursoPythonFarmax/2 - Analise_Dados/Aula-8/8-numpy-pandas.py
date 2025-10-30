@@ -2,7 +2,7 @@
 import pandas as pd  # aqui, a lib pandas recebe um apelido convencional
 import numpy as np  # aqui, a lib numpy recebe um apelido convencional
 
-# Definir um recurso que passaremos a conhecer como Series: nada mais é do que uma matriz unidimensional, ou seja, de uma única colua
+# Definir um recurso que passaremos a conhecer como Series: nada mais é do que uma matriz unidimensional, ou seja, de uma única coluna
 umaSerie = pd.Series([1, 2, 3, 6, 8, 'Ola'],
                      index=pd.date_range('20251001', periods=6))
 print(umaSerie)
@@ -12,7 +12,7 @@ algumasDatas = pd.date_range('20251001', periods=6)
 print(algumasDatas)
 
 """
-date_range(): cria um conjunto de dados baseado num intervalo de valores com a caracteristica de datas; alem disso, temos 2 parametros
+date_range(): cria um conjunto de dados baseado em num intervalo de valores com a caracteristica de datas; alem disso, temos 2 parâmetros
 
 20251001: este é o parametro que estabelece o ponto inicial do intervalo de valores de data. 2023-10-01 (ano, mês, dia)
 
@@ -25,6 +25,7 @@ O resultado esperado é algo semelhante a isto: '2025-10-01', '2025-10-02', '202
 """
 
 # Vamos definir, neste passo, o 1º dataframe usando como recurso de indice a variavel algumasDatas
+
 """
 O DataFrame é uma estrutura de dados tabular, rotulada e bidimensional que possui as seguintes características:
 
@@ -52,7 +53,7 @@ df1 = pd.DataFrame(np.random.randn(
     6, 4), index=algumasDatas, columns=list('ABCD'))
 
 """
-    1º ARGUMENTO: é a definição do numero de linhas e colunas que irão compor o dataframe; alem disso, tambem, indicamos os valores aleatorios que farão aprte do df
+    1º ARGUMENTO: é a definição do numero de linhas e colunas que irão compor o dataframe; alem disso, tambem, indicamos os valores aleatórios que farão aprte do df
     2º ARGUMENTO: index=algumasDatas -> define qual será o recurso de indice "principal do df
     3º ARGUMENTO: columns=list('ABCD') -> define os nomes das colunas que irão compor o df
 
@@ -109,8 +110,8 @@ print(df2.head(3))
 print()
 print('-'*50)
 
-# Neste passo, vamos fazer uma nova leitura; só que, agora, será uma leitura das ultimas linhas do df
-# Para este proposito usaremos o método/função tail(): por padrão, tail(), lê as utlimas 3 linhas do df
+# Neste passo, vamos fazer uma nova leitura; só que, agora, será uma leitura das últimas linhas do df
+# Para este propósito usaremos o método/função tail(): por padrão, tail(), lê as útlimas 3 linhas do df
 print('Últimas linhas do df1')
 print(df1.tail(2))
 print()
