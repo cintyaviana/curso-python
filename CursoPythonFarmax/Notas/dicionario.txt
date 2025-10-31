@@ -34,4 +34,10 @@
         # Onde o .isin() é aplicado:
         df['Fruta'].isin(frutas_favoritas)
 
-⚠️
+⚠️agg -> É a função de agregação. Ela aplica uma ou mais funções (como média, soma, contagem, etc.) aos grupos criados
+
+⚠️ axis=0 (padrão) calcula a média ao longo das colunas (para cada coluna).
+
+⚠️ axis=1 calcula a média ao longo das linhas (para cada linha).
+
+⚠️   

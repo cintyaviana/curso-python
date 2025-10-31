@@ -36,10 +36,18 @@ def get_fato_impostos():
     # Agrupa pela Nota Fiscal para consolidar os impostos
     dfImpostos_consolidado = (
         dfImpostos
-        .groupby(['nota_fiscal', 'cod_sku', 'data'])
+        # Estado também é chave de imposto
+        .groupby(['nota_fiscal', 'cod_sku', 'estado'])
         .agg(
             impostos_total=('impostos_total', 'sum'),
-            # Se você precisar de outros campos da nota (ex: total de itens), adicione aqui
+            # <--- Incluído para o gráfico de composição
+            valor_icms=('valor_icms', 'sum'),
+            # <--- Incluído para o gráfico de composição
+            valor_pis=('valor_pis', 'sum'),
+            # <--- Incluído para o gráfico de composição
+            valor_cofins=('valor_cofins', 'sum'),
+            # Se a base tiver alíquotas, você pode trazê-las aqui com 'first' ou 'mean'
+            # aliq_icms=('aliq_icms', 'first'),
         )
         .reset_index()
     )
@@ -114,11 +122,12 @@ if __name__ == '__main__':
         'impostos_total')
 
     # Ordenar para ver qual é o mais correlacionado
-    impostos_corr_ordenada = impostos_corr_total.sort_values(ascending=False)
+    impostos_corr_ordenada = impostos_corr_total.sort_values(
+        ascending=False).round(4)
 
     # Exibição dos dados
     print('Correlação de cada componente (impostos) com o "impostos_total":')
-    print(impostos_corr_ordenada.round(4))
+    print(impostos_corr_ordenada)
     print("\n")
 
     # ==============================================================================

@@ -1,5 +1,7 @@
 
 # IMPORTAR AS BIBLIOTECAS NECESSÁRIAS
+import seaborn as sns
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os  # Necessário para a solução de caminho
@@ -168,3 +170,194 @@ print('\nTabela dinamica com o menor preço por representante e produto\n')
 print(tabela_dinamica)
 print('-'*50)
 print()
+
+print()
+print('----- Operação 12 - Função custom com pivot_table -----')
+
+
+def func_intervalo(x):
+    return x.max() - x.min()
+
+
+# fazer uso do pivot_table
+operacao_12 = pd.pivot_table(df, index=['Manager', 'Rep'], values=[
+                             'Price'], aggfunc=func_intervalo)
+
+print('\nPrivot table com "faixa de preços" min() e max()')
+print(operacao_12)
+
+print()
+print('----- Operação 13 - Criar uma nova - "populada" com o resultado de uma operação -----')
+
+df['Total_Sales'] = df['Quantity'] * df['Price']
+print('\nDataframe com a coluna Total_Sales adicionada')
+print(df.head(5))
+
+# continuando - pivot_table com o total de vendas por representante e produto
+table_total_vendas = pd.pivot_table(
+    df,
+    index=['Rep'],
+    values=['Total_Sales'],
+    columns=['Product'],
+    aggfunc=np.sum,
+    fill_value=0
+)
+
+print('\nTabela dinamica com TOTAL DE DE VENDAS por representante e produto')
+print(table_total_vendas)
+
+print()
+print('----- Operação 14 - observar a correlação entre algumas variaveis -----')
+# método que estabelece a correlação entre variaveis
+correlacao = df[['Price', 'Quantity', 'Total_Sales']].corr()
+print('Correlação entre Preço, Qunaitdade e Vendas totais')
+print(correlacao)
+print()
+
+# graficos
+print('========================= GRÁFICOS =========================')
+print()
+
+
+print('------------- 1. total de vendas por representante -------------')
+print()
+
+plt.figure(figsize=(10, 6))
+df.groupby('Rep')['Quantity'].sum().plot(kind='bar', color='skyblue')
+plt.title('total de vendas por representante')
+plt.xlabel('Representante')
+plt.ylabel('Qtde vendida')
+# método/função que "rotaciona" - em 45 graus - os elementos exibidos no grafico para que não fiquem sobrepostos
+plt.xticks(rotation=45)
+# método/função que adiciona uma "grade" horizontal - a partir do eixo y do grafico para "facilitar" a leitura
+plt.grid(axis='y')
+# método/função que ajusta o layout do gráfico para que nada fique cortado na exibição
+plt.tight_layout()
+plt.show()  # exibir o gráfico
+
+
+print()
+print('------------- 2. vendas por produto -------------')
+print()
+
+plt.figure(figsize=(10, 6))
+df.groupby('Product')['Quantity'].sum().plot(kind='bar', color='orange')
+plt.title('Quantidade de vendas por produto')
+plt.xlabel('Produto')
+plt.ylabel('Quantidade')
+plt.xticks(rotation=45)
+plt.grid(axis='y')
+plt.tight_layout()
+plt.show()
+
+# nova operação, inserção de um elemento de data
+print('----- operação 15 - observar colunas disponiveis e inserir uma nova ---------')
+print()
+print('Colunas disponiveis no df')
+print(df.columns)
+print()
+# caso não exista uma coluna de, por exemplo: data, podemos adiciona-la
+if 'Date' not in df.columns and 'Data' not in df.columns:
+    # podemos criar uma nova
+    df['Date'] = pd.to_datetime('2024-01-01')
+    print('\nAdicionando coluna Date com data fixa')
+
+# "converter" a coluna 'Date' para o formato adequado - datetime
+df['Date'] = pd.to_datetime(df['Date'])
+
+# agrupar as vendas por trimestre
+vendas_por_trimestre = df.resample('QE', on='Date')['Total_Sales'].sum()
+
+# criar intervalo trimestral completo - a indicação é: '2023-01-01' a 2025
+intervalo_trimestre = pd.date_range('2023-01-01', '2025-12-31', freq='Q')
+
+# reindexar para incluir o intervalo trimestral ja criado, acima
+vendas_por_trimestre = vendas_por_trimestre.reindex(
+    intervalo_trimestre, fill_value=0)
+
+print('\nTotal de vendas por trimestre')
+print(vendas_por_trimestre)
+
+# QE = Quarter End, ou seja, trimestres encerrando no final do quarter(1/4 de 12 == 3: trimestre)
+
+print('\nTotal de vendas por trimestre (2024-2025)')
+print(vendas_por_trimestre)
+
+"""
+QE = Quarter End, ou seja, trimestres encerrando no final do quarter (1/4 de 12 == 3: trimestre)
+"""
+
+print(df)
+
+print()
+print('------------- 3. evolução trimestral de vendas -------------')
+print()
+
+plt.figure(figsize=(10, 6))
+vendas_por_trimestre.plot(marker='o', linestyle='-', color='purple')
+plt.title('Total de vendas por trimestre')
+plt.xlabel('Trimestre')
+plt.ylabel('Total de vendas (R$)')
+# plt.xticks(rotation=45)
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+print()
+print('------------- 4. Boxplot dos preços por produto -------------')
+print()
+
+plt.figure(figsize=(10, 6))
+sns.boxplot(data=df, x='Product', y='Price', palette='Set2')
+plt.title('Boxplot de preços por produto')
+plt.xlabel('Produto')
+plt.ylabel('Preço (R$)')
+plt.xticks(rotation=45)
+# plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+print('----- operação 16 - definição de uma classificação simples para as vendas')
+print()
+print('função para classificar as vendas')
+
+
+def classificar_vendas(preco):
+    if preco > 500:
+        return 'Alto'
+    elif preco > 200:
+        return 'Medio'
+    else:
+        return 'Baixo'
+
+
+# fora da função
+df['ClassifiClassification_Salescação_Vendas'] = df['Price'].apply(
+    classificar_vendas)
+
+print()
+print('--- 5. Heatmap - auxiliam na observação da correlação ---')
+print()
+plt.figure(figsize=(10, 6))
+sns.heatmap(df[['Price', 'Quantity', 'Total_Sales']].corr(), annot=True, cmap='Blues',
+            fmt='.2f')
+plt.title('Mapa de correlação entre Preço, quantidade e total de vendas')
+# plt.xlabel('Produto')
+# plt.ylabel('Preço (R$)')
+# plt.xticks(rotation=45)
+# plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+print('------------------ 6.Classificação de vendas (Alto, Médio e Baixo) -----------------')
+print()
+plt.figure(figsize=(10, 6))
+sns.countplot(data=df, x='Classification_Sales',
+              order=['Baixo', 'Média', 'Alto'])
+sns.color_palette('pastel')
+plt.title('Classificação de vendas por faixa de preço')
+plt.xlabel('Classificação')
+plt.ylabel('Quantidade de ocorrencias de vendas')
+# plt.xticks(rotation=45)
+# plt.grid(True)
