@@ -1,160 +1,123 @@
+
 # ==========================================================
-# IMPORTAÇÃO DOS RECURSOS (MANTIDAS FORA DA DEF)
+# IMPORTAÇÃO DOS RECURSOS
 # ==========================================================
 
-# Módulos de dados (get_fato_brindes, etc., devem estar em arquivos separados)
-from fato_brindes import get_fato_brindes
-from dimensao_produto import get_dimensao_produto
-from fato_impostos import get_fato_impostos
+# Biblioteca para trabalhar com caminhos de arquivos. Permite manipulação de caminhos de forma orientada a objetos.
+from pathlib import Path
+
+# Biblioteca oferece estruturas de dados flexíveis (como DataFrame e Series) e ferramentas para manipulação, limpeza e análise de dados tabulares.
 import pandas as pd
-import numpy as np
-import calendar as cl
 
-# Importação para Gráficos
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
-
-# Importação para Locale (para meses em português)
-import locale
-
-# Configurações de Locale e Matplotlib (MANTIDAS FORA DA DEF)
-try:
-    locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
-except locale.Error:
-    print("Aviso: Locale 'pt_BR.utf8' não disponível. Tentando 'Portuguese_Brazil.1252'.")
-    try:
-        locale.setlocale(locale.LC_ALL, 'Portuguese_Brazil.1252')
-    except locale.Error:
-        print("Aviso: Locale para português do Brasil não configurado. Formatação de moeda e meses pode não estar em PT-BR.")
-
-plt.style.use('default')
-
-# ==========================================================
-# 🧱 DEF PRINCIPAL: GERAÇÃO DO DATAFRAME FATO DO PROJETO 🧱
-# (O que era o corpo do script foi movido para cá)
-# ==========================================================
+# ====================================================================================
+# CRIAÇÃO DA FUNÇÃO QUE GERA O DF
+# ====================================================================================
 
 
-def get_fato_projeto():
-    """
-    Carrega os DataFrames brutos (Fato/Dimensões), executa os merges, 
-    trata NaNs e calcula as colunas de custo final e impostos.
-    Retorna o DataFrame final ('df_analise_final') pronto para consumo pelo ML ou Análise.
-    """
+def get_py_fBrinde():
 
-    print("\n[PREPARAÇÃO DE DADOS] Iniciando Carregamento Fato/Dimensões...")
-    dfBrindes = get_fato_brindes()
-    dfCadprod = get_dimensao_produto()
-    dfImpostos = get_fato_impostos()
-    print("[PREPARAÇÃO DE DADOS] Bases de dados carregadas.")
+    # Retorna o caminho de onde estão os arquivos do projeto
+    dataPath = Path(__file__).resolve().parent
 
-    # ==========================================================
-    # PRIMEIRO MERGE (Fato Brindes + Dimensão Produto)
-    # ==========================================================
+    # Carregar os dados - para este propósito vamos definir uma variavel para receber como valor o arquivo de dados
+    dfBrindes = pd.read_excel(
+        dataPath / 'Ex_fBrindes_Impostos.xlsx')
 
-    COLUNAS_DIMENSAO = ['cod_produto', 'nivel_1', 'nivel_2']
-    dfCadprod = dfCadprod[COLUNAS_DIMENSAO].copy()
+    # Converte para o Período Mensal (01/mês/ano)
+    dfBrindes['data'] = dfBrindes['data'].dt.to_period('M').dt.to_timestamp()
 
-    print("Executando 1º LEFT MERGE (Brindes + Produto).")
+    # Criar a coluna (mes) com o número do mês em relação a coluna (data)
+    dfBrindes['mes'] = dfBrindes['data'].dt.month
 
-    df1 = pd.merge(
-        left=dfBrindes,
-        right=dfCadprod,
-        left_on='cod_sku',
-        right_on='cod_produto',
-        how='left'
-    )
-    df1.drop(columns=['cod_produto'], inplace=True)
+    # # Criar a coluna (menome_mes) com o nome do mês em relação a coluna (data)
+    dfBrindes['nome_mes'] = dfBrindes['data'].dt.month_name(
+        locale='pt_BR').str.capitalize()
 
-    # ==========================================================
-    # SEGUNDO MERGE (df1 + Fato Impostos)
-    # ==========================================================
+    dfBrindes['total_impostos'] = (
+        dfBrindes['valor_icms'].fillna(0) +
+        dfBrindes['valor_icms_st'].fillna(0) +
+        dfBrindes['difal'].fillna(0))
 
-    dfImpostos.rename(columns={'codigo_sku': 'cod_sku'}, inplace=True)
+    dfBrindes['custo_final'] = (
+        dfBrindes['custo_unitario_total'].fillna(0) +
+        dfBrindes['total_impostos'].fillna(0))
 
-    # Selecionar todas as colunas de impostos
-    COLUNAS_IMPOSTOS = [
-        'nota_fiscal',
-        'estado',
-        'cod_sku',
-        'valor_icms',
-        'valor_icms_st',
-        'valor_fcp_st',
-        'icms_interestadual_uf_destino',
-        'valor_icms_fcp_uf_destino',
-        'valor_cofins',
-        'valor_pis',
-        'impostos_total'
-    ]
-    dfImpostos = dfImpostos[COLUNAS_IMPOSTOS].drop_duplicates(
-        subset=['nota_fiscal', 'cod_sku'])
+    # Retorna o DataFrame
+    return dfBrindes
 
-    print("Executando 2º LEFT MERGE (df1 + Impostos) nas chaves: 'nota_fiscal' e 'cod_sku'.")
-
-    df_analise_final = pd.merge(
-        left=df1,
-        right=dfImpostos,
-        on=['nota_fiscal', 'cod_sku'],
-        how='left'
-    )
-
-    # Lista de colunas de impostos para preencher NaNs com 0
-    COLUNAS_IMPOSTOS_VALOR = [
-        'valor_icms', 'valor_icms_st', 'valor_fcp_st',
-        'icms_interestadual_uf_destino', 'valor_icms_fcp_uf_destino',
-        'valor_cofins', 'valor_pis', 'impostos_total'
-    ]
-
-    # Trata NaNs nas colunas de custo e imposto
-    df_analise_final['custo_total'] = df_analise_final['custo_total'].fillna(0)
-    df_analise_final[COLUNAS_IMPOSTOS_VALOR] = df_analise_final[COLUNAS_IMPOSTOS_VALOR].fillna(
-        0)
-
-    # Novo cálculo de custo_final somando explicitamente todos os componentes
-    impostos_somados = (
-        df_analise_final['valor_icms'] +
-        df_analise_final['valor_icms_st'] +
-        df_analise_final['valor_fcp_st'] +
-        df_analise_final['icms_interestadual_uf_destino'] +
-        df_analise_final['valor_icms_fcp_uf_destino'] +
-        df_analise_final['valor_pis'] +
-        df_analise_final['valor_cofins']
-    )
-
-    # Atualiza custo_final
-    df_analise_final['custo_final'] = df_analise_final['custo_total'] + \
-        impostos_somados
-
-    # 💡 Coluna custo unitário para o projeto ML
-    df_analise_final['custo_unitario'] = np.where(
-        df_analise_final['quantidade'] > 0,
-        df_analise_final['custo_total'] / df_analise_final['quantidade'],
-        0
-    )
-
-    # 💡 Coluna para agrupar ICMS/ST/Difal (Para Gráfico de Composição)
-    df_analise_final['ICMS_ST_e_Difal_Soma'] = (
-        df_analise_final['valor_icms_st'] +
-        df_analise_final['valor_fcp_st'] +
-        df_analise_final['icms_interestadual_uf_destino'] +
-        df_analise_final['valor_icms_fcp_uf_destino']
-    )
-
-    print("[PREPARAÇÃO DE DADOS] Colunas de custo e impostos calculadas. DataFrame FATO DO PROJETO pronto.")
-    return df_analise_final
-
-# ================================================================================================================================
-# INÍCIO DAS ANÁLISES (Lógica de Plotagem e Execução da Análise)
-# ================================================================================================================================
+# ====================================================================================
+# BLOCO DE ANÁLISE: Executado apenas se o arquivo for rodado diretamente
+# ====================================================================================
 
 
 if __name__ == '__main__':
 
-    dfImpostos = get_fato_projeto()
+    # Carrega o DataFrame através da função
+    dfBrindes = get_py_fBrinde()
 
-    # Exibir os nomes das colunas e o tipo dos dados
+# ========================================= EXIBIR TOP 5 SKU'S COM MAIOR CUSTO =================================================
+
+    # ---------------------------------------------------- Análise Mensal ------------------------------------------------------
+
+    # Variável de controle para as análises mensais
+    meses = sorted(dfBrindes['mes'].dropna().unique())
+
+    # Dicionário para armazenar os resultados mensais
+    dados_mensais_sku = {}
+
     print('='*120)
-    print('🔗 Nome das colunas do dfImpostos')
+    print('🏆 TOP 5 SKUs COM MAIORES CUSTOS NO MÊS')
+
+    # Condição FOR que vai analisar os dados para cada mês
+    for mes in meses:
+        df_mes = dfBrindes[dfBrindes['mes'] == mes]
+
+        # Nome do mês correto
+        nome_mes = df_mes['nome_mes'].iloc[0]
+
+        # Soma a coluna custos de acordo com o mês sendo analisado
+        total_custo_mes = df_mes['custo_unitario_total'].sum()
+
+        # Soma a coluna custos de acordo com o SKU e o mês sendo analisado
+        total_custo_sku = df_mes.groupby(['cod_sku', 'descricao_sku'])[
+            ['custo_unitario_total']].sum()
+
+        # Cria a coluna AV (Total por SKU / Total geral no mês em análise)
+        total_custo_sku['(%) S/Custo mensal'] = (
+            total_custo_sku['custo_unitario_total'] / total_custo_mes) * 100
+
+        # Insere os dados na lista
+        dados_mensais_sku[mes] = total_custo_sku
+
+        # Seleciona os 5 maiores custos
+        top_custo_mes = total_custo_sku.sort_values(
+            by='custo_unitario_total', ascending=False).head(5).round(1)
+
+        # Exibição dos dados
+        print(f'\n📅 Mês: {nome_mes}')
+        print(top_custo_mes[['(%) S/Custo mensal']])
+        print("\n")
+
+    # ---------------------------------------- Análise Geral -------------------------------------------
+
+    # Soma a coluna custos de acordo com o SKU e o mês sendo analisado
+    total_custo_sku = dfBrindes.groupby(['cod_sku', 'descricao_sku'])[
+        ['custo_unitario_total']].sum()
+
+    # Soma a coluna custos do dfBrindes
+    total_custo = dfBrindes['custo_unitario_total'].sum()
+
+    # Cria a coluna AV (Total por SKU / Total geral)
+    total_custo_sku['(%) S/Custo total'] = (
+        total_custo_sku['custo_unitario_total'] / total_custo) * 100
+
+    # Seleciona os 5 maiores SKU
+    top_custo_total = total_custo_sku.sort_values(
+        by='custo_unitario_total', ascending=False).head(5).round(1)
+
+    # Exibição dos dado
+    print('='*120)
+    print('🏆 TOP 5 SKUs COM MAIORES CUSTOS TOTAL')
     print('='*120 + "\n")
-    print('Colunas: ', dfImpostos.dtypes)
-    print("\n")
+    print(top_custo_total[['(%) S/Custo total']])
+    print("\n" + "="*120 + "\n")

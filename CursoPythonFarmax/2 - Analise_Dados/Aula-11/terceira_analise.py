@@ -10,6 +10,7 @@ financiados
 # PASSO 0 - importar todos os recusros necessários para as operações
 #######################################################################
 
+from sklearn.neural_network import MLPClassifier
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -30,6 +31,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
 from sklearn.metrics import classification_report, confusion_matrix
+
+# auxilia na verificação do nivel de precisão do modelo - indice de acerto
+from sklearn.metrics import accuracy_score
+
+from sklearn.ensemble import RandomForestClassifier
+
+
 '''
 este dois recursos atuam com elementos aplicados a avaliação dos modelos ML classification_report: retorna algumas métricas relacionadas aos modelos, por exemplo: precisão, f1-score, entre outros
 
@@ -147,13 +155,16 @@ Se o seu shapiro_p for muito baixo (por exemplo, 0.0001), indica que a coluna de
 ------------------------------------------------------------------------------------------------------------------------------------------------
 """
 
+"""
+
+
 # Exibir a normalidade
 print(f'\nShapiro-Wilk (normalidade de renda): p = {shapiro_p:.4f}')
 print('-'*100 + "\n")
 """
-Shapiro_p: valor_p(p_value): o valor mais importante para a analise que estamos fazendo: porque é o valor usado para, então, decidir se os dados são normais ou não.
+# Shapiro_p: valor_p(p_value): o valor mais importante para a analise que estamos fazendo: porque é o valor usado para, então, decidir se os dados são normais ou não.
 
-Shapiro_stat: valor estatistico do teste -> esta variavel é um nuemro calculado para medir quão proximo os dados estão de uma distribuição normal quanto mais proximo de 1, mais normal é a distribuição quanto mais distante de 1, menos normal
+# Shapiro_stat: valor estatistico do teste -> esta variavel é um nuemro calculado para medir quão proximo os dados estão de uma distribuição normal quanto mais proximo de 1, mais normal é a distribuição quanto mais distante de 1, menos normal
 """
 if shapiro_p < 0.05:  # a expressão do if representa 5% de probabilidade maxima de occorrer
     # algum erro na analise
@@ -163,7 +174,7 @@ else:
     print('-> A renda SEGUE DISTRIBUIÇÃO NORMAL')
 
 # observar a renda de forma visual: # observar a renda de forma visual: hist(bins=...) desenha o grafico o histograma; plt. show() mostrar o grafico -> este histograma nos jauda a observar a distribuição de renda; por exemplo: mostra se os dados estão dispersos, se ha valores muito altos/baixos (outliers)
-"""
+
 print(df['ApplicantIncome'].hist(bins=200))
 plt.show()
 print('-'*100 + "\n")
@@ -186,15 +197,13 @@ plt.show()
 print(df.boxplot(column='LoanAmount'))
 plt.show()
 
-"""
-
 # observar a coluna de historico de credito
 obs_1 = df['Credit_History'].value_counts()
+
 obs_2 = df.pivot_table(values='Loan_Status', index=['Credit_History'],
                        aggfunc=lambda x: x.map({'Y': 1, 'N': 0}).mean())
-
 print()
-print('Table de frequencia por historico de crédito')
+print('Table de frenquencia por historico de crédito')
 print(obs_1)
 
 print('\nProbabilidade de obtenção de emprestimo considerando o historico de credito')
@@ -202,14 +211,13 @@ print(obs_2)
 
 # observar via grafico
 fig = plt.figure(figsize=(10, 6))
+# significa: 1 linha, 2 colunas, 1º grafico de grade/grid
 ax1 = fig.add_subplot(121)
 ax1.set_xlabel('Historico de Credito')
 ax1.set_ylabel('Contagem de candidadtos')
 ax1.set_title('Candidatos/Aplicants por historico de credito')
 obs_1.plot(kind='bar', ax=ax1)
-plt.show()
 
-fig = plt.figure(figsize=(10, 6))
 ax2 = fig.add_subplot(122)
 ax2.set_xlabel('Historico de credito')
 ax2.set_ylabel('Probabilidade de obter emprestimo')
@@ -248,9 +256,7 @@ plt.show()
 # calcular o coeficiente da relação
 corr = df['ApplicantIncome'].corr(df['LoanAmount'])
 print(f'Correlação: {corr: .2f}')
-# medir e observar a correlação entre o candidatos ao emprestimo e suas rendas com o
-# montante de emprestimo solicitado
-
+# medir e observar a correlação entre o candidados ao emprestimo e suas rendas com o montante de emprestimo solicitado
 plt.figure(figsize=(10, 6))
 plt.scatter(df['ApplicantIncome'], df['LoanAmount'])
 plt.title('Correlação: renda do candidato x montante solicitado')
@@ -258,3 +264,256 @@ plt.xlabel('Renda')
 plt.ylabel('Valor do emrpestimo')
 plt.tight_layout()
 plt.show()
+
+
+
+
+"""
+
+
+"""
+
+# MODELAGEM ML
+
+para qualquer dataset que está em análise é importante que seja observado 4 pontos fundamentais:
+1 - observação da normalidade
+2 - distribuição
+3 - correlação
+4 - graficos
+"""
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+# MODELAGEM ML (Machine Learning)
+
+"""
+Modelagem - Nível 1: a partir do momento que nós, analista, observamos - a partir do dataset - padrão e tendencia, nosso modelo ML também precisa detectar os mesmos. Se o modelo for capaz de detectar, é provavel que conseguiremos implementa-lo para fazer previsões. A 1º previsão será implementado a partir da coluna Lon_Status(Y/N)
+
+    Características:
+    Melhor modelo: Regressão Logística
+    Tipo de classificação: binária
+    Justificativa da escolha: a premissa é estabelecer a previsão de aprovação de
+    empréstimos. Portanto, a regressão Logística é rápida, simples e facilmente
+    "interpretável".
+    O modelo ML vai aprender a partir de relações entre as variaveis, tais como: renda,
+    historico de credito, tipo de imovel e prever se o emprestimo será aprovado ou não
+
+"""
+
+# convertendo Loan_Status par ao contexto numerico necessario
+df['Loan_Status'] = df['Loan_Status'].map({'Y': 1, 'N': 0})
+
+# selecionar as vars numéricas necessarias
+
+df_ml = df[['ApplicantIncome', 'CoapplicantIncome',
+            # lista de dados que será analizado
+            'LoanAmount', 'Credit_History', 'Loan_Status']].copy()
+
+# vamos "limpar" os dados atribuidos a var df_ml
+df_ml = df_ml.dropna()
+
+# agora, vamos crias duas vars; a 1º receberá como valor o 'Loan_Status' no eixo da coluna - axis = 1
+# a 2º receberá como valor a 1º
+# não queremos o nome da coluna mas somente os dados numericos que, a ela, pertencem
+X = df_ml.drop('Loan_Status', axis=1)
+Y = df_ml['Loan_Status']
+
+# neste passo, dividir os dados em blocos de treino do modelo e teste deste modelo treinado
+X_train, X_test, y_train, y_test = train_test_split(X, Y,
+                                                    test_size=0.25,
+                                                    random_state=42)
+
+"""
+Aqui está a transcrição do texto na imagem:
+
+X: dados de entrada do modelo (features)
+y: rotulagem(classe/variavel/coluna que queremos prever )
+test_size=0.25: aqui, estamos separando 25% dos dados para teste e 75% - os dados restantes - para o treino do modelo random_state: aqui, garantimos que a divisão sempre será igual, ou seja, teremos a possibilidade de reproduzir o treino e o teste sempre que for necessario.
+
+X_train e y_train: vars usadas para treinar o modelo
+X_test e y_test: vars usadas para avaliar o modelo ML(o modleo nunca ve os dados de teste antes do treino)
+
+"""
+# criar a padronização necessaria para os valores que o modelo vai usar para treino e test (normalização)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+# fit -> calcula a media dos dados aplicado, á ele, como argumento; tambem observa o desvio padrão - caso exista
+# transform -> usa os valores resultantes do calculo do fit e aplica este resultado aos dados transformando-os no conjunto ideal para ser testado, posteriorment
+# aqui, o metodo transform tem o mesmo proposito da aplicação acima, somente aplicando a transformação nos dados de teste
+X_test_scaled = scaler.transform(X_test)
+
+"""
+StandardScaler(): # recurso que auxilia na "padronização" dos dados: significa que -> podemos transformar os valores para a média 0(zero) e o desvio padrão 1. Modelos baseados em Regressão Logística trabalham muito melhor com dados padronizados
+
+fit_transform(): é usado somente no treino transform(): é usado somente no teste; usando os mesmos parametros do treino - porque, dessa forma, mantemos a consistencia dos dados usados para o modelo prever aquilo que queremos;
+
+"""
+
+# criação do modelo ML
+# estabelecemos a instancia/criação do modelo ML de regeressão logistica
+model_lr = LogisticRegression()
+# fazendo do uso do método fit() para treinar o modelo
+model_lr.fit(X_train_scaled, y_train)
+
+# as instruções acima estabelecem o "aprendizado" da relação entre as variaveis X_train_scaled e as classes atribuidas como valor a variavel y_train
+
+# implementar a previsão/predição que modelo pode fazer a partir dos dados dos quais ele - modelo ML - se "alimentou"
+
+# aqui, o modelo faz as previsões a partir dos dados de teste que ele NUNCA viu antes; porque a var pred_lr vai conter as classes previstas para cada linha do valor dado à var X_test_scaled
+pred_lr = model_lr.predict(X_test_scaled)
+
+# exibir o resultado
+print('\nModelo Nivel 1 - Regeressão Logística')
+print()
+print('------------------ Matriz de confusão ------------------')
+print(confusion_matrix(y_test, pred_lr))
+print()
+print('------------------ relatorio de classificação do modelo ------------------')
+print(classification_report(y_test, pred_lr))
+print()
+print('------------------ Precisão do Modelo ------------------')
+print(accuracy_score(y_test, pred_lr))
+print()
+print('------------------ Coeficiente da vars/colunas aplicadas pelo RL ------------------')
+print(model_lr.coef_)
+print(X.columns)
+print()
+
+"""
+Modelagem - Nível 2: a partir do momento que nós, analista, observamos - a partir do dataset - padrão e tendencia, nosso modelo ML também precisa detectar os mesmos. Se o modelo for capaz de detectar, é provavel que conseguiremos implementa-lo para fazer previsões. A 2º previsão será implementado a partir da coluna Lon_Status(Y/N)
+
+    Características:
+    Melhor modelo: Random Forest
+    Tipo de classificação: variada
+
+    Justificativa da escolha: o modelo consegue capturar relações não-lineares; oferece boa resistência a outliers (dados fora do padrão); geralmente, lidam melhor do que modelos baseados em regressão linear.
+
+    O modelo ML vai aprender a partir de relações entre as variaveis, tais como: renda, historico de credito, tipo de imovel e prever se o emprestimo será aprovado ou não
+
+"""
+
+# definição do modelo RandomForest
+model_rf = RandomForestClassifier(
+    n_estimators=300,
+    max_depth=8,
+    random_state=42
+)
+
+# definição do modelo RandomForest
+model_rf = RandomForestClassifier(
+    n_estimators=300,
+    max_depth=8,
+    random_state=42
+)
+
+# implementar o treino do modelo
+model_rf.fit(X_train, y_train)
+# implementar a predição/previsão
+pred_rf = model_rf.predict(X_test)
+
+# definição do modelo RandomForest
+model_rf = RandomForestClassifier(
+    # este é o numero de estimadores da floresta. Quando mais estimadores, maior é a estabilidade (menos variância) do modelo; porem é provável que quanto maior o numero de arvore, maior é o consumo de memoria
+    n_estimators=300,
+    # este numero é relacionado a profundidade maxima de cada estimadores.
+    max_depth=8,
+    random_state=42
+)
+
+# implementar o treino do modelo
+model_rf.fit(X_train, y_train)
+
+# implementar a predição/previsão
+pred_rf = model_rf.predict(X_test)
+
+# exibir os resultados
+print('\nModelo Nivel 2 - Random Forest')
+print()
+print('------------------ Matriz de confusão ------------------')
+print(confusion_matrix(y_test, pred_rf))
+print()
+print('------------------ Relatorio de classificação ------------------')
+print(classification_report(y_test, pred_rf))
+print()
+print('------------------ Relevancia/Importancia das variaveis ------------------')
+importancias = pd.Series(model_rf.feature_importances_, index=X.columns)
+print(importancias.sort_values(ascending=False))
+
+
+"""
+Modelagem - Nível 3: a partir do momento que nós, analista, observamos - a partir do dataset - padrão e tendencia, nosso modelo ML também precisa detectar os mesmos. Se o modelo for capaz de detectar, é provavel que conseguiremos implementa-lo para fazer previsões. A 3º previsão será implementado a partir da coluna Lon_Status(Y/N)
+
+    Características:
+    Melhor modelo: rede neural MLPClassifier
+
+    Tipo de classificação: variada
+
+    Justificativa da escolha: o modelo consegue capturar relações não-lineares; oferece boa resistência a outliers (dados fora do padrão); geralmente, lidam melhor do que modelos baseados em regressão linear e baseados em random forest - porque consegue observar e aprender maiores relações e compexidades entre as variaveis/classes.
+
+    O modelo ML vai aprender a partir de relações entre as variaveis, tais como: renda, historico de credito, tipo de imovel e prever se o emprestimo será aprovado ou não e ainda, fazer uma recomendação de credito para um novo usuário.
+
+"""
+
+
+# implementando o modelo
+model_mlp = MLPClassifier(
+    hidden_layer_sizes=(50, 25),
+    activation='relu',
+    solver='adam',
+    max_iter=800,
+    random_state=42
+)
+
+# implementar o treino do modelo
+model_mlp.fit(X_train, y_train)
+# implementar a predição/previsão
+pred_mlp = model_mlp.predict(X_test_scaled)
+
+# função de recomendação de emprestimo para um novo usuario
+
+
+def recomendar_credito(modelo, dados_candidato):
+    """
+    o parametro dados_candidato é um lista com valores referentes a:
+    [ApplicantIncome, CoapplicantIncome, LoanAmount, Credit_History]
+    """
+
+    # definir uma var para receber como valor o lista com os dados do novo usuario
+    dados_candidato = np.array([dados_candidato])
+    dados_scaled = scaler.transform(dados_candidato)
+
+    # definir uma nova var que vai receber como valor a predição do emprestimo
+    pred = modelo.predict(dados_scaled)[0]
+
+    # uma nova var para "calculamos" a probabilidade do aplicante reeber o emprestimo
+    prob = modelo.predict_proba(dados_scaled)[0][1]
+
+    # agora, vamos criar um dicionario com o status do emprestimo para o candidato e a
+    # probabilidade dele conseguir o emprestimo
+    resultado = {
+        "status": "APROVADO" if pred == 1 else "NEGADO",
+        "probabilidade": round(prob * 100, 2)
+    }
+
+    return resultado
+
+
+# inserir um novo candidato
+novo_candidato = [5000, 0, 120, 1]
+
+"""
+ApplicantIncome: 5000
+CoapplicantIncome: 0
+LoanAmount: 120
+Credit_History: 1
+"""
+
+resposta = recomendar_credito(model_mlp, novo_candidato)
+print()
+
+# exibir os resultados
+print('\nModelo Nivel 3 - Saídas')
+print()
+print('================== SISTEMA DE RECOMENDAÇÃO DE CREDITO ==================')
+print(f'Status: {resposta["status"]}')
+print(f'Probabilidade de aprovação: {resposta["probabilidade"]}%')
