@@ -36,7 +36,7 @@ def prever_icms(natureza_input, cliente_input, sku_input, valor_nf_input, estado
 
     # 2.1.1 REGRA ICMS: EXPORTAÇÃO E AMOSTRA GRÁTIS
     if natureza_input in ['Exportação', 'Amostra grátis']:
-        return 0.0, f"Natureza '{natureza_input}' não incide ICMS.", 0.0
+        return 0.0
         """
         0.0 = valor_icms_previsto 
         0.0 = aliquota  
@@ -62,7 +62,7 @@ def prever_icms(natureza_input, cliente_input, sku_input, valor_nf_input, estado
 
             # Se passar do Elif, iniciar o proceddo de apuração da alíquota icms.
 
-            return 0.0, 0.0
+            return 0.0
 
     # 2.1.3 REGRA ICMS DEGUSTAÇÃO
     elif natureza_input == 'Degustação':
@@ -98,7 +98,7 @@ def prever_icms(natureza_input, cliente_input, sku_input, valor_nf_input, estado
     # 2.3 CÁLCULO DO ICMS ---------------------------------
     valor_icms_previsto = valor_nf_input * aliquota
 
-    return valor_icms_previsto, aliquota
+    return valor_icms_previsto
 
 # ==================================================================
 # 3. FUNÇÃO PREDITIVA: ICMS-ST
@@ -146,10 +146,51 @@ def prever_icms_st(natureza_input, cliente_input, sku_input, valor_nf_input, est
 
     return valor_icms_st_previsto
 
+# ==================================================================
+# 4. FUNÇÃO PREDITIVA: ICMS INTERESTADUAL UF DESTINO
+# ==================================================================
+# Prevê o valor_icms_interestadual_uf_destino (DIFAL)
+
+
+def prever_icms_interestadual_uf_destino(
+    natureza_venda_input,
+    estado_input,
+    valor_nf_input,
+    valor_icms_previsto,
+    estado_aliqdifal_lookup
+):
+    # 4.1. VERIFICAÇÃO DE INCIDÊNCIA ---------------------------------
+    estados_excluidos = ['SP', 'EX']
+
+    # Regra de Incidência
+    if (natureza_venda_input != 'Consumidor final' or estado_input in estados_excluidos):
+        return 0.0
+
+    # 4.2. BUSCA DA ALÍQUOTA INTERNA (POR ESTADO) --------
+    aliquota_interna_destino = estado_aliqdifal_lookup[estado_input]
+
+    # 4.3. CÁLCULO ---------------------------------
+
+    # 1º passo: calcular a base_calculo_icms_uf_destino:
+    base_icms = valor_nf_input - valor_icms_previsto
+    fator_divisao = 1 - (aliquota_interna_destino / 100.0)
+
+    if fator_divisao == 0:
+        return 0.0
+
+    base_calculo_icms_uf_destino = base_icms / fator_divisao
+
+    # 2º passo: calcular o icms_interestadual_uf_destino:
+    icms_cheio_destino = base_calculo_icms_uf_destino * \
+        (aliquota_interna_destino / 100.0)
+    valor_icms_interestadual_uf_destino = icms_cheio_destino - valor_icms_previsto
+
+    return valor_icms_interestadual_uf_destino
 
 # ==================================================================
 # 4. CARREGAMENTO E CRIAÇÃO DA BASE - MERGE
 # ==================================================================
+
 
 print("[PREPARAÇÃO] Carregando bases e criando DataFrame de trabalho...")
 
@@ -221,32 +262,37 @@ astype(str) >> converte todos os valores da coluna ncm para tipo str.
 cliente_cnpj_lookup = dfProjeto.set_index(
     'cod_cliente')['cnpj_destinatario'].to_dict()
 
-# 6.3: ESTADO -> ALÍQUOTA
+# 6.3: ESTADO -> ALÍQUOTA ICMS
 df_aliquota_icms = dfProjeto[
     pd.to_numeric(dfProjeto['aliquota_icms']) > 0.0]
-
-"""
-errors='coerce' >> converte valores "N/A" pelo valor especial NaN (Not a Number).
-"""
 
 estado_aliqicms_lookup = (
     df_aliquota_icms.set_index('estado')['aliquota_icms'] / 100.0
 ).to_dict()
 
+# 6.3: ESTADO -> ALÍQUOTA DIFAL
+df_aliquota_difal = dfProjeto[
+    pd.to_numeric(dfProjeto['aliquota_interna_uf_destino']) > 0.0]
+
+estado_aliqdifal_lookup = (
+    df_aliquota_difal.set_index(
+        'estado')['aliquota_interna_uf_destino']
+).to_dict()
 
 # ==================================================================
 # 7. FUNÇÃO PRINCIPAL DE TESTE
 # ==================================================================
 # Chama as funções prever_custo_total, prever_icms e prever_icms_st
 
-def simulador(natureza_input, cliente_input, sku_input, quantidade_input, valor_nf_input, estado_input, modelo_custo_unitario, sku_ncm_lookup, cliente_cnpj_lookup, estado_aliqicms_lookup):
+
+def simulador(natureza_input, natureza_venda_input, cliente_input, sku_input, quantidade_input, valor_nf_input, estado_input, modelo_custo_unitario, sku_ncm_lookup, cliente_cnpj_lookup, estado_aliqicms_lookup, estado_aliqdifal_lookup):
 
     # 7.1 Previsão de Custo Total
     custo_total_previsto, custo_unitario_previsto = prever_custo_total(
         sku_input, quantidade_input, modelo_custo_unitario)
 
     # 7.2 Previsão de ICMS
-    valor_icms_previsto, aliquota_utilizada = prever_icms(
+    valor_icms_previsto = prever_icms(
         natureza_input,
         cliente_input,
         sku_input,
@@ -268,22 +314,31 @@ def simulador(natureza_input, cliente_input, sku_input, quantidade_input, valor_
         cliente_cnpj_lookup,
         valor_icms_previsto
     )
+    # 8.4 Previsão de DIFAL
+    valor_icms_interestadual_uf_destino = prever_icms_interestadual_uf_destino(
+        natureza_venda_input,
+        estado_input,
+        valor_nf_input,
+        valor_icms_previsto,
+        estado_aliqdifal_lookup
+    )
 
     # 7.4. CÁLCULO FINAL E EXIBIÇÃO
-    soma_total_prevista = custo_total_previsto + \
-        valor_icms_previsto + valor_icms_st_previsto
+    soma_total_prevista = custo_total_previsto + valor_icms_previsto + \
+        valor_icms_st_previsto + valor_icms_interestadual_uf_destino
     percentual_custo_nf = (soma_total_prevista / valor_nf_input) * 100
 
     # Output Final
     print("\n" + "="*50)
     print("💰 CUSTO TOTAL PREVISTO 💰")
-    print(f"SKU: {sku_input} | Cliente: {cliente_input} | Natureza: {natureza_input} | Estado: {estado_input}")
+    print(f"Natureza: {natureza_input} |Natureza: {natureza_venda_input} | SKU: {sku_input} | Cliente: {cliente_input} |  Estado: {estado_input}")
     print("-" * 50)
 
     print(f"Custo Unitário Médio: R$ {custo_unitario_previsto:,.2f}")
     print(f"Custo Total (Produto): R$ {custo_total_previsto:,.2f}")
-    print(f"ICMS ({aliquota_utilizada*100:.2f}%): R$ {valor_icms_previsto:,.2f}")
+    print(f"ICMS: R$ {valor_icms_previsto:,.2f}")
     print(f"ICMS-ST: R$ {valor_icms_st_previsto:,.2f}")
+    print(f"ICMS-Difal: R$ {valor_icms_interestadual_uf_destino:,.2f}")
     print("-" * 50)
 
     print(f"Custo Total Final: R$ {soma_total_prevista:,.2f}")
@@ -300,14 +355,16 @@ def simulador(natureza_input, cliente_input, sku_input, quantidade_input, valor_
 if __name__ == "__main__":
 
     natureza_teste = 'Bonificação'
-    cliente_teste = 20072
-    sku_teste = 11362
-    quantidade_teste = 1
-    valor_nf_teste = 58.81
-    estado_teste = 'RJ'
+    natureza_venda_teste = 'Consumidor final'
+    cliente_teste = 19965
+    sku_teste = 10344
+    quantidade_teste = 1650
+    valor_nf_teste = 105517.5
+    estado_teste = 'SP'
 
     resultado_final = simulador(
         natureza_teste,
+        natureza_venda_teste,
         cliente_teste,
         sku_teste,
         quantidade_teste,
@@ -316,7 +373,8 @@ if __name__ == "__main__":
         modelo_custo_unitario,
         sku_ncm_lookup,
         cliente_cnpj_lookup,
-        estado_aliqicms_lookup
+        estado_aliqicms_lookup,
+        estado_aliqdifal_lookup
     )
     print(
         f"✅ Processo finalizado. Custo Total Previsto Retornado: R$ {resultado_final:,.2f}")

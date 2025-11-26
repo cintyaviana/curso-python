@@ -103,33 +103,6 @@ if __name__ == '__main__':
     # Carrega o DataFrame através da função
     dfBrindes = get_fBrinde()
 
-    # Exibir um determinado intervalo dos dados a partir do método head: primeiras linhas e o método tail: últimas linhas.
-    print('='*120)
-    print('🔗 Primeiras 5 linhas do dfBrindes')
-    print('='*120 + "\n")
-    print(dfBrindes.head(5))
-    print("\n")
-
-    print('='*120)
-    print('🔗 Últimas 5 linhas do dfBrindes')
-    print('='*120 + "\n")
-    print(dfBrindes.tail(5))
-    print("\n")
-
-    # Exibir os nomes das colunas e o tipo dos dados
-    print('='*120)
-    print('🔗 Nome das colunas do dfBrindes')
-    print('='*120 + "\n")
-    print('Colunas: ', dfBrindes.dtypes)
-    print("\n")
-
-    # Exibir o resumo estatístico
-    print('='*120)
-    print('🔗 Resumo estatístico do dfBrindes')
-    print('='*120 + "\n")
-    print(dfBrindes.describe())
-    print("\n")
-
 # ========================================= EXIBIR TOP 5 SKU'S COM MAIOR CUSTO =================================================
 
     # ---------------------------------------------------- Análise Mensal ------------------------------------------------------
@@ -378,11 +351,6 @@ if __name__ == '__main__':
     print("\n" + "="*120 + "\n")
 
     # ========================================= CURVA ABC: ESTADO vs CUSTO FINAL ========================================
-
-    print('='*120)
-    print('📈 ANÁLISE DA CURVA ABC: estado vs. custo_final')
-    print('='*120)
-
     # Agregação do custo_final por estado
     df_abc_final = (
         dfBrindes.groupby('estado').agg(total_valor=('custo_final', 'sum')).sort_values(
@@ -441,31 +409,21 @@ if __name__ == '__main__':
     """
 
     # Resumo da Classificação
-    resumo_abc = df_abc_final.groupby('classe_abc').agg(num_estados=('estado', 'count'), total_custo=('total_valor', 'sum'), participacao_custo=(
+    resumo_abc_estado = df_abc_final.groupby('classe_abc').agg(num_estados=('estado', 'count'), total_custo=('total_valor', 'sum'), participacao_custo=(
         'participacao_relativa_%', 'sum')).round(2).sort_values(by='participacao_custo', ascending=False)
 
     # Cálculo da porcentagem de Estados
-    total_estados = resumo_abc['num_estados'].sum()
-    resumo_abc['(%) S/Total Estados'] = (
-        resumo_abc['num_estados'] / total_estados * 100
+    total_estados = resumo_abc_estado['num_estados'].sum()
+    resumo_abc_estado['(%) S/Total Estados'] = (
+        resumo_abc_estado['num_estados'] / total_estados * 100
     ).round(2)
 
-    resumo_abc = resumo_abc.rename(columns={
+    resumo_abc_estado = resumo_abc_estado.rename(columns={
         'num_estados': 'Qtd. Estados',
-        'participacao_custo': '(%) Custo Total'
+        'participacao_custo': '(%) Custo Total Estado'
     })
 
-    print("\nResumo da Classificação")
-    print(
-        resumo_abc[['Qtd. Estados', '(%) S/Total Estados', '(%) Custo Total']])
-    print("\n" + "="*120)
-
     # ========================================= CURVA ABC: CENTRO CUSTO vs. CUSTO FINAL  ===============================================
-
-    print('\n' + '='*120)
-    print('📈 ANÁLISE DA CURVA ABC: centro_custo vs. custo_final')
-    print('='*120)
-
     # Agregação do custo_final por centro_custo
     df_abc_cc = dfBrindes.groupby('centro_custo').agg(total_valor=('custo_final', 'sum')).sort_values(
         by='total_valor', ascending=False).reset_index()
@@ -502,13 +460,8 @@ if __name__ == '__main__':
 
     resumo_abc_cc = resumo_abc_cc.rename(columns={
         'num_ccs': 'Qtd. Centros Custo',
-        'participacao_custo': '(%) Custo Total'
+        'participacao_custo': '(%) Custo Total CC'
     })
-
-    print("\nResumo da Classificação")
-    print(resumo_abc_cc[['Qtd. Centros Custo',
-          '(%) S/Total CCs', '(%) Custo Total']])
-    print("\n" + "="*120)
 
     # ---------------------------------------------- PLOTAGEM ESTADO (APENAS CLASSE A)  ----------------------------------------------------
 
@@ -616,9 +569,39 @@ if __name__ == '__main__':
         loc='upper left',
         bbox_to_anchor=(0, 1),
         frameon=False)
+
+    # -------------------------------------------------------------
+    # INSERÇÃO DO RESUMO ABC COMO TEXTO NO GRÁFICO
+    # -------------------------------------------------------------
+
+    # 1. Preparar o texto formatado para o box
+
+    # Montar o cabeçalho
+    cabecalho = "Resumo da Classificação Estado\n"
+    # Montar a tabela de dados, focando em Qtd. e (%) Custo Total
+    tabela_dados = resumo_abc_estado[['Qtd. Estados', '(%) Custo Total Estado']].to_string(
+        header=True, float_format='{:.2f}'.format)
+
+    # Combinar
+    texto_box = cabecalho + tabela_dados
+
+    # 2. Inserir o texto no gráfico
+    # plt.gca() retorna o eixo atual
+    plt.gca().text(
+        x=0.98,  # Posição X: 98% da largura do eixo (próximo à direita)
+        y=0.95,  # Posição Y: 98% da altura do eixo (próximo ao topo)
+        s=texto_box,
+        # Garante que as coordenadas sejam relativas ao gráfico (de 0 a 1)
+        transform=plt.gca().transAxes,
+        fontsize=10,
+        verticalalignment='top',
+        horizontalalignment='right',
+        bbox=dict(boxstyle='round,pad=0.5', facecolor='white',
+                  alpha=0.8, edgecolor='gray')
+    )
+
     plt.tight_layout()
     plt.show()
-    print("\n" + "="*120 + "\n")
 
 # ========================================= PLOTAGEM CENTRO CUSTO (APENAS CLASSE A)  ========================================
 
@@ -720,9 +703,39 @@ if __name__ == '__main__':
         loc='upper left',
         bbox_to_anchor=(0, 1),
         frameon=False)
+
+    # -------------------------------------------------------------
+    # INSERÇÃO DO RESUMO ABC COMO TEXTO NO GRÁFICO
+    # -------------------------------------------------------------
+
+    # 1. Preparar o texto formatado para o box
+
+    # Montar o cabeçalho
+    cabecalho = "Resumo da Classificação CC\n"
+    # Montar a tabela de dados, focando em Qtd. e (%) Custo Total
+    tabela_dados = resumo_abc_cc[['Qtd. Centros Custo', '(%) Custo Total CC']].to_string(
+        header=True, float_format='{:.2f}'.format)
+
+    # Combinar
+    texto_box = cabecalho + tabela_dados
+
+    # 2. Inserir o texto no gráfico
+    # plt.gca() retorna o eixo atual
+    plt.gca().text(
+        x=0.98,  # Posição X: 98% da largura do eixo (próximo à direita)
+        y=0.95,  # Posição Y: 98% da altura do eixo (próximo ao topo)
+        s=texto_box,
+        # Garante que as coordenadas sejam relativas ao gráfico (de 0 a 1)
+        transform=plt.gca().transAxes,
+        fontsize=10,
+        verticalalignment='top',
+        horizontalalignment='right',
+        bbox=dict(boxstyle='round,pad=0.5', facecolor='white',
+                  alpha=0.8, edgecolor='gray')
+    )
+
     plt.tight_layout()
     plt.show()
-    print("\n" + "="*120 + "\n")
 
 # ======================================================= PLOTAGEM MÊS  =========================================================
 
@@ -818,4 +831,60 @@ if __name__ == '__main__':
         frameon=False)
     plt.tight_layout()
     plt.show()
-    print("\n" + "="*120 + "\n")
+
+    # ==================================== REPRESENTATIVIDADE DO CUSTO POR LINHA DRE ========================================
+
+    # 1. Agrupar os dados por 'linha_dre' e somar o 'custo_final'
+    df_dre_custo = dfBrindes.groupby('linha_dre').agg(
+        total_custo_final=('custo_final', 'sum')
+    ).sort_values(by='total_custo_final', ascending=False).reset_index()
+
+    # 2. Calcular o Custo Final Total Geral
+    custo_final_total_geral = df_dre_custo['total_custo_final'].sum()
+
+    # 3. Calcular a Participação Relativa (%)
+    df_dre_custo['participacao_%'] = (
+        df_dre_custo['total_custo_final'] / custo_final_total_geral
+    ) * 100
+
+    # Formatação e Exibição da Tabela
+    df_dre_custo['participacao_%'] = df_dre_custo['participacao_%'].round(2)
+    df_dre_custo['total_custo_final'] = df_dre_custo['total_custo_final'].map(
+        '{:,.2f}'.format)
+
+    # 4. PLOTAGEM (Gráfico de Barras)
+
+    # Preparar os dados para plotagem (sem a formatação de string)
+    df_plot = df_dre_custo.sort_values(by='participacao_%', ascending=True)
+    categorias_dre = df_plot['linha_dre']
+    percentuais = df_plot['participacao_%']
+
+    # Cores e configurações
+    COR_AZUL_ESCURO = '#4E56C0'  # Usando a mesma cor do seu código
+    COR_CINZA = '#A0A0A0'
+    # Destacar a maior categoria
+    cores_barras = [COR_CINZA] * (len(categorias_dre) - 1) + [COR_AZUL_ESCURO]
+
+    plt.figure(figsize=(10, 6))
+
+    # Plotar o gráfico de barras horizontais
+    plt.barh(categorias_dre, percentuais, color=cores_barras)
+
+    # Adicionar rótulos de dados (percentuais)
+    for index, value in enumerate(percentuais):
+        plt.text(value + 0.5, index,
+                 f'{value:.2f}%', va='center', fontweight='bold')
+
+    # Títulos e Rótulos
+    plt.title(
+        'Representatividade do Custo Final por Linha DRE', fontsize=16)
+    plt.xlabel('Participação no Custo Final (%)', fontsize=12)
+    plt.ylabel('Linha DRE', fontsize=12)
+
+    # Formatação do Eixo X (Para adicionar o símbolo de %)
+    formatter = mtick.PercentFormatter()
+    plt.gca().xaxis.set_major_formatter(formatter)
+
+    plt.grid(axis='x', linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    plt.show()
