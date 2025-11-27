@@ -1,23 +1,19 @@
 
-# ==========================================================
+# ====================================================================================
 # IMPORTAÇÃO DOS RECURSOS
-# ==========================================================
+# ====================================================================================
 
 from pathlib import Path
 import pandas as pd
 import numpy as np
+
+# Biblioteca que personaliza a forma como os valores aparecem no eixo do seu gráfico para que ele seja mais claro, como formatar para dinheiro, porcentagem ou usar notação científica.
 import matplotlib.ticker as mtick
 
 # Biblioteca oferece estruturas de criação de visualizações estáticas, interativas e animadas em 2D, e até mesmo algumas em 3D.
 import matplotlib.pyplot as plt
 
-"""
-Biblioteca que fornece módulos para otimização, álgebra linear, integração, interpolação, e, mais importante para este caso, estatística.
-chi2_contingency: esta é a função exata que você está importando. Ela é usada para realizar o Teste Qui-Quadrado de Independência (Chi-Square Test) em uma tabela de contingência.
-
-O teste Qui-Quadrado de Independência é usado para determinar se existe uma relação estatisticamente significativa entre duas variáveis categóricas.
-
- """
+# Biblioteca que fornece módulos de álgebra linear, integração, interpolação, e, estatística.chi2_contingency. Ela é usada para realizar o Teste Qui-Quadrado de Independência (Chi-Square Test) que é usado para determinar se existe uma relação estatisticamente significativa entre duas variáveis categóricas.
 from scipy.stats import chi2_contingency
 
 # ====================================================================================
@@ -27,12 +23,9 @@ from scipy.stats import chi2_contingency
 
 def get_fBrinde():
 
-    # Retorna o caminho de onde estão os arquivos do projeto
     dataPath = Path(__file__).resolve().parent
 
-    # Carregar os dados - para este propósito vamos definir uma variavel para receber como valor o arquivo de dados
-    dfBrindes = pd.read_excel(
-        dataPath / 'Ex_fBrindes_Impostos.xlsx')
+    dfBrindes = pd.read_excel(dataPath / 'Ex_fBrindes_Impostos.xlsx')
 
     # Converte para o Período Mensal (01/mês/ano)
     dfBrindes['data'] = dfBrindes['data'].dt.to_period('M').dt.to_timestamp()
@@ -40,51 +33,41 @@ def get_fBrinde():
     """
     .dt: É o acessor do Pandas para DateTime (data e hora). Ele permite aplicar métodos específicos de manipulação de data/hora aos valores da coluna.
 
-    .to_period('M'): Esta é a primeira conversão: ela transforma a coluna de um formato de Timestamp (data e hora exata, ex: 2025-01-15 14:30:00) para um formato Period (Período).
+    .to_period('M'): transforma a coluna de um formato de Timestamp (data e hora exata, ex: 2025-01-15 14:30:00) para um formato (Período).
 
-        O argumento 'M' indica que o período deve ser Mensal. Resultado desta etapa: A data 2025-01-15 14:30:00 se torna simplesmente o período 2025-01.
+        O argumento 'M' indica que o período deve ser Mensal. Resultado desta etapa: A data 2025-01-15 14:30:00 se torna o período 2025-01.
 
-    .to_timestamp(): Após a conversão para Período, esta função converte o Período de volta para o formato Timestamp (data e hora).
+    .to_timestamp(): Após a conversão para Período, esta função converte o Período de volta para o formato Timestamp.
 
         A Regra Chave: Ao converter um Período Mensal de volta para um Timestamp, o Pandas define o início desse período como a nova data.
 
         Resultado Final: O período 2025-01 é transformado na data exata 2025-01-01 00:00:00
     """
-
-    # Criar a coluna (mes) com o número do mês em relação a coluna (data)
+    # Criar a coluna (mes) com o número do mês
+    # .month: extrai o número inteiro correspondente ao mês
     dfBrindes['mes'] = dfBrindes['data'].dt.month
 
-    """
-    .month: É uma propriedade do acessor .dt que extrai o número inteiro correspondente ao mês de cada data na coluna data.
-
-    """
-
-    # Cria a coluna (nome_mes) com o nome do mês em relação a coluna (data)
+    # Cria a coluna (nome_mes)
     dfBrindes['nome_mes'] = dfBrindes['data'].dt.month_name(
         locale='pt_BR').str.capitalize()
-
     """
     .month_name(...): É a função que extrai o nome completo do mês (ex: "janeiro" em vez de "1").
 
-    locale='pt_BR': Este é o argumento crucial. Ele garante que o nome do mês seja retornado no idioma Português do Brasil ("Janeiro", "Fevereiro", etc.), e não no padrão americano ("January", "February").
+    locale='pt_BR': Ele garante que o nome do mês seja retornado no idioma Português do Brasil ("Janeiro", "Fevereiro", etc.), e não no padrão americano ("January", "February").
 
-    .str: É o acessor de string (texto) do Pandas. Ele é usado aqui porque o resultado da etapa anterior é uma série de nomes (texto).
+    .str: É o acessor de string (texto) do Pandas. Ele é usado porque o resultado da etapa anterior é uma série de (texto).
 
-    .capitalize(): É um método de string que garante que a primeira letra de cada nome de mês esteja em maiúscula e todas as demais em minúscula.
+    .capitalize(): É um método de string que garante que a primeira letra de cada nome esteja em maiúscula e todas as demais em minúscula.
 
     """
-
     # Cria a coluna (total_impostos)
+    # .fillna: preenche valores ausentes ou nulos (NaN) com zero.
     dfBrindes['total_impostos'] = (
         dfBrindes['valor_icms'].fillna(0) +
         dfBrindes['valor_icms_st'].fillna(0) +
         dfBrindes['icms_interestadual_uf_destino'].fillna(0) +
         dfBrindes['valor_icms_fcp_uf_destino'].fillna(0))
 
-    """
-    .fillna(0): Este método da biblioteca Pandas preenche quaisquer valores ausentes ou nulos (NaN) naquela coluna com o valor zero (0).
-
-    """
     # Cria a coluna (custo_final)
     dfBrindes['custo_final'] = (
         dfBrindes['custo_unitario_total'].fillna(0) +
@@ -93,66 +76,55 @@ def get_fBrinde():
     # Retorna o DataFrame
     return dfBrindes
 
+
 # ====================================================================================
 # BLOCO DE ANÁLISE: Executado apenas se o arquivo for rodado diretamente
 # ====================================================================================
-
-
 if __name__ == '__main__':
-
     # Carrega o DataFrame através da função
     dfBrindes = get_fBrinde()
 
-# ========================================= EXIBIR TOP 5 SKU'S COM MAIOR CUSTO =================================================
-
-    # ---------------------------------------------------- Análise Mensal ------------------------------------------------------
-
+    # ---------------------------------------------------------------------------------
+    # TOP 5 SKU'S COM MAIOR CUSTO
+    # ---------------------------------------------------------------------------------
+    #  Análise Mensal -----------------------------------------------------------------
     # Variável de controle para as análises mensais
-    meses = sorted(dfBrindes['mes'].dropna().unique())
+    meses = sorted(dfBrindes['mes'].unique())
 
     """
-    .dropna(): Este método remove quaisquer valores nulos (NaN, ou Not a Number) que possam existir na coluna mes.
-
     .unique(): Este método, aplicado após a remoção dos nulos, retorna um array NumPy contendo apenas os valores distintos (únicos) que sobraram na coluna
 
-    sorted(...): Esta é uma função nativa do Python que pega qualquer lista ou array (neste caso, o array dos meses únicos) e o retorna como uma lista Python totalmente ordenada.
+    sorted(): Ordena a lista
 
     """
-
     # Dicionário para armazenar os resultados mensais
     dados_mensais_sku = {}
 
     print('='*120)
-    print('🏆 TOP 5 SKUs COM MAIORES CUSTOS NO MÊS')
+    print('🏆 TOP 5 SKUs COM MAIOR CUSTO NO MÊS')
+    print('='*120)
 
     # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
+        # Cria um novo df, apenas com os dados cujo valor na coluna 'mes' é igual ao mês do loop.
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
 
-        """
-        Cria um novo DataFrame temporário (df_mes) que contém apenas as linhas cujo valor na coluna 'mes' é igual ao mês atual do loop.
-
-        """
-
-        # Retorna o nome dos mês da nova df_mes criada na etapa anterior
+        # Retorna o nome dos mês da nova df_mes
         nome_mes = df_mes['nome_mes'].iloc[0]
+        # iloc[0]: indica que você quer o item que está na posição zero (o primeiro item) da Série.
 
-        """
-        iloc[0]: indica que você quer o item que está na posição zero (o primeiro item) da Série.
-        """
-
-        # Soma a coluna custos de acordo com o mês sendo analisado
+        # Soma a coluna custos total
         total_custo_mes = df_mes['custo_unitario_total'].sum()
 
-        # Soma a coluna custos de acordo com o SKU e o mês sendo analisado gerando um novo df onde cada linha mostra o custo total acumulado para um SKU específico naquele mês
+        # Soma a coluna custos total de acordo com o SKU gerando um novo df onde cada linha mostra o custo total acumulado para o SKU.
         total_custo_sku = df_mes.groupby(['cod_sku', 'descricao_sku'])[
             ['custo_unitario_total']].sum()
 
-        # Cria a coluna AV (Total por SKU / Total geral no mês em análise) no df total_custo_sku.
+        # Cria a coluna AV (Total por SKU / Total geral)
         total_custo_sku['(%) S/Custo mensal'] = (
             total_custo_sku['custo_unitario_total'] / total_custo_mes) * 100
 
-        # Insere os dados na lista usando o número do mês como chave. Isso permite que você acesse esses dados detalhados para o mês 1, mês 2, etc., posteriormente.
+        # Insere os dados na lista usando o número do mês como chave. Isso permite acessar esses dados para o mês 1, 2..., posteriormente.
         dados_mensais_sku[mes] = total_custo_sku
 
         # Seleciona os 5 maiores custos
@@ -164,13 +136,13 @@ if __name__ == '__main__':
         print(top_custo_mes[['(%) S/Custo mensal']])
         print("\n")
 
-    # ---------------------------------------- Análise Geral -------------------------------------------
-
-    # Soma a coluna custos de acordo com o SKU, gerando um novo df onde cada linha mostra o custo total acumulado para um SKU específico
+    # ---------------------------------------------------------------------------------
+    # Análise Geral -------------------------------------------------------------------
+    # Soma a coluna custos total de acordo com o SKU gerando um novo df onde cada linha mostra o custo total acumulado para o SKU.
     total_custo_sku = dfBrindes.groupby(['cod_sku', 'descricao_sku'])[
         ['custo_unitario_total']].sum()
 
-    # Soma a coluna custos do dfBrindes QUE SERÁ USADO PARA AS DEMAIS ANÁLISES GERAIS DE CC E CLIENTE
+    # Soma a coluna custos total QUE SERÁ USADO PARA AS DEMAIS ANÁLISES GERAIS DE CC E CLIENTE.
     total_custo = dfBrindes['custo_unitario_total'].sum()
 
     # Cria a coluna AV (Total por SKU / Total geral)
@@ -183,36 +155,38 @@ if __name__ == '__main__':
 
     # Exibição dos dado
     print('='*120)
-    print('🏆 TOP 5 SKUs COM MAIORES CUSTOS TOTAL')
+    print('🏆 TOP 5 SKUs COM MAIOR CUSTO GERAL')
     print('='*120 + "\n")
     print(top_custo_total[['(%) S/Custo total']])
     print("\n" + "="*120 + "\n")
 
-    # =============================== EXIBIR TOP 5 CENTROS DE CUSTOS COM MAIOR CUSTO COM BRINDES ======================================
-
-    # ---------------------------------------------------- Análise Mensal ------------------------------------------------------
-
+    # ---------------------------------------------------------------------------------
+    # TOP 5 CENTROS DE CUSTOS COM MAIOR CUSTO
+    # ---------------------------------------------------------------------------------
+    #  Análise Mensal -----------------------------------------------------------------
     # Dicionário para armazenar os resultados mensais
     dados_mensais_cc = {}
 
     print('='*120)
-    print('🏆 TOP 5 CC COM MAIORES CUSTOS NO MÊS')
+    print('🏆 TOP 5 CENTRO DE CUSTO COM MAIOR CUSTO NO MÊS')
+    print('='*120)
 
     # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
+        # Cria um novo df, apenas com os dados cujo valor na coluna 'mes' é igual ao mês do loop.
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
 
-        # Retorna o nome dos mês da nova df_mes criada na etapa anterior
+        # Retorna o nome dos mês da nova df_mes
         nome_mes = df_mes['nome_mes'].iloc[0]
 
-        # Soma a coluna custos de acordo com o mês sendo analisado
+        # Soma a coluna custos total
         total_custo_mes = df_mes['custo_unitario_total'].sum()
 
-        # Soma a coluna custos de acordo com o CC e o mês sendo analisado gerando um novo df onde cada linha mostra o custo total acumulado para um CC específico naquele mês
+        # Soma a coluna custos total de acordo com o CC gerando um novo df onde cada linha mostra o custo total acumulado para o CC.
         total_custo_cc = df_mes.groupby(['centro_custo'])[
             ['custo_unitario_total']].sum()
 
-        # Cria a coluna AV (Total por CC / Total geral no mês em análise)
+        # Cria a coluna AV (Total por CC / Total geral)
         total_custo_cc['(%) S/Custo mensal'] = (
             total_custo_cc['custo_unitario_total'] / total_custo_mes) * 100
 
@@ -228,9 +202,9 @@ if __name__ == '__main__':
         print(top_custo_mes[['(%) S/Custo mensal']])
         print("\n")
 
-    # ---------------------------------------- Análise Geral -------------------------------------------
-
-    # Soma a coluna custos de acordo com o CC, , gerando um novo df onde cada linha mostra o custo total acumulado para um CC específico
+    # ---------------------------------------------------------------------------------
+    #  Análise Geral ------------------------------------------------------------------
+    # Soma a coluna custos total de acordo com o CC gerando um novo df onde cada linha mostra o custo total acumulado para o CC.
     total_custo_cc = dfBrindes.groupby(['centro_custo'])[
         ['custo_unitario_total']].sum()
 
@@ -244,36 +218,38 @@ if __name__ == '__main__':
 
     # Exibição dos dado
     print('='*120)
-    print('🏆 TOP 5 CC COM MAIORES CUSTOS DE BRINDES TOTAL')
+    print('🏆 TOP 5 CENTRO DE CUSTO COM MAIOR CUSTO GERAL')
     print('='*120 + "\n")
     print(top_custo_total[['(%) S/Custo total']])
     print("\n" + "="*120 + "\n")
 
-    # ==================================== EXIBIR TOP 5 CLIENTES COM MAIOR CUSTO COM BRINDES ========================================
-
-    # ---------------------------------------------------- Análise Mensal ------------------------------------------------------
-
+    # ---------------------------------------------------------------------------------
+    # EXIBIR TOP 5 CLIENTES COM MAIOR CUSTO
+    # ---------------------------------------------------------------------------------
+    # Análise Mensal -----------------------------------------------------------------
     # Dicionário para armazenar os resultados mensais
     dados_mensais_cliente = {}
 
     print('='*120)
-    print('🏆 TOP 5 CLIENTES COM MAIOR CUSTO NO MÊS COM BRINDES')
+    print('🏆 TOP 5 CLIENTES COM MAIOR CUSTO NO MÊS')
+    print('='*120)
 
     # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
+        # Cria um novo df, apenas com os dados cujo valor na coluna 'mes' é igual ao mês do loop.
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
 
-        # Retorna o nome dos mês da nova df_mes criada na etapa anterior
+        # Retorna o nome dos mês da nova df_mes
         nome_mes = df_mes['nome_mes'].iloc[0]
 
-        # Soma a coluna custos de acordo com o mês sendo analisado
+        # Soma a coluna custos total
         total_custo_mes = df_mes['custo_unitario_total'].sum()
 
-        # Soma a coluna custos de acordo com o Cliente e o mês sendo analisado, gerando um novo df onde cada linha mostra o custo total acumulado para um Cliente específico naquele mês
+        # Soma a coluna custos total de acordo com o Cliente gerando um novo df onde cada linha mostra o custo total acumulado para o Cliente.
         total_custo_cliente = df_mes.groupby(['cod_cliente', 'descricao_cliente'])[
             ['custo_unitario_total']].sum()
 
-        # Cria a coluna AV (Total por Cliente / Total geral no mês em análise)
+        # Cria a coluna AV (Total por Cliente / Total geral)
         total_custo_cliente['(%) S/Custo mensal'] = (
             total_custo_cliente['custo_unitario_total'] / total_custo_mes) * 100
 
@@ -289,9 +265,9 @@ if __name__ == '__main__':
         print(top_custo_mes[['(%) S/Custo mensal']])
         print("\n")
 
-    # ---------------------------------------- Análise Geral -------------------------------------------
-
-    # Soma a coluna custos de acordo com o Cliente
+    # ---------------------------------------------------------------------------------
+    #  Análise Geral ------------------------------------------------------------------
+    # Soma a coluna custos total de acordo com o Cliente gerando um novo df onde cada linha mostra o custo total acumulado para o Cliente.
     total_custo_cliente = dfBrindes.groupby(['cod_cliente', 'descricao_cliente'])[
         ['custo_unitario_total']].sum()
 
@@ -305,35 +281,33 @@ if __name__ == '__main__':
 
     # Exibição dos dado
     print('='*120)
-    print('🏆 TOP 5 CLIENTES COM MAIOR CUSTO TOTAL COM BRINDES')
+    print('🏆 TOP 5 CLIENTES COM MAIOR CUSTO GERAL')
     print('='*120 + "\n")
     print(top_custo_total[['(%) S/Custo total']])
 
-    # ========================================= MATRIZ DE CORRELAÇÃO DE CUSTOS ========================================
-
+    # ---------------------------------------------------------------------------------
+    # MATRIZ DE CORRELAÇÃO DE CUSTOS
+    # ---------------------------------------------------------------------------------
+    # O objetivo é descobrir o quão forte e em que direção cada componente que forma o custo, está relacionado com o custo_final.
     print('\n' + '='*120)
-    print('🔗 ANÁLISE DE CORRELAÇÃO: Componentes vs. Custo Final')
+    print('🔗 ANÁLISE DE CORRELAÇÃO: Custo Final')
     print('='*120)
 
-    """
-    O objetivo principal é descobrir o quão forte e em que direção cada componente (variável) está relacionado com o custo_final.
-    """
-    # Variável alvo (target)
+    # Variável alvo (target).
     variavel_target = 'custo_final'
 
-    # Determina as variáveis/colunas para análise da correlação
+    # Determina as variáveis/colunas para análise da correlação.
     variaveis_componentes = [
         'custo_unitario_total',
         'valor_icms',
         'valor_icms_st',
         'icms_interestadual_uf_destino',
-        'valor_icms_fcp_uf_destino'
-    ]
+        'valor_icms_fcp_uf_destino']
 
-    # Dicionário para armazenar os resultados da correlação
+    # Dicionário para armazenar os resultados da correlação.
     correlacoes = {}
 
-    # Calcula a correlação de Pearson de cada componente com o custo_final
+    # Calcula a correlação de cada componente com o custo_final
     for var in variaveis_componentes:
         # O método .corr() calcula a correlação entre duas Series
         correlacao_valor = dfBrindes[var].corr(dfBrindes[variavel_target])
@@ -341,7 +315,7 @@ if __name__ == '__main__':
 
     # Converte o resultado para uma Series do Pandas para facilitar a visualização e ordenação
     df_correlacao_final = pd.Series(
-        correlacoes).sort_values(ascending=False).round(4)
+        correlacoes).sort_values(ascending=False).round(2)
 
     # Exibe o resultado formatado
     print(f"\n Correlação com a Variável '{variavel_target}'")
@@ -350,7 +324,9 @@ if __name__ == '__main__':
     print(df_correlacao_final)
     print("\n" + "="*120 + "\n")
 
-    # ========================================= CURVA ABC: ESTADO vs CUSTO FINAL ========================================
+    # ---------------------------------------------------------------------------------
+    # CURVA ABC: ESTADO vs CUSTO FINAL
+    # ---------------------------------------------------------------------------------
     # Agregação do custo_final por estado
     df_abc_final = (
         dfBrindes.groupby('estado').agg(total_valor=('custo_final', 'sum')).sort_values(
@@ -369,17 +345,15 @@ if __name__ == '__main__':
     total_geral = df_abc_final['total_valor'].sum()
 
     df_abc_final['participacao_relativa_%'] = (
-        df_abc_final['total_valor'] / total_geral
-    ) * 100
+        df_abc_final['total_valor'] / total_geral) * 100
 
     df_abc_final['participacao_acumulada_%'] = (
-        df_abc_final['participacao_relativa_%'].cumsum()
-    )
+        df_abc_final['participacao_relativa_%'].cumsum())
 
     """
     .cumsum(): É um método do Pandas que calcula a soma acumulada dos valores da coluna anterior (participacao_relativa_%).
-
-    Funciona assim: O valor da primeira linha é somado ao valor da segunda linha. O resultado é somado ao valor da terceira linha, e assim por diante.
+    
+    O valor da primeira linha é somado ao valor da segunda linha. O resultado é somado ao valor da terceira linha, e assim por diante.
 
     Função: Como o DataFrame está ordenado, esta coluna informa qual percentual do custo total é coberto ao somar os estados mais importantes.
 
@@ -390,8 +364,7 @@ if __name__ == '__main__':
     # Classificação ABC (80/15/5)
     condicoes = [
         df_abc_final['participacao_acumulada_%'] <= 80,
-        df_abc_final['participacao_acumulada_%'] <= 95
-    ]
+        df_abc_final['participacao_acumulada_%'] <= 95]
     escolhas = ['A', 'B']
     df_abc_final['classe_abc'] = np.select(condicoes, escolhas, default='C')
 
@@ -420,10 +393,11 @@ if __name__ == '__main__':
 
     resumo_abc_estado = resumo_abc_estado.rename(columns={
         'num_estados': 'Qtd. Estados',
-        'participacao_custo': '(%) Custo Total Estado'
-    })
+        'participacao_custo': '(%) Custo Total Estado'})
 
-    # ========================================= CURVA ABC: CENTRO CUSTO vs. CUSTO FINAL  ===============================================
+    # ---------------------------------------------------------------------------------
+    # CURVA ABC: CENTRO CUSTO vs CUSTO FINAL
+    # ---------------------------------------------------------------------------------
     # Agregação do custo_final por centro_custo
     df_abc_cc = dfBrindes.groupby('centro_custo').agg(total_valor=('custo_final', 'sum')).sort_values(
         by='total_valor', ascending=False).reset_index()
@@ -463,29 +437,25 @@ if __name__ == '__main__':
         'participacao_custo': '(%) Custo Total CC'
     })
 
-    # ---------------------------------------------- PLOTAGEM ESTADO (APENAS CLASSE A)  ----------------------------------------------------
+    # ---------------------------------------------------------------------------------
+    #  PLOTAGEM ESTADO (APENAS CLASSE A)
+    # ---------------------------------------------------------------------------------
 
     # Cores
     COR_AZUL_ESCURO = '#4E56C0'
-    COR_AZUL_CLARO = '#9B5DE0'
-    COR_VERDE_ESCURO = '#D78FEE'
-    COR_VERDE_CLARO = '#FDCFFA'
+    COR_ROXO_CLARO = '#9B5DE0'
+    COR_ROSA_MEDIO = '#D78FEE'
+    COR_ROSA_CLARO = '#FDCFFA'
     COR_ROXA = '#9112BC'
 
-    # Filtrar apenas a Classe A e o DataFrame original
+    # Filtrar apenas a Classe A e o DataFrame original.
     estados_classe_a = df_abc_final[df_abc_final['classe_abc']
                                     == 'A']['estado'].tolist()
+    # .tolist(): converte a Series em uma lista.
 
-    """
-    # .tolist(): este método converte a Series do Pandas (que contém os nomes dos estados) em uma lista padrão do Python.
-    """
-
-    # Filtrar o DataFrame original para incluir apenas os estados da Classe A
+    # Filtrar o DataFrame original para incluir apenas os estados da Classe A.
     df_classe_a_detalhe = dfBrindes[dfBrindes['estado'].isin(estados_classe_a)]
-
-    """
-    # .isin(estados_classe_a): Verifica, linha por linha, se o estado daquela linha (ex: 'SP') está presente na lista estados_classe_a (que você criou no passo anterior).
-    """
+    # .isin(): Verifica, se o estado daquela linha (ex: 'SP') está presente na lista estados_classe_a.
 
     # Agrupar os componentes do custo por estado (apenas Classe A)
     df_composicao = df_classe_a_detalhe.groupby('estado').agg({
@@ -503,7 +473,6 @@ if __name__ == '__main__':
     custo_final_total_geral = dfBrindes['custo_final'].sum()
 
     # Criação das Bases Percentuais (Para PLOTAGEM)
-
     # Altura da Barra (Eixo Y): Percentual do Estado sobre o Total Geral
     df_percentual_estado = (total_custo / custo_final_total_geral) * 100
 
@@ -542,19 +511,19 @@ if __name__ == '__main__':
     p1 = plt.bar(estados, plot_custo_base, color=COR_AZUL_ESCURO,
                  label='Custo')
     p2 = plt.bar(estados, plot_icms, bottom=bottom_icms,
-                 color=COR_AZUL_CLARO, label='ICMS')
+                 color=COR_ROXO_CLARO, label='ICMS')
     p3 = plt.bar(estados, plot_icms_st, bottom=bottom_icms_st,
-                 color=COR_VERDE_ESCURO, label='ICMS ST')
+                 color=COR_ROSA_MEDIO, label='ICMS ST')
     p4 = plt.bar(estados, plot_icms_interestadual, bottom=bottom_icms_interestadual,
-                 color=COR_VERDE_CLARO, label='ICMS Interestadual')
+                 color=COR_ROSA_CLARO, label='ICMS Interestadual')
     p5 = plt.bar(estados, plot_fcp, bottom=bottom_fcp,
                  color=COR_ROXA, label='ICMS FCP')
 
     # Adicionar Títulos e Rótulos
     plt.title(
-        'Composição Percentual do Custo Final nos Estados da Classe A', fontsize=16)
+        'Composição (%) do Custo Final nos Estados da Classe A', fontsize=16)
     plt.xlabel('Estado', fontsize=12)
-    plt.ylabel('Representatividade S/ Custo Final (%)', fontsize=12)
+    plt.ylabel('(%) S/ Custo Final', fontsize=12)
     plt.xticks(rotation=45, ha='right')
     plt.ylim(0, 100)
 
@@ -570,11 +539,8 @@ if __name__ == '__main__':
         bbox_to_anchor=(0, 1),
         frameon=False)
 
-    # -------------------------------------------------------------
-    # INSERÇÃO DO RESUMO ABC COMO TEXTO NO GRÁFICO
-    # -------------------------------------------------------------
-
-    # 1. Preparar o texto formatado para o box
+    # ---------------------------------------------------------------------------------
+    # INSERÇÃO DO RESUMO ABC COMO TEXTO NO GRÁFICO ------------------------------------
 
     # Montar o cabeçalho
     cabecalho = "Resumo da Classificação Estado\n"
@@ -585,7 +551,7 @@ if __name__ == '__main__':
     # Combinar
     texto_box = cabecalho + tabela_dados
 
-    # 2. Inserir o texto no gráfico
+    # Inserir o texto no gráfico
     # plt.gca() retorna o eixo atual
     plt.gca().text(
         x=0.98,  # Posição X: 98% da largura do eixo (próximo à direita)
@@ -603,7 +569,9 @@ if __name__ == '__main__':
     plt.tight_layout()
     plt.show()
 
-# ========================================= PLOTAGEM CENTRO CUSTO (APENAS CLASSE A)  ========================================
+    # ---------------------------------------------------------------------------------
+    # PLOTAGEM CENTRO CUSTO (APENAS CLASSE A)
+    # ---------------------------------------------------------------------------------
 
     # Filtrar apenas a Classe A
     ccs_classe_a = df_abc_cc[df_abc_cc['classe_abc']
@@ -620,8 +588,7 @@ if __name__ == '__main__':
         'valor_icms_st': 'sum',
         'icms_interestadual_uf_destino': 'sum',
         'valor_icms_fcp_uf_destino': 'sum',
-        'custo_final': 'sum'
-    })
+        'custo_final': 'sum'})
 
     df_composicao_cc = df_composicao_cc.sort_values(
         by='custo_final',
@@ -636,7 +603,6 @@ if __name__ == '__main__':
     custo_final_total_geral = dfBrindes['custo_final'].sum()
 
     # Criação das Bases Percentuais
-
     # Altura da Barra (Eixo Y): Percentual do CC sobre o Total Geral
     df_percentual_cc = (total_custo_cc / custo_final_total_geral) * 100
 
@@ -676,11 +642,11 @@ if __name__ == '__main__':
     p1 = plt.bar(centros_custo, plot_custo_base,
                  color=COR_AZUL_ESCURO, label='Custo')
     p2 = plt.bar(centros_custo, plot_icms, bottom=bottom_icms,
-                 color=COR_AZUL_CLARO, label='ICMS')
+                 color=COR_ROXO_CLARO, label='ICMS')
     p3 = plt.bar(centros_custo, plot_icms_st, bottom=bottom_icms_st,
-                 color=COR_VERDE_ESCURO, label='ICMS ST')
+                 color=COR_ROSA_MEDIO, label='ICMS ST')
     p4 = plt.bar(centros_custo, plot_icms_interestadual, bottom=bottom_icms_interestadual,
-                 color=COR_VERDE_CLARO, label='ICMS Interestadual')
+                 color=COR_ROSA_CLARO, label='ICMS Interestadual')
     p5 = plt.bar(centros_custo, plot_fcp, bottom=bottom_fcp,
                  color=COR_ROXA, label='ICMS FCP')
 
@@ -704,11 +670,8 @@ if __name__ == '__main__':
         bbox_to_anchor=(0, 1),
         frameon=False)
 
-    # -------------------------------------------------------------
-    # INSERÇÃO DO RESUMO ABC COMO TEXTO NO GRÁFICO
-    # -------------------------------------------------------------
-
-    # 1. Preparar o texto formatado para o box
+    # ---------------------------------------------------------------------------------
+    # INSERÇÃO DO RESUMO ABC COMO TEXTO NO GRÁFICO ------------------------------------
 
     # Montar o cabeçalho
     cabecalho = "Resumo da Classificação CC\n"
@@ -719,7 +682,7 @@ if __name__ == '__main__':
     # Combinar
     texto_box = cabecalho + tabela_dados
 
-    # 2. Inserir o texto no gráfico
+    # Inserir o texto no gráfico
     # plt.gca() retorna o eixo atual
     plt.gca().text(
         x=0.98,  # Posição X: 98% da largura do eixo (próximo à direita)
@@ -737,9 +700,10 @@ if __name__ == '__main__':
     plt.tight_layout()
     plt.show()
 
-# ======================================================= PLOTAGEM MÊS  =========================================================
-
-    # ----------------------------------------------- PREPARAÇÃO DE DADOS -----------------------------------------------
+    # ---------------------------------------------------------------------------------
+    #  PLOTAGEM MÊS
+    # ---------------------------------------------------------------------------------
+    #  PREPARAÇÃO DE DADOS ------------------------------------------------------------
 
     # Cria uma coluna de Mês/Ano para agrupar e ordenar
     dfBrindes['mes_ano'] = dfBrindes['data'].dt.strftime('%Y-%m')
@@ -771,7 +735,7 @@ if __name__ == '__main__':
     df_percentual_fcp = (
         df_temp_mensal['valor_icms_fcp_uf_destino'] / df_temp_mensal['total_custo']) * 100
 
-    # ------------------------------------------ PREPARAÇÃO PARA PLOTAGEM --------------------------------------------------------
+    # PLOTAGEM ------------------------------------------------------------------------
 
     # Os valores plotados serão os valores REAIS (R$) para mostrar a tendência total
     meses = df_composicao_mensal.index
@@ -787,19 +751,17 @@ if __name__ == '__main__':
     bottom_icms_interestadual = bottom_icms_st + plot_icms_st
     bottom_fcp = bottom_icms_interestadual + plot_icms_interestadual
 
-    # ---------------------------------------------------- PLOTAGEM ---------------------------------------------------------------
-
     plt.figure(figsize=(14, 7))
 
     # Plotar o gráfico de barras empilhadas (5 fatias)
     p1 = plt.bar(meses, plot_custo_base, color=COR_AZUL_ESCURO,
                  label='Custo')
     p2 = plt.bar(meses, plot_icms, bottom=bottom_icms,
-                 color=COR_AZUL_CLARO, label='ICMS')
+                 color=COR_ROXO_CLARO, label='ICMS')
     p3 = plt.bar(meses, plot_icms_st, bottom=bottom_icms_st,
-                 color=COR_VERDE_ESCURO, label='ICMS ST')
+                 color=COR_ROSA_MEDIO, label='ICMS ST')
     p4 = plt.bar(meses, plot_icms_interestadual, bottom=bottom_icms_interestadual,
-                 color=COR_VERDE_CLARO, label='ICMS Interestadual')
+                 color=COR_ROSA_CLARO, label='ICMS Interestadual')
     p5 = plt.bar(meses, plot_fcp, bottom=bottom_fcp,
                  color=COR_ROXA, label='ICMS FCP')
 
@@ -832,17 +794,18 @@ if __name__ == '__main__':
     plt.tight_layout()
     plt.show()
 
-    # ==================================== REPRESENTATIVIDADE DO CUSTO POR LINHA DRE ========================================
-
-    # 1. Agrupar os dados por 'linha_dre' e somar o 'custo_final'
+    # ---------------------------------------------------------------------------------
+    #  REPRESENTATIVIDADE DO CUSTO POR LINHA DRE
+    # ---------------------------------------------------------------------------------
+    # Agrupar os dados por 'linha_dre' e somar o 'custo_final'
     df_dre_custo = dfBrindes.groupby('linha_dre').agg(
         total_custo_final=('custo_final', 'sum')
     ).sort_values(by='total_custo_final', ascending=False).reset_index()
 
-    # 2. Calcular o Custo Final Total Geral
+    # Calcular o Custo Final Total Geral
     custo_final_total_geral = df_dre_custo['total_custo_final'].sum()
 
-    # 3. Calcular a Participação Relativa (%)
+    # Calcular a Participação Relativa (%)
     df_dre_custo['participacao_%'] = (
         df_dre_custo['total_custo_final'] / custo_final_total_geral
     ) * 100
@@ -852,18 +815,15 @@ if __name__ == '__main__':
     df_dre_custo['total_custo_final'] = df_dre_custo['total_custo_final'].map(
         '{:,.2f}'.format)
 
-    # 4. PLOTAGEM (Gráfico de Barras)
+    # PLOTAGEM (Gráfico de Barras)
 
     # Preparar os dados para plotagem (sem a formatação de string)
     df_plot = df_dre_custo.sort_values(by='participacao_%', ascending=True)
     categorias_dre = df_plot['linha_dre']
     percentuais = df_plot['participacao_%']
 
-    # Cores e configurações
-    COR_AZUL_ESCURO = '#4E56C0'  # Usando a mesma cor do seu código
-    COR_CINZA = '#A0A0A0'
     # Destacar a maior categoria
-    cores_barras = [COR_CINZA] * (len(categorias_dre) - 1) + [COR_AZUL_ESCURO]
+    cores_barras = [COR_ROSA_CLARO] * (len(categorias_dre) - 1) + [COR_ROXA]
 
     plt.figure(figsize=(10, 6))
 
@@ -877,14 +837,14 @@ if __name__ == '__main__':
 
     # Títulos e Rótulos
     plt.title(
-        'Representatividade do Custo Final por Linha DRE', fontsize=16)
+        '(%) do Custo Final por Linha DRE', fontsize=16)
     plt.xlabel('Participação no Custo Final (%)', fontsize=12)
     plt.ylabel('Linha DRE', fontsize=12)
 
     # Formatação do Eixo X (Para adicionar o símbolo de %)
     formatter = mtick.PercentFormatter()
     plt.gca().xaxis.set_major_formatter(formatter)
+    plt.xlim(0, 50)
 
-    plt.grid(axis='x', linestyle='--', alpha=0.6)
     plt.tight_layout()
     plt.show()
