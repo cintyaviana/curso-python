@@ -1,0 +1,62 @@
+Vocês aceitam encomendas por Skype?;Sim, aceitamos encomendas por Skype durante o horário comercial.
+Vocês aceitam encomendas por Teams?;Sim, aceitamos encomendas por Teams durante o horário comercial.
+Vocês aceitam encomendas por Zoom?;Sim, aceitamos encomendas por Zoom durante o horário comercial.
+Vocês aceitam encomendas por Google Meet?;Sim, aceitamos encomendas por Google Meet durante o horário comercial.
+Vocês aceitam encomendas por Discord?;Sim, aceitamos encomendas por Discord durante o horário comercial.
+Vocês aceitam encomendas por Slack?;Sim, aceitamos encomendas por Slack durante o horário comercial.
+Vocês aceitam encomendas por WeChat?;Sim, aceitamos encomendas por WeChat durante o horário comercial.
+Vocês aceitam encomendas por Line?;Sim, aceitamos encomendas por Line durante o horário comercial.
+Vocês aceitam encomendas por Signal?;Sim, aceitamos encomendas por Signal durante o horário comercial.
+Vocês aceitam encomendas por Viber?;Sim, aceitamos encomendas por Viber durante o horário comercial.
+Vocês têm suporte para clientes internacionais?;Sim, oferecemos suporte em inglês e espanhol para clientes internacionais.
+Como faço para abrir uma reclamação?;Você pode abrir uma reclamação pelo e-mail suporte@empresa.com.
+Vocês oferecem suporte via chat online?;Sim, nosso chat online está disponível de segunda a sexta, das 9h às 18h.
+Como alterar meus dados cadastrais?;Você pode alterar seus dados acessando sua conta no nosso site.
+Posso cancelar minha assinatura a qualquer momento?;Sim, você pode cancelar sua assinatura a qualquer momento sem custo adicional.
+Vocês oferecem planos corporativos?;Sim, temos planos especiais para empresas.
+É possível agendar entrega em horário específico?;Sim, você pode solicitar a entrega em um horário específico no checkout.
+Vocês oferecem garantia estendida?;Sim, oferecemos garantia estendida por até 2 anos.
+Vocês possuem programa de fidelidade?;Sim, temos um programa de pontos para clientes frequentes.
+Como funciona o programa de pontos?;Cada compra acumula pontos que podem ser trocados por descontos.
+Vocês aceitam pagamentos parcelados?;Sim, aceitamos parcelamento em até 12x no cartão de crédito.
+É possível retirar o produto na loja?;Sim, você pode optar por retirar o produto na nossa loja física.
+Vocês oferecem embalagens para presente?;Sim, temos serviço de embalagem para presente disponível no checkout.
+Como solicitar nota fiscal eletrônica?;A nota fiscal é enviada automaticamente por e-mail após a compra.
+Posso devolver o produto sem a embalagem original?;Sim, mas é necessário que o produto esteja em perfeito estado.
+Vocês aceitam trocas de produtos em promoção?;Sim, trocas de produtos em promoção são aceitas nas mesmas condições.
+Como funciona a política de cancelamento?;Pedidos podem ser cancelados até 24h após a confirmação de compra.
+É possível alterar o endereço de entrega depois do pedido?;Sim, entre em contato com nosso suporte imediatamente para alterar o endereço.
+Vocês oferecem atendimento via WhatsApp?;Sim, nosso atendimento via WhatsApp está disponível de segunda a sexta, das 9h às 18h.
+Como posso acompanhar minhas ordens?;Você pode acompanhar suas ordens acessando sua conta no site ou app.
+Vocês oferecem cupons de desconto?;Sim, regularmente enviamos cupons de desconto para clientes cadastrados.
+É possível fazer pedidos fora do horário comercial?;Sim, pedidos podem ser realizados a qualquer momento, mas o atendimento ocorre apenas no horário comercial.
+Vocês enviam confirmações de pedido por SMS?;Sim, se o cliente informar o número de telefone durante a compra.
+Como faço para atualizar meu e-mail cadastrado?;Entre em sua conta e altere o e-mail nas configurações de perfil.
+Vocês oferecem suporte por telefone?;Sim, nosso telefone de atendimento é (11) 99999-9999.
+Como posso alterar meu método de pagamento?;Você pode alterar o método de pagamento na sua conta antes de concluir a compra.
+Vocês aceitam pagamentos via PayPal?;Sim, aceitamos pagamentos via PayPal.
+É possível comprar presentes para terceiros?;Sim, você pode enviar produtos diretamente para outra pessoa no checkout.
+Vocês oferecem atendimento em outros idiomas?;Sim, oferecemos atendimento em inglês e espanhol.
+Posso solicitar nota fiscal em CPF diferente?;Sim, informe o CPF correto no momento da compra.
+Como faço para acessar meu histórico de pedidos?;Você pode acessar pelo menu “Meus Pedidos” em sua conta.
+Vocês têm promoções sazonais?;Sim, realizamos promoções em datas especiais como Black Friday e Natal.
+Como funciona o atendimento ao cliente?;Nosso atendimento é realizado via chat, e-mail e telefone.
+Posso falar com um gerente?;Sim, solicite contato com o gerente através do suporte.
+Vocês têm política de devolução para produtos digitais?;Sim, produtos digitais podem ser devolvidos em até 7 dias após a compra.
+É possível trocar produtos comprados em liquidação?;Sim, trocas seguem as mesmas regras da política de devolução.
+Vocês oferecem suporte técnico para produtos comprados há mais de um ano?;Sim, o suporte técnico está disponível para todos os produtos adquiridos.
+Como posso recuperar minha senha?;Clique em “Esqueci minha senha” na página de login.
+Vocês oferecem atendimento personalizado?;Sim, clientes VIPs recebem atendimento personalizado.
+Vocês aceitam pagamentos em criptomoedas?;Não, atualmente não aceitamos criptomoedas.
+Como posso receber notificações sobre promoções?;Cadastre-se em nossa newsletter para receber promoções.
+Posso alterar o endereço de cobrança?;Sim, altere o endereço de cobrança em sua conta antes de finalizar a compra.
+Vocês oferecem suporte para empresas?;Sim, temos equipe dedicada para suporte empresarial.
+Como faço para me cadastrar?;Clique em “Criar Conta” e siga os passos no site.
+Vocês têm blog ou canal de notícias?;Sim, acesse nosso blog através do site para novidades e dicas.
+Vocês têm aplicativo para iOS e Android?;Sim, disponível nas lojas App Store e Google Play.
+Qual o horario de atendimento?;Horario comercial - hora de Brasilia -das 8:00 as 18:00 de segunda a sexta.
+Horário comercial aos sábados;Das 8:00 às 13:00
+Fazemos entregas na cidade do cliente;Sim, entregamos em todo o Brasil
+Atendimento noturno;Não atendemos à noite
+Telefone de atendimento;0800-123-456
+

@@ -5,6 +5,113 @@ from py_fBrinde import get_fBrinde
 from py_dProduto import get_dProduto
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_absolute_error, r2_score
+import warnings
+
+# Ocultar avisos do sklearn e pandas para manter o código limpo
+warnings.filterwarnings("ignore")
+
+# ==================================================================
+# 1. FUNÇÃO PREDITIVA: CUSTO UNITÁRIO (MODELO ML - RANDOM FOREST)
+# ==================================================================
+
+
+def prever_custo_unitario_ml(sku_input, quantidade_input, modelo_ml):
+    # Prevê APENAS o custo_unitario (custo base)
+
+    print("-> Previsão de Custo Unitário Base usando Random Forest Regressor...")
+
+    # 1. Criar o DataFrame de entrada com as features
+    data_input = pd.DataFrame({
+        'cod_sku': [sku_input],
+        'quantidade': [quantidade_input],
+    })
+
+    # GARANTE que o SKU seja STRING
+    data_input['cod_sku'] = data_input['cod_sku'].astype(str)
+
+    # 2. Fazer a previsão usando o pipeline
+    custo_unitario_previsto = modelo_ml.predict(data_input)[0]
+
+    return custo_unitario_previsto
+
+# ==================================================================
+# 3. TREINAMENTO DO MODELO RANDOM FOREST REGRESSOR
+# ==================================================================
+
+
+def treinar_modelo_custo_base(df_treinamento):  # Nome da função ajustado
+    # Treina o modelo Random Forest Regressor para prever o custo_unitario.
+    print("\n" + "="*70)
+    print("🧠 TREINAMENTO DO MODELO DE MACHINE LEARNING (CUSTO UNITÁRIO BASE) 🧠")
+
+    # 3.1. Tratamento de dados para o ML
+    # O CUSTO UNITÁRIO AGORA É O TARGET
+    df_treinamento['custo_unitario'] = pd.to_numeric(
+        df_treinamento['custo_unitario'], errors='coerce')
+    df_treinamento['quantidade'] = pd.to_numeric(
+        df_treinamento['quantidade'], errors='coerce')
+    df_treinamento['cod_sku'] = df_treinamento['cod_sku'].astype(str)
+
+    # Remove linhas com valores faltantes
+    df_treinamento.dropna(
+        subset=['custo_unitario', 'quantidade'], inplace=True)
+
+    # 3.2. Definição de Features (X) e Target (Y)
+    features = ['cod_sku', 'quantidade']
+    target = 'custo_unitario'  # NOVO TARGET: Apenas o custo unitário
+
+    X = df_treinamento[features]
+    Y = df_treinamento[target]
+
+    # 3.3. Pré-processamento (Pipeline)
+    categorical_features = ['cod_sku']
+    numeric_features = ['quantidade']
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('categoria', OneHotEncoder(sparse_output=False,
+             handle_unknown='ignore'), categorical_features),
+            ('numerico', 'passthrough', numeric_features)
+        ])
+
+    # 3.4. Criação do Pipeline e Treinamento
+    modelo_ml = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('regressor', RandomForestRegressor(
+            n_estimators=100, random_state=42, n_jobs=-1))
+    ])
+
+    # Divisão para validação
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X, Y, test_size=0.2, random_state=42)
+
+    print("-> Iniciando treinamento do Random Forest...")
+    if len(X_train) == 0:
+        print("ERRO: O conjunto de treinamento está vazio. Verifique os dados de entrada.")
+        return None
+
+    modelo_ml.fit(X_train, Y_train)
+    print("-> Treinamento concluído.")
+
+    # 3.5. Avaliação
+    Y_pred = modelo_ml.predict(X_test)
+
+    mae = mean_absolute_error(Y_test, Y_pred)
+    r2 = r2_score(Y_test, Y_pred)
+
+    print(f"--- Métrica do Modelo (Teste Simulado) ---")
+    print(f"MAE (Erro Absoluto Médio): R$ {mae:,.4f}")
+    print(f"R² (Coef. de Determinação): {r2:.4f}")
+    print(f"O modelo de ML treinou com {len(X_train)} registros.")
+    print("="*70)
+
+    return modelo_ml
 
 # ==================================================================
 # 1. FUNÇÃO PREDITIVA: CUSTO UNITÁRIO MÉDIO E CUSTO TOTAL PREVISTO
@@ -12,11 +119,13 @@ import pandas as pd
 # Prevê o custo total de um SKU baseado no custo médio histórico.
 
 
-def prever_custo_total(sku_input, quantidade_input, modelo_custo_unitario):
-    custo_unitario_medio = modelo_custo_unitario[sku_input]
-    custo_total_previsto = custo_unitario_medio * quantidade_input
+def prever_custo_total(sku_input, quantidade_input, modelo_ml):
+    custo_unitario_previsto = prever_custo_unitario_ml(
+        sku_input, quantidade_input, modelo_ml
+    )
+    custo_total_previsto = custo_unitario_previsto * quantidade_input
 
-    return custo_total_previsto, custo_unitario_medio
+    return custo_total_previsto, custo_unitario_previsto
 
     """
      "modelo_custo_unitario" >> é um dicionário (chave: SKU, valor: custo unitário médio) criado a partir do cálculo na média dos custos do SKU
@@ -209,34 +318,18 @@ dfProjeto = pd.merge(
 ).drop(columns=['cod_produto'])
 
 # ==================================================================
-# 5. TREINAMENTO DO MODELO CUSTO UNITÁRIO
+# 5. TREINAMENTO DO MODELO_ML DE CUSTO UNITÁRIO
 # ==================================================================
-# Cria o dicionário de busca para o custo unitário em relação ao SKU.
+# Agora treina o modelo ML para prever o Custo Unitário (Target: custo_unitario).
 
-print("[MODELO] Criando modelo de custo médio por SKU...")
+print("[MODELO] Treinando modelo de Machine Learning (Custo Unitário Base)...")
 
-dfProjeto['cod_sku'] = pd.to_numeric(
-    dfProjeto['cod_sku'])
+# Chamada da função de treinamento ML
+modelo_ml = treinar_modelo_custo_base(dfProjeto)
 
-modelo_custo_unitario = dfProjeto.groupby(
-    'cod_sku')['custo_unitario'].mean().to_dict()
-
-"""
-pd.to_numeric() >> garante que a coluna de código do produto (cod_sku) seja tratada como um tipo de dado numérico.
-
-errors='coerce': Este é um argumento de segurança. Se o Pandas encontrar qualquer valor na coluna que não possa ser convertido para um número (como, por exemplo, um texto "N/A"), ele irá substituí-lo por NaN (Not a Number).
-
-.groupby() >> Agrupa todas as linhas do DataFrame (dfProjeto) que possuem o mesmo código de SKU.
-
-.mean() >> Pega todos os valores na coluna custo_unitario e calcula a média aritmética em relação ao SKU.
-
-.to_dict() >> O resultado do cálculo da média (que é uma Série do Pandas) é transformado em um dicionário.
-
-    >> O cod_sku se torna a chave (key).
-
-    >> O Custo Unitário Médio calculado se torna o valor.
-
-"""
+# Renomeia a variável para manter a compatibilidade com a função simulador
+# O simulador espera 'modelo_custo_unitario', que agora é a instância do modelo ML.
+modelo_custo_unitario = modelo_ml
 
 # ==================================================================
 # 6. CRIAÇÃO DOS LOOKUPS PARA REGRAS DE ICMS
@@ -356,11 +449,11 @@ if __name__ == "__main__":
 
     natureza_teste = 'Bonificação'
     natureza_venda_teste = 'Consumidor final'
-    cliente_teste = 19965
-    sku_teste = 10344
-    quantidade_teste = 1650
-    valor_nf_teste = 105517.5
-    estado_teste = 'SP'
+    cliente_teste = 20001
+    sku_teste = str(10343)
+    quantidade_teste = 230
+    valor_nf_teste = 18837
+    estado_teste = 'PE'
 
     resultado_final = simulador(
         natureza_teste,

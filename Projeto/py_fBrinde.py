@@ -766,25 +766,12 @@ if __name__ == '__main__':
                  color=COR_ROXA, label='ICMS FCP')
 
     # Adicionar Títulos e Rótulos
-    plt.title('Evolução Mensal da Composição do Custo Final (R$)', fontsize=16)
+    plt.title('Evolução Mensal da Composição do Custo Final', fontsize=16)
     plt.xlabel('Mês/Ano', fontsize=12)
     plt.ylabel('Custo Final (R$)', fontsize=12)
     plt.xticks(rotation=45, ha='right')
     plt.ylim(0, 500000)
-
-    def k_formatter(x, pos):
-        # Formata o valor do eixo para 'K' (milhares)
-        return f'{x/1000:,.0f}K'
-
-    # Aplicar o novo formatador ao eixo Y
-    plt.gca().yaxis.set_major_formatter(mtick.FuncFormatter(k_formatter))
-
-    # Rótulos no topo da barra (Valor Total em R$)
-    for i, total in enumerate(total_custo_mensal):
-        # Simplifica o rótulo para não poluir muito o eixo Y
-        plt.text(i, total + (total * 0.01),
-                 f'R${total/1000:,.0f}K',
-                 ha='center', va='bottom', fontsize=10, fontweight='bold')
+    plt.gca().yaxis.set_visible(False)
 
     # Adicionar legenda
     plt.legend(
