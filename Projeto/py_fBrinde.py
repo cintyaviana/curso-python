@@ -57,7 +57,7 @@ def get_fBrinde():
 
     .str: É o acessor de string (texto) do Pandas. Ele é usado porque o resultado da etapa anterior é uma série de (texto).
 
-    .capitalize(): É um método de string que garante que a primeira letra de cada nome esteja em maiúscula e todas as demais em minúscula.
+    .capitalize(): Converte a primeira letra de cada nome em maiúscula e todas as demais em minúscula.
 
     """
     # Cria a coluna (total_impostos)
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     meses = sorted(dfBrindes['mes'].unique())
 
     """
-    .unique(): Este método, aplicado após a remoção dos nulos, retorna um array NumPy contendo apenas os valores distintos (únicos) que sobraram na coluna
+    .unique(): Este método, aplicado após a remoção dos nulos, retorna um array NumPy contendo apenas os valores distintos (únicos).
 
     sorted(): Ordena a lista
 
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     dados_mensais_sku = {}
 
     print('='*120)
-    print('🏆 TOP 5 SKUs COM MAIOR CUSTO NO MÊS')
+    print('TOP 5 SKUs COM MAIOR CUSTO NO MÊS')
     print('='*120)
 
     # Condição FOR que vai analisar os dados para cada mês
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         # Cria um novo df, apenas com os dados cujo valor na coluna 'mes' é igual ao mês do loop.
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
 
-        # Retorna o nome dos mês da nova df_mes
+        # Retorna o nome do mês da nova df_mes
         nome_mes = df_mes['nome_mes'].iloc[0]
         # iloc[0]: indica que você quer o item que está na posição zero (o primeiro item) da Série.
 
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     # Exibição dos dado
     print('='*120)
-    print('🏆 TOP 5 SKUs COM MAIOR CUSTO GERAL')
+    print('TOP 5 SKUs COM MAIOR CUSTO GERAL')
     print('='*120 + "\n")
     print(top_custo_total[['(%) S/Custo total']])
     print("\n" + "="*120 + "\n")
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     dados_mensais_cc = {}
 
     print('='*120)
-    print('🏆 TOP 5 CENTRO DE CUSTO COM MAIOR CUSTO NO MÊS')
+    print('TOP 5 CENTRO DE CUSTO COM MAIOR CUSTO NO MÊS')
     print('='*120)
 
     # Condição FOR que vai analisar os dados para cada mês
@@ -218,7 +218,7 @@ if __name__ == '__main__':
 
     # Exibição dos dado
     print('='*120)
-    print('🏆 TOP 5 CENTRO DE CUSTO COM MAIOR CUSTO GERAL')
+    print('TOP 5 CENTRO DE CUSTO COM MAIOR CUSTO GERAL')
     print('='*120 + "\n")
     print(top_custo_total[['(%) S/Custo total']])
     print("\n" + "="*120 + "\n")
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     dados_mensais_cliente = {}
 
     print('='*120)
-    print('🏆 TOP 5 CLIENTES COM MAIOR CUSTO NO MÊS')
+    print('TOP 5 CLIENTES COM MAIOR CUSTO NO MÊS')
     print('='*120)
 
     # Condição FOR que vai analisar os dados para cada mês
@@ -281,7 +281,7 @@ if __name__ == '__main__':
 
     # Exibição dos dado
     print('='*120)
-    print('🏆 TOP 5 CLIENTES COM MAIOR CUSTO GERAL')
+    print('TOP 5 CLIENTES COM MAIOR CUSTO GERAL')
     print('='*120 + "\n")
     print(top_custo_total[['(%) S/Custo total']])
 
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     # ---------------------------------------------------------------------------------
     # O objetivo é descobrir o quão forte e em que direção cada componente que forma o custo, está relacionado com o custo_final.
     print('\n' + '='*120)
-    print('🔗 ANÁLISE DE CORRELAÇÃO: Custo Final')
+    print('ANÁLISE DE CORRELAÇÃO: Custo Final')
     print('='*120)
 
     # Variável alvo (target).
@@ -328,7 +328,7 @@ if __name__ == '__main__':
     # CURVA ABC: ESTADO vs CUSTO FINAL
     # ---------------------------------------------------------------------------------
     # Agregação do custo_final por estado
-    df_abc_final = (
+    df_abc_uf = (
         dfBrindes.groupby('estado').agg(total_valor=('custo_final', 'sum')).sort_values(
             by='total_valor', ascending=False).reset_index())
 
@@ -342,13 +342,13 @@ if __name__ == '__main__':
     """
 
     # Cálculo da Participação Relativa e Acumulada
-    total_geral = df_abc_final['total_valor'].sum()
+    total_geral = df_abc_uf['total_valor'].sum()
 
-    df_abc_final['participacao_relativa_%'] = (
-        df_abc_final['total_valor'] / total_geral) * 100
+    df_abc_uf['participacao_relativa_%'] = (
+        df_abc_uf['total_valor'] / total_geral) * 100
 
-    df_abc_final['participacao_acumulada_%'] = (
-        df_abc_final['participacao_relativa_%'].cumsum())
+    df_abc_uf['participacao_acumulada_%'] = (
+        df_abc_uf['participacao_relativa_%'].cumsum())
 
     """
     .cumsum(): É um método do Pandas que calcula a soma acumulada dos valores da coluna anterior (participacao_relativa_%).
@@ -363,10 +363,10 @@ if __name__ == '__main__':
 
     # Classificação ABC (80/15/5)
     condicoes = [
-        df_abc_final['participacao_acumulada_%'] <= 80,
-        df_abc_final['participacao_acumulada_%'] <= 95]
+        df_abc_uf['participacao_acumulada_%'] <= 80,
+        df_abc_uf['participacao_acumulada_%'] <= 95]
     escolhas = ['A', 'B']
-    df_abc_final['classe_abc'] = np.select(condicoes, escolhas, default='C')
+    df_abc_uf['classe_abc'] = np.select(condicoes, escolhas, default='C')
 
     """
     df_abc_final['classe_abc'] = ...: Cria a nova coluna chamada classe_abc.
@@ -382,7 +382,7 @@ if __name__ == '__main__':
     """
 
     # Resumo da Classificação
-    resumo_abc_estado = df_abc_final.groupby('classe_abc').agg(num_estados=('estado', 'count'), total_custo=('total_valor', 'sum'), participacao_custo=(
+    resumo_abc_estado = df_abc_uf.groupby('classe_abc').agg(num_estados=('estado', 'count'), total_custo=('total_valor', 'sum'), participacao_custo=(
         'participacao_relativa_%', 'sum')).round(2).sort_values(by='participacao_custo', ascending=False)
 
     # Cálculo da porcentagem de Estados
@@ -449,8 +449,8 @@ if __name__ == '__main__':
     COR_ROXA = '#9112BC'
 
     # Filtrar apenas a Classe A e o DataFrame original.
-    estados_classe_a = df_abc_final[df_abc_final['classe_abc']
-                                    == 'A']['estado'].tolist()
+    estados_classe_a = df_abc_uf[df_abc_uf['classe_abc']
+                                 == 'A']['estado'].tolist()
     # .tolist(): converte a Series em uma lista.
 
     # Filtrar o DataFrame original para incluir apenas os estados da Classe A.

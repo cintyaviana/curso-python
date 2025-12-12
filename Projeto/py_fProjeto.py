@@ -45,13 +45,12 @@ def prever_custo_unitario_ml(sku_input, quantidade_input, modelo_ml):
 # ==================================================================
 
 
-def treinar_modelo_custo_base(df_treinamento):  # Nome da função ajustado
+def treinar_modelo_custo_base(df_treinamento):
     # Treina o modelo Random Forest Regressor para prever o custo_unitario.
     print("\n" + "="*70)
-    print("🧠 TREINAMENTO DO MODELO DE MACHINE LEARNING (CUSTO UNITÁRIO BASE) 🧠")
+    print("TREINAMENTO DO MODELO DE MACHINE LEARNING (CUSTO UNITÁRIO BASE)")
 
     # 3.1. Tratamento de dados para o ML
-    # O CUSTO UNITÁRIO AGORA É O TARGET
     df_treinamento['custo_unitario'] = pd.to_numeric(
         df_treinamento['custo_unitario'], errors='coerce')
     df_treinamento['quantidade'] = pd.to_numeric(
@@ -64,7 +63,7 @@ def treinar_modelo_custo_base(df_treinamento):  # Nome da função ajustado
 
     # 3.2. Definição de Features (X) e Target (Y)
     features = ['cod_sku', 'quantidade']
-    target = 'custo_unitario'  # NOVO TARGET: Apenas o custo unitário
+    target = 'custo_unitario'
 
     X = df_treinamento[features]
     Y = df_treinamento[target]
@@ -87,14 +86,29 @@ def treinar_modelo_custo_base(df_treinamento):  # Nome da função ajustado
             n_estimators=100, random_state=42, n_jobs=-1))
     ])
 
+    """
+    n_estimators=100 >> Representa o número de árvores de decisão (Decision Trees) que serão construídas na "floresta" (o modelo Random Forest).
+
+    random_state=42 >>  Define a "semente" (seed) para o gerador de números pseudoaleatórios. O processo de Random Forest, por natureza, envolve aleatoriedade (como a amostragem de dados e a seleção de features para cada árvore). 42 é um valor popularmente usado na comunidade de programação e ciência de dados.
+
+    n_jobs=-1 >> Especifica quantos núcleos (ou threads) do seu processador podem ser usados para o treinamento paralelo do modelo. O valor -1 é uma instrução que significa: "Use todos os núcleos de processamento disponíveis no meu computador."
+
+    """
+
     # Divisão para validação
     X_train, X_test, Y_train, Y_test = train_test_split(
         X, Y, test_size=0.2, random_state=42)
+
+    """
+    O valor 0.2 (ou 20%) significa que 20% de todo o seu conjunto de dados original será usado para o teste (X_test e Y_test), e os restantes 80% serão usados para o treinamento (X_train e Y_train).
+    """
 
     print("-> Iniciando treinamento do Random Forest...")
     if len(X_train) == 0:
         print("ERRO: O conjunto de treinamento está vazio. Verifique os dados de entrada.")
         return None
+
+    # É neste momento que o modelo aprende a fazer previsões usando os dados preparados
 
     modelo_ml.fit(X_train, Y_train)
     print("-> Treinamento concluído.")
@@ -105,18 +119,31 @@ def treinar_modelo_custo_base(df_treinamento):  # Nome da função ajustado
     mae = mean_absolute_error(Y_test, Y_pred)
     r2 = r2_score(Y_test, Y_pred)
 
+    """
+    MAE: Quanta diferença média, em unidades da sua variável alvo, há entre o que foi previsto e o que é real.
+        Se o seu MAE for, por exemplo, R$ 5,00, isso significa que, em média, as previsões do seu modelo de custo estão erradas em R$ 5,00. Quanto menor o MAE, melhor.
+
+    R^2: Quão bem o seu modelo explica a variação dos seus dados.
+
+        Valor: O valor varia de $-\infty$ a $1.0$.
+        R^2 = 1.0: O modelo explica perfeitamente 100% da variação.
+        R^2 = 0: O modelo não explica nada da variação (é tão bom quanto simplesmente usar a média dos dados).
+        R^2 < 0: O modelo é pior do que usar a média (o que indica um modelo muito ruim).
+    
+    """
     print(f"--- Métrica do Modelo (Teste Simulado) ---")
     print(f"MAE (Erro Absoluto Médio): R$ {mae:,.4f}")
     print(f"R² (Coef. de Determinação): {r2:.4f}")
     print(f"O modelo de ML treinou com {len(X_train)} registros.")
     print("="*70)
 
+    # O modelo_ml vai ser chamado no def anterior "prever_custo_unitario_ml" para o calculo do custo unitario
     return modelo_ml
 
 # ==================================================================
-# 1. FUNÇÃO PREDITIVA: CUSTO UNITÁRIO MÉDIO E CUSTO TOTAL PREVISTO
+# 1. FUNÇÃO PREDITIVA: CUSTO UNITÁRIO E CUSTO TOTAL PREVISTO
 # ==================================================================
-# Prevê o custo total de um SKU baseado no custo médio histórico.
+# Prevê o custo total de um SKU usando o def "prever_custo_unitario_ml"
 
 
 def prever_custo_total(sku_input, quantidade_input, modelo_ml):
@@ -127,29 +154,28 @@ def prever_custo_total(sku_input, quantidade_input, modelo_ml):
 
     return custo_total_previsto, custo_unitario_previsto
 
-    """
-     "modelo_custo_unitario" >> é um dicionário (chave: SKU, valor: custo unitário médio) criado a partir do cálculo na média dos custos do SKU
-
-    """
-
 # ==================================================================
 # 2. FUNÇÃO PREDITIVA: ICMS
 # ==================================================================
 # Prevê o valor_icms baseado em Natureza, Estado e Alíquota histórico.
 
 
-def prever_icms(natureza_input, cliente_input, sku_input, valor_nf_input, estado_input,
-                sku_ncm_lookup, cliente_cnpj_lookup, estado_aliqicms_lookup):
+def prever_icms(
+    natureza_input,
+    cliente_input,
+    sku_input,
+    valor_nf_input,
+    estado_input,
+    sku_ncm_lookup,
+    cliente_cnpj_lookup,
+    estado_aliqicms_lookup
+):
 
     # 2.1 APURAÇÃO SE INCIDE OU NÃO ICMS ---------------------------
 
     # 2.1.1 REGRA ICMS: EXPORTAÇÃO E AMOSTRA GRÁTIS
     if natureza_input in ['Exportação', 'Amostra grátis']:
         return 0.0
-        """
-        0.0 = valor_icms_previsto 
-        0.0 = aliquota  
-        """
 
     # 2.1.2 REGRA ICMS: EXCEÇÃO DE BONIFICAÇÃO
     if natureza_input == 'Bonificação':
@@ -215,8 +241,16 @@ def prever_icms(natureza_input, cliente_input, sku_input, valor_nf_input, estado
 # Prevê o valor_icms_st baseado em Natureza, Estado e Alíquota.
 
 
-def prever_icms_st(natureza_input, cliente_input, sku_input, valor_nf_input, estado_input,
-                   sku_ncm_lookup, cliente_cnpj_lookup, valor_icms_previsto):
+def prever_icms_st(
+    natureza_input,
+    cliente_input,
+    sku_input,
+    valor_nf_input,
+    estado_input,
+    sku_ncm_lookup,
+    cliente_cnpj_lookup,
+    valor_icms_previsto
+):
 
     # Premissas
     estados_validos = ['SP', 'RJ', 'AL', 'DF']
@@ -328,7 +362,6 @@ print("[MODELO] Treinando modelo de Machine Learning (Custo Unitário Base)...")
 modelo_ml = treinar_modelo_custo_base(dfProjeto)
 
 # Renomeia a variável para manter a compatibilidade com a função simulador
-# O simulador espera 'modelo_custo_unitario', que agora é a instância do modelo ML.
 modelo_custo_unitario = modelo_ml
 
 # ==================================================================
