@@ -14,8 +14,8 @@ def executar_refresh_powerbi():
     os.startfile(CAMINHO_PBIX)
 
     # 2. Aguardar o refresh terminar
-    print(f"[{time.strftime('%H:%M:%S')}] Aguardando a conclusão do refresh (Estimativa: 6 min).")
-    time.sleep(300)
+    print(f"[{time.strftime('%H:%M:%S')}] Aguardando a conclusão do refresh.")
+    time.sleep(1080)
 
     # 3. Fechar o Power BI Desktop
     print(f"[{time.strftime('%H:%M:%S')}] Confirmando o salvamento e fechamento.")
@@ -42,7 +42,7 @@ def executar_refresh_excel():
     # 3. Executar o Refresh de TODOS os dados
     print(f"[{time.strftime('%H:%M:%S')}] Aguardando a conclusão do refresh (Estimativa: 5 min).")
     workbook.RefreshAll()
-    time.sleep(300)
+    time.sleep(600)
 
     # 4. Fechar a pasta de trabalho e encerrar o Excel
     print(f"[{time.strftime('%H:%M:%S')}] Confirmando o salvamento e fechamento.")
