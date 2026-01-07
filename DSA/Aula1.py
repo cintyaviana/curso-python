@@ -201,3 +201,56 @@ b = 0
 
 # Mas isso pode! (não é soma, é concatenação)
 '8' + 's'
+
+# -------------------------------------------------------------------------------------------------------------------------------------------
+# 5.2 OPERADORES DE COMPARAÇÃO
+# -------------------------------------------------------------------------------------------------------------------------------------------
+# Usados para comparar valores. O resultado é sempre um Boolean (True or False)
+
+# Definição de variáveis
+x = 5
+y = 10
+
+# Operador "maior que"
+x > y
+
+# Operador "menor que"
+x < y
+
+# Operador "igual a"
+x == y
+
+# Operador "diferente de"
+x != y
+
+# Operador "maior ou igual a"
+x >= 5
+
+# Operador "menor ou igual a"
+x <= y
+
+
+print(f"{x} > {y} ? {x > y}")      # Maior que
+print(f"{x} < {y} ? {x < y}")      # Menor que
+print(f"{x} == {y} ? {x == y}")    # Igual a
+print(f"{x} != {y} ? {x != y}")    # Diferente de
+print(f"{x} >= 5 ? {x >= 5}")      # Maior ou igual a
+print(f"{x} <= {y} ? {x <= y}")    # Menor ou igual a
+
+# -------------------------------------------------------------------------------------------------------------------------------------------
+# 5.3 OPERADORES LÓGICOS
+# -------------------------------------------------------------------------------------------------------------------------------------------
+# Usados para combinar expressões booleanas
+
+# Definição de variáveis
+tem_dinheiro = True
+tem_tempo = False
+
+# Operador AND (e): Ambos precisam ser verdadeiros
+print(f"O cliente pode viajar? {tem_dinheiro and tem_tempo}")
+
+# Operador OR (ou): Pelo menos um precisa ser verdadeiro
+print(f"O cliente pode viajar? {tem_dinheiro or tem_tempo}")
+
+# Operador NOT (não): Inverte o valor booleano
+print(f"O cliente pode viajar? {tem_dinheiro and not tem_tempo}")
