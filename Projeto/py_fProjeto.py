@@ -16,32 +16,9 @@ import warnings
 # Ocultar avisos do sklearn e pandas para manter o código limpo
 warnings.filterwarnings("ignore")
 
-# ==================================================================
-# 1. FUNÇÃO PREDITIVA: CUSTO UNITÁRIO (MODELO ML - RANDOM FOREST)
-# ==================================================================
-
-
-def prever_custo_unitario_ml(sku_input, quantidade_input, modelo_ml):
-    # Prevê APENAS o custo_unitario (custo base)
-
-    print("-> Previsão de Custo Unitário Base usando Random Forest Regressor...")
-
-    # 1. Criar o DataFrame de entrada com as features
-    data_input = pd.DataFrame({
-        'cod_sku': [sku_input],
-        'quantidade': [quantidade_input],
-    })
-
-    # GARANTE que o SKU seja STRING
-    data_input['cod_sku'] = data_input['cod_sku'].astype(str)
-
-    # 2. Fazer a previsão usando o pipeline
-    custo_unitario_previsto = modelo_ml.predict(data_input)[0]
-
-    return custo_unitario_previsto
 
 # ==================================================================
-# 3. TREINAMENTO DO MODELO RANDOM FOREST REGRESSOR
+# 1. TREINAMENTO DO MODELO RANDOM FOREST REGRESSOR
 # ==================================================================
 
 
@@ -50,7 +27,7 @@ def treinar_modelo_custo_base(df_treinamento):
     print("\n" + "="*70)
     print("TREINAMENTO DO MODELO DE MACHINE LEARNING (CUSTO UNITÁRIO BASE)")
 
-    # 3.1. Tratamento de dados para o ML
+    # 1.1. Tratamento de dados para o ML
     df_treinamento['custo_unitario'] = pd.to_numeric(
         df_treinamento['custo_unitario'], errors='coerce')
     df_treinamento['quantidade'] = pd.to_numeric(
@@ -61,14 +38,14 @@ def treinar_modelo_custo_base(df_treinamento):
     df_treinamento.dropna(
         subset=['custo_unitario', 'quantidade'], inplace=True)
 
-    # 3.2. Definição de Features (X) e Target (Y)
+    # 1.2. Definição de Features (X) e Target (Y)
     features = ['cod_sku', 'quantidade']
     target = 'custo_unitario'
 
     X = df_treinamento[features]
     Y = df_treinamento[target]
 
-    # 3.3. Pré-processamento (Pipeline)
+    # 1.3. Pré-processamento (Pipeline)
     categorical_features = ['cod_sku']
     numeric_features = ['quantidade']
 
@@ -79,7 +56,7 @@ def treinar_modelo_custo_base(df_treinamento):
             ('numerico', 'passthrough', numeric_features)
         ])
 
-    # 3.4. Criação do Pipeline e Treinamento
+    # 1.4. Criação do Pipeline e Treinamento
     modelo_ml = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('regressor', RandomForestRegressor(
@@ -103,17 +80,11 @@ def treinar_modelo_custo_base(df_treinamento):
     O valor 0.2 (ou 20%) significa que 20% de todo o seu conjunto de dados original será usado para o teste (X_test e Y_test), e os restantes 80% serão usados para o treinamento (X_train e Y_train).
     """
 
-    print("-> Iniciando treinamento do Random Forest...")
-    if len(X_train) == 0:
-        print("ERRO: O conjunto de treinamento está vazio. Verifique os dados de entrada.")
-        return None
-
     # É neste momento que o modelo aprende a fazer previsões usando os dados preparados
-
     modelo_ml.fit(X_train, Y_train)
     print("-> Treinamento concluído.")
 
-    # 3.5. Avaliação
+    # 1.5. Avaliação
     Y_pred = modelo_ml.predict(X_test)
 
     mae = mean_absolute_error(Y_test, Y_pred)
@@ -125,7 +96,7 @@ def treinar_modelo_custo_base(df_treinamento):
 
     R^2: Quão bem o seu modelo explica a variação dos seus dados.
 
-        Valor: O valor varia de $-\infty$ a $1.0$.
+        
         R^2 = 1.0: O modelo explica perfeitamente 100% da variação.
         R^2 = 0: O modelo não explica nada da variação (é tão bom quanto simplesmente usar a média dos dados).
         R^2 < 0: O modelo é pior do que usar a média (o que indica um modelo muito ruim).
@@ -137,25 +108,32 @@ def treinar_modelo_custo_base(df_treinamento):
     print(f"O modelo de ML treinou com {len(X_train)} registros.")
     print("="*70)
 
-    # O modelo_ml vai ser chamado no def anterior "prever_custo_unitario_ml" para o calculo do custo unitario
     return modelo_ml
-
 # ==================================================================
-# 1. FUNÇÃO PREDITIVA: CUSTO UNITÁRIO E CUSTO TOTAL PREVISTO
+# 2. FUNÇÃO PREDITIVA: CUSTO UNITÁRIO E CUSTO TOTAL (MODELO ML - RANDOM FOREST)
 # ==================================================================
-# Prevê o custo total de um SKU usando o def "prever_custo_unitario_ml"
 
 
-def prever_custo_total(sku_input, quantidade_input, modelo_ml):
-    custo_unitario_previsto = prever_custo_unitario_ml(
-        sku_input, quantidade_input, modelo_ml
-    )
+def calcular_previsao_custos(sku_input, quantidade_input, modelo_ml):
+
+    # 2.1. Criar o DataFrame de entrada com as features
+    data_input = pd.DataFrame({
+        'cod_sku': [sku_input],
+        'quantidade': [quantidade_input],
+    })
+
+    # Garante que o SKU seja STRING
+    data_input['cod_sku'] = data_input['cod_sku'].astype(str)
+
+    # 2.2. Fazer a previsão usando o pipeline
+    custo_unitario_previsto = modelo_ml.predict(data_input)[0]
+
     custo_total_previsto = custo_unitario_previsto * quantidade_input
 
     return custo_total_previsto, custo_unitario_previsto
 
 # ==================================================================
-# 2. FUNÇÃO PREDITIVA: ICMS
+# 3. FUNÇÃO PREDITIVA: ICMS
 # ==================================================================
 # Prevê o valor_icms baseado em Natureza, Estado e Alíquota histórico.
 
@@ -171,13 +149,13 @@ def prever_icms(
     estado_aliqicms_lookup
 ):
 
-    # 2.1 APURAÇÃO SE INCIDE OU NÃO ICMS ---------------------------
+    # 3.1 APURAÇÃO SE INCIDE OU NÃO ICMS ---------------------------
 
-    # 2.1.1 REGRA ICMS: EXPORTAÇÃO E AMOSTRA GRÁTIS
+    # 3.1.1 REGRA ICMS: EXPORTAÇÃO E AMOSTRA GRÁTIS
     if natureza_input in ['Exportação', 'Amostra grátis']:
         return 0.0
 
-    # 2.1.2 REGRA ICMS: EXCEÇÃO DE BONIFICAÇÃO
+    # 3.1.2 REGRA ICMS: EXCEÇÃO DE BONIFICAÇÃO
     if natureza_input == 'Bonificação':
         ncm_sku = sku_ncm_lookup[sku_input]
 
@@ -199,11 +177,11 @@ def prever_icms(
 
             return 0.0
 
-    # 2.1.3 REGRA ICMS DEGUSTAÇÃO
+    # 3.1.3 REGRA ICMS DEGUSTAÇÃO
     elif natureza_input == 'Degustação':
         pass
 
-    # 2.2 APURAÇÃO DA ALÍQUOTA  ---------------------------------
+    # 3.2 APURAÇÃO DA ALÍQUOTA  ---------------------------------
 
     # Verifica se o Cliente é Revendedor
     cnpj_value = cliente_cnpj_lookup[cliente_input]
@@ -230,13 +208,13 @@ def prever_icms(
         else:
             aliquota = 0.0
 
-    # 2.3 CÁLCULO DO ICMS ---------------------------------
+    # 3.3 CÁLCULO DO ICMS ---------------------------------
     valor_icms_previsto = valor_nf_input * aliquota
 
     return valor_icms_previsto
 
 # ==================================================================
-# 3. FUNÇÃO PREDITIVA: ICMS-ST
+# 4. FUNÇÃO PREDITIVA: ICMS-ST
 # ==================================================================
 # Prevê o valor_icms_st baseado em Natureza, Estado e Alíquota.
 
@@ -290,7 +268,7 @@ def prever_icms_st(
     return valor_icms_st_previsto
 
 # ==================================================================
-# 4. FUNÇÃO PREDITIVA: ICMS INTERESTADUAL UF DESTINO
+# 5. FUNÇÃO PREDITIVA: ICMS INTERESTADUAL UF DESTINO
 # ==================================================================
 # Prevê o valor_icms_interestadual_uf_destino (DIFAL)
 
@@ -302,17 +280,17 @@ def prever_icms_interestadual_uf_destino(
     valor_icms_previsto,
     estado_aliqdifal_lookup
 ):
-    # 4.1. VERIFICAÇÃO DE INCIDÊNCIA ---------------------------------
+    # 5.1. VERIFICAÇÃO DE INCIDÊNCIA ---------------------------------
     estados_excluidos = ['SP', 'EX']
 
     # Regra de Incidência
     if (natureza_venda_input != 'Consumidor final' or estado_input in estados_excluidos):
         return 0.0
 
-    # 4.2. BUSCA DA ALÍQUOTA INTERNA (POR ESTADO) --------
+    # 5.2. BUSCA DA ALÍQUOTA INTERNA (POR ESTADO) --------
     aliquota_interna_destino = estado_aliqdifal_lookup[estado_input]
 
-    # 4.3. CÁLCULO ---------------------------------
+    # 5.3. CÁLCULO ---------------------------------
 
     # 1º passo: calcular a base_calculo_icms_uf_destino:
     base_icms = valor_nf_input - valor_icms_previsto
@@ -331,7 +309,7 @@ def prever_icms_interestadual_uf_destino(
     return valor_icms_interestadual_uf_destino
 
 # ==================================================================
-# 4. CARREGAMENTO E CRIAÇÃO DA BASE - MERGE
+# 6. CARREGAMENTO E CRIAÇÃO DA BASE - MERGE
 # ==================================================================
 
 
@@ -352,27 +330,14 @@ dfProjeto = pd.merge(
 ).drop(columns=['cod_produto'])
 
 # ==================================================================
-# 5. TREINAMENTO DO MODELO_ML DE CUSTO UNITÁRIO
-# ==================================================================
-# Agora treina o modelo ML para prever o Custo Unitário (Target: custo_unitario).
-
-print("[MODELO] Treinando modelo de Machine Learning (Custo Unitário Base)...")
-
-# Chamada da função de treinamento ML
-modelo_ml = treinar_modelo_custo_base(dfProjeto)
-
-# Renomeia a variável para manter a compatibilidade com a função simulador
-modelo_custo_unitario = modelo_ml
-
-# ==================================================================
-# 6. CRIAÇÃO DOS LOOKUPS PARA REGRAS DE ICMS
+# 7. CRIAÇÃO DOS LOOKUPS PARA REGRAS DE ICMS
 # ==================================================================
 
 print("[LOOKUPS] Criando lookups de NCM, CNPJ e Alíquota ICMS")
 
-# 6.1: SKU -> NCM
-sku_ncm_lookup = dfProjeto.set_index(
-    'cod_sku')['ncm'].astype(str).to_dict()
+# 8.1: SKU -> NCM
+sku_ncm_lookup = dfProjeto.assign(cod_sku=dfProjeto['cod_sku'].astype(float).astype(int).astype(str).str.strip())\
+                          .set_index('cod_sku')['ncm'].astype(str).to_dict()
 
 """
 set_index('cod_sku') >> transforma a coluna 'cod_sku' em seu índice. Os valores de SKU agora funcionam como as chaves que serão usadas para acessar o dicionário.
@@ -384,11 +349,11 @@ astype(str) >> converte todos os valores da coluna ncm para tipo str.
 
 """
 
-# 6.2: CLIENTE -> CNPJ DESTINATARIO
+# 7.2: CLIENTE -> CNPJ DESTINATARIO
 cliente_cnpj_lookup = dfProjeto.set_index(
     'cod_cliente')['cnpj_destinatario'].to_dict()
 
-# 6.3: ESTADO -> ALÍQUOTA ICMS
+# 7.3: ESTADO -> ALÍQUOTA ICMS
 df_aliquota_icms = dfProjeto[
     pd.to_numeric(dfProjeto['aliquota_icms']) > 0.0]
 
@@ -396,7 +361,7 @@ estado_aliqicms_lookup = (
     df_aliquota_icms.set_index('estado')['aliquota_icms'] / 100.0
 ).to_dict()
 
-# 6.3: ESTADO -> ALÍQUOTA DIFAL
+# 7.3: ESTADO -> ALÍQUOTA DIFAL
 df_aliquota_difal = dfProjeto[
     pd.to_numeric(dfProjeto['aliquota_interna_uf_destino']) > 0.0]
 
@@ -406,18 +371,18 @@ estado_aliqdifal_lookup = (
 ).to_dict()
 
 # ==================================================================
-# 7. FUNÇÃO PRINCIPAL DE TESTE
+# 8. FUNÇÃO PRINCIPAL DE TESTE
 # ==================================================================
 # Chama as funções prever_custo_total, prever_icms e prever_icms_st
 
 
-def simulador(natureza_input, natureza_venda_input, cliente_input, sku_input, quantidade_input, valor_nf_input, estado_input, modelo_custo_unitario, sku_ncm_lookup, cliente_cnpj_lookup, estado_aliqicms_lookup, estado_aliqdifal_lookup):
+def simulador(natureza_input, natureza_venda_input, cliente_input, sku_input, quantidade_input, valor_nf_input, estado_input, modelo_ml, sku_ncm_lookup, cliente_cnpj_lookup, estado_aliqicms_lookup, estado_aliqdifal_lookup):
 
-    # 7.1 Previsão de Custo Total
-    custo_total_previsto, custo_unitario_previsto = prever_custo_total(
-        sku_input, quantidade_input, modelo_custo_unitario)
+    # 8.1 Previsão de Custo Total
+    custo_total_previsto, custo_unitario_previsto = calcular_previsao_custos(
+        sku_input, quantidade_input, modelo_ml)
 
-    # 7.2 Previsão de ICMS
+    # 8.2 Previsão de ICMS
     valor_icms_previsto = prever_icms(
         natureza_input,
         cliente_input,
@@ -429,7 +394,7 @@ def simulador(natureza_input, natureza_venda_input, cliente_input, sku_input, qu
         estado_aliqicms_lookup
     )
 
-    # 7.3 Previsão de ICMS-ST
+    # 8.3 Previsão de ICMS-ST
     valor_icms_st_previsto = prever_icms_st(
         natureza_input,
         cliente_input,
@@ -449,7 +414,7 @@ def simulador(natureza_input, natureza_venda_input, cliente_input, sku_input, qu
         estado_aliqdifal_lookup
     )
 
-    # 7.4. CÁLCULO FINAL E EXIBIÇÃO
+    # 8.4. CÁLCULO FINAL E EXIBIÇÃO
     soma_total_prevista = custo_total_previsto + valor_icms_previsto + \
         valor_icms_st_previsto + valor_icms_interestadual_uf_destino
     percentual_custo_nf = (soma_total_prevista / valor_nf_input) * 100
@@ -476,16 +441,18 @@ def simulador(natureza_input, natureza_venda_input, cliente_input, sku_input, qu
 
 
 # ==========================================================
-# 8. EXECUÇÃO PARA TESTE (Bloco de Chamada)
+# 9. EXECUÇÃO PARA TESTE (Bloco de Chamada)
 # ==========================================================
 if __name__ == "__main__":
+
+    modelo_ml = treinar_modelo_custo_base(dfProjeto)
 
     natureza_teste = 'Bonificação'
     natureza_venda_teste = 'Consumidor final'
     cliente_teste = 20001
-    sku_teste = str(10343)
-    quantidade_teste = 230
-    valor_nf_teste = 18837
+    sku_teste = str(9026)
+    quantidade_teste = 200
+    valor_nf_teste = 15180
     estado_teste = 'PE'
 
     resultado_final = simulador(
@@ -496,7 +463,7 @@ if __name__ == "__main__":
         quantidade_teste,
         valor_nf_teste,
         estado_teste,
-        modelo_custo_unitario,
+        modelo_ml,
         sku_ncm_lookup,
         cliente_cnpj_lookup,
         estado_aliqicms_lookup,

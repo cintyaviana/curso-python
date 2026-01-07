@@ -87,22 +87,24 @@ if __name__ == '__main__':
     # ---------------------------------------------------------------------------------
     # TOP 5 SKU'S COM MAIOR CUSTO
     # ---------------------------------------------------------------------------------
-    #  Análise Mensal -----------------------------------------------------------------
-    # Variável de controle para as análises mensais
-    meses = sorted(dfBrindes['mes'].unique())
-
-    """
-    .unique(): Este método, aplicado após a remoção dos nulos, retorna um array NumPy contendo apenas os valores distintos (únicos).
-
-    sorted(): Ordena a lista
-
-    """
-    # Dicionário para armazenar os resultados mensais
-    dados_mensais_sku = {}
+    # Análise Mensal -----------------------------------------------------------------=
 
     print('='*120)
     print('TOP 5 SKUs COM MAIOR CUSTO NO MÊS')
     print('='*120)
+
+    # Variável de controle para as análises mensais
+    meses = sorted(dfBrindes['mes'].unique())
+
+    """
+    .unique(): Este método retorna um array NumPy contendo apenas os valores distintos (únicos).
+
+    sorted(): Ordena a lista
+
+    """
+
+    # Dicionário para armazenar os resultados mensais
+    dados_mensais_sku = {}
 
     # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
@@ -113,7 +115,7 @@ if __name__ == '__main__':
         nome_mes = df_mes['nome_mes'].iloc[0]
         # iloc[0]: indica que você quer o item que está na posição zero (o primeiro item) da Série.
 
-        # Soma a coluna custos total
+        # Soma a coluna custo total
         total_custo_mes = df_mes['custo_unitario_total'].sum()
 
         # Soma a coluna custos total de acordo com o SKU gerando um novo df onde cada linha mostra o custo total acumulado para o SKU.
@@ -163,20 +165,21 @@ if __name__ == '__main__':
     # ---------------------------------------------------------------------------------
     # TOP 5 CENTROS DE CUSTOS COM MAIOR CUSTO
     # ---------------------------------------------------------------------------------
-    #  Análise Mensal -----------------------------------------------------------------
+    # Análise Mensal ------------------------------------------------------------------
     # Dicionário para armazenar os resultados mensais
-    dados_mensais_cc = {}
 
     print('='*120)
     print('TOP 5 CENTRO DE CUSTO COM MAIOR CUSTO NO MÊS')
     print('='*120)
+
+    dados_mensais_cc = {}
 
     # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
         # Cria um novo df, apenas com os dados cujo valor na coluna 'mes' é igual ao mês do loop.
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
 
-        # Retorna o nome dos mês da nova df_mes
+        # Retorna o nome do mês da nova df_mes
         nome_mes = df_mes['nome_mes'].iloc[0]
 
         # Soma a coluna custos total
@@ -227,19 +230,20 @@ if __name__ == '__main__':
     # EXIBIR TOP 5 CLIENTES COM MAIOR CUSTO
     # ---------------------------------------------------------------------------------
     # Análise Mensal -----------------------------------------------------------------
-    # Dicionário para armazenar os resultados mensais
-    dados_mensais_cliente = {}
 
     print('='*120)
     print('TOP 5 CLIENTES COM MAIOR CUSTO NO MÊS')
     print('='*120)
+
+    # Dicionário para armazenar os resultados mensais
+    dados_mensais_cliente = {}
 
     # Condição FOR que vai analisar os dados para cada mês
     for mes in meses:
         # Cria um novo df, apenas com os dados cujo valor na coluna 'mes' é igual ao mês do loop.
         df_mes = dfBrindes[dfBrindes['mes'] == mes]
 
-        # Retorna o nome dos mês da nova df_mes
+        # Retorna o nome do mês da nova df_mes
         nome_mes = df_mes['nome_mes'].iloc[0]
 
         # Soma a coluna custos total
@@ -369,15 +373,15 @@ if __name__ == '__main__':
     df_abc_uf['classe_abc'] = np.select(condicoes, escolhas, default='C')
 
     """
-    df_abc_final['classe_abc'] = ...: Cria a nova coluna chamada classe_abc.
+    df_abc_final['classe_abc']: Cria a nova coluna chamada classe_abc.
 
     np.select(...): A função do NumPy que aplica a lógica:
 
-    Argumento 1 (condicoes): As regras (a lista de condições).
+        Argumento 1 (condicoes): As regras (a lista de condições).
 
-    Argumento 2 (escolhas): Os resultados se as regras forem verdadeiras.
+        Argumento 2 (escolhas): Os resultados se as regras forem verdadeiras.
 
-    Argumento 3 (default='C'): O valor que será atribuído se nenhuma das condições for verdadeira.
+        Argumento 3 (default='C'): O valor que será atribuído se nenhuma das condições for verdadeira.
 
     """
 
@@ -697,87 +701,6 @@ if __name__ == '__main__':
                   alpha=0.8, edgecolor='gray')
     )
 
-    plt.tight_layout()
-    plt.show()
-
-    # ---------------------------------------------------------------------------------
-    #  PLOTAGEM MÊS
-    # ---------------------------------------------------------------------------------
-    #  PREPARAÇÃO DE DADOS ------------------------------------------------------------
-
-    # Cria uma coluna de Mês/Ano para agrupar e ordenar
-    dfBrindes['mes_ano'] = dfBrindes['data'].dt.strftime('%Y-%m')
-
-    # Agrupar os componentes do custo por mês/ano
-    df_composicao_mensal = dfBrindes.groupby('mes_ano').agg({
-        'custo_unitario_total': 'sum',
-        'valor_icms': 'sum',
-        'valor_icms_st': 'sum',
-        'icms_interestadual_uf_destino': 'sum',
-        'valor_icms_fcp_uf_destino': 'sum'
-    }).sort_index()
-
-    # Calcular o valor total de cada barra (Custo Final do Mês)
-    total_custo_mensal = df_composicao_mensal.sum(axis=1)
-
-    # Cálculo das Bases Percentuais (Representatividade da fatia sobre o TOTAL DA PRÓPRIA BARRA)
-    df_temp_mensal = df_composicao_mensal.copy()
-    df_temp_mensal['total_custo'] = total_custo_mensal
-
-    df_percentual_base = (
-        df_temp_mensal['custo_unitario_total'] / df_temp_mensal['total_custo']) * 100
-    df_percentual_icms = (
-        df_temp_mensal['valor_icms'] / df_temp_mensal['total_custo']) * 100
-    df_percentual_icms_st = (
-        df_temp_mensal['valor_icms_st'] / df_temp_mensal['total_custo']) * 100
-    df_percentual_icms_interestadual = (
-        df_temp_mensal['icms_interestadual_uf_destino'] / df_temp_mensal['total_custo']) * 100
-    df_percentual_fcp = (
-        df_temp_mensal['valor_icms_fcp_uf_destino'] / df_temp_mensal['total_custo']) * 100
-
-    # PLOTAGEM ------------------------------------------------------------------------
-
-    # Os valores plotados serão os valores REAIS (R$) para mostrar a tendência total
-    meses = df_composicao_mensal.index
-    plot_custo_base = df_composicao_mensal['custo_unitario_total']
-    plot_icms = df_composicao_mensal['valor_icms']
-    plot_icms_st = df_composicao_mensal['valor_icms_st']
-    plot_icms_interestadual = df_composicao_mensal['icms_interestadual_uf_destino']
-    plot_fcp = df_composicao_mensal['valor_icms_fcp_uf_destino']
-
-    # Acumuladores de altura para o bottom do plot
-    bottom_icms = plot_custo_base
-    bottom_icms_st = bottom_icms + plot_icms
-    bottom_icms_interestadual = bottom_icms_st + plot_icms_st
-    bottom_fcp = bottom_icms_interestadual + plot_icms_interestadual
-
-    plt.figure(figsize=(14, 7))
-
-    # Plotar o gráfico de barras empilhadas (5 fatias)
-    p1 = plt.bar(meses, plot_custo_base, color=COR_AZUL_ESCURO,
-                 label='Custo')
-    p2 = plt.bar(meses, plot_icms, bottom=bottom_icms,
-                 color=COR_ROXO_CLARO, label='ICMS')
-    p3 = plt.bar(meses, plot_icms_st, bottom=bottom_icms_st,
-                 color=COR_ROSA_MEDIO, label='ICMS ST')
-    p4 = plt.bar(meses, plot_icms_interestadual, bottom=bottom_icms_interestadual,
-                 color=COR_ROSA_CLARO, label='ICMS Interestadual')
-    p5 = plt.bar(meses, plot_fcp, bottom=bottom_fcp,
-                 color=COR_ROXA, label='ICMS FCP')
-
-    # Adicionar Títulos e Rótulos
-    plt.title('Evolução Mensal da Composição do Custo Final', fontsize=16)
-    plt.xlabel('Mês/Ano', fontsize=12)
-    plt.ylabel('Custo Final (R$)', fontsize=12)
-    plt.xticks(rotation=45, ha='right')
-    plt.ylim(0, 500000)
-    plt.gca().yaxis.set_visible(False)
-
-    # Adicionar legenda
-    plt.legend(
-        loc='upper left',
-        bbox_to_anchor=(0, 1),
-        frameon=False)
     plt.tight_layout()
     plt.show()
 

@@ -15,7 +15,7 @@ def executar_refresh_powerbi():
 
     # 2. Aguardar o refresh terminar
     print(f"[{time.strftime('%H:%M:%S')}] Aguardando a conclusão do refresh.")
-    time.sleep(1080)
+    time.sleep(1200)
 
     # 3. Fechar o Power BI Desktop
     print(f"[{time.strftime('%H:%M:%S')}] Confirmando o salvamento e fechamento.")
