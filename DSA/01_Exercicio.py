@@ -156,90 +156,154 @@ print(f"O resultado de {numero} elevado a {potencia} é igual a {resultado}.")
 # ======================================================================
 # Converta a string "2026" para um tipo inteiro e armazene-a em uma variável chamada ano. Em seguida, some 1 a essa variável e imprima o novo ano.
 
+# 01 Declaração de variáveis
 ano = int("2026")
 
+# 02 Print da csoma do ano
 print(f"{ano + 1}")
 
 # ======================================================================
 # EXERCÍCIO 11
 # ======================================================================
+"""
+Crie a string:
+
+frase = "   Python é uma linguagem poderosa e estou aprendendo com a DSA   ". 
+
+Remova os espaços em branco do início e do fim da string e imprima a nova string.
+"""
+
+# 01 Declaração de variáveis
+frase = "   Python é uma linguagem poderosa e estou aprendendo com a DSA   "
+
+# 02 Print da variável tratada
+print(f"{frase.strip()}")
 
 # ======================================================================
 # EXERCÍCIO 12
 # ======================================================================
+# Na string do exercício anterior (já sem os espaços), converta toda a frase para letras maiúsculas.
+
+# 01 Declaração de variáveis
+frase = "   Python é uma linguagem poderosa e estou aprendendo com a DSA   "
+
+# 02 Print da variável tratada
+print(f"{frase.strip().upper()}")
+
 
 # ======================================================================
 # EXERCÍCIO 13
 # ======================================================================
+# Ainda usando a mesma string, substitua a palavra "poderosa" por "incrível".
+
+# 01 Declaração de variáveis
+frase = "   Python é uma linguagem poderosa e estou aprendendo com a DSA   "
+
+# 02 Print da variável tratada
+print(f"{frase.replace('poderosa', 'incrível').strip().upper()}")
 
 # ======================================================================
 # EXERCÍCIO 14
 # ======================================================================
+# Verifique e imprima o número total de caracteres na string frase (após as modificações dos exercícios anteriores).
+
+# 01 Declaração de variáveis
+frase = "   Python é uma linguagem poderosa e estou aprendendo com a DSA   "
+
+# 02 Print da variável tratada
+print(
+    f"O número total de caracteres na string é {len(frase.replace('poderosa', 'incrível').strip().upper())}.")
 
 # ======================================================================
 # EXERCÍCIO 15
 # ======================================================================
+# Use fatiamento (slicing) para extrair e imprimir apenas a palavra "Python" da string frase.
 
 # ======================================================================
 # EXERCÍCIO 16
 # ======================================================================
+# Crie uma lista chamada compras com os seguintes itens: "arroz", "feijão", "macarrão", "carne". Imprima a lista.
+
 
 # ======================================================================
 # EXERCÍCIO 17
 # ======================================================================
+# Adicione o item "leite" ao final da lista compras e imprima a lista atualizada.
 
 # ======================================================================
 # EXERCÍCIO 18
 # ======================================================================
-
-# ======================================================================
-# EXERCÍCIO 15
-# ======================================================================
+# Acesse e imprima o segundo item da lista compras.
 
 # ======================================================================
 # EXERCÍCIO 19
 # ======================================================================
+# Remova o item "macarrão" da lista compras e imprima a lista final.
 
 # ======================================================================
 # EXERCÍCIO 20
 # ======================================================================
+# Crie uma lista de números de 1 a 5. Use uma função para calcular e imprimir o tamanho (número de elementos) dessa lista.
 
 # ======================================================================
 # EXERCÍCIO 21
 # ======================================================================
+# Crie uma tupla chamada meses com os três primeiros meses do ano: "Janeiro", "Fevereiro", "Março".
 
 # ======================================================================
 # EXERCÍCIO 22
 # ======================================================================
+# Tente adicionar o mês "Abril" à tupla meses. O que acontece? Explique o resultado.
 
 # ======================================================================
 # EXERCÍCIO 23
 # ======================================================================
+# Acesse e imprima o primeiro mês da tupla meses.
 
 # ======================================================================
 # EXERCÍCIO 24
 # ======================================================================
+"""
+Crie um dicionário chamado filme com as seguintes chaves e valores: 
+
+- titulo = "O Poderoso Chefão",
+- ano = 1972
+- diretor = "Francis Ford Coppola"
+"""
 
 # ======================================================================
 # EXERCÍCIO 25
 # ======================================================================
+# Acesse e imprima o ano de lançamento do filme a partir do dicionário.
 
 # ======================================================================
 # EXERCÍCIO 26
 # ======================================================================
+# Adicione uma nova chave genero com o valor "Drama" ao dicionário filme e imprima o dicionário completo.
 
 # ======================================================================
 # EXERCÍCIO 27
 # ======================================================================
+# Modifique o valor da chave ano para 1973 e imprima o dicionário atualizado.
 
 # ======================================================================
 # EXERCÍCIO 28
 # ======================================================================
+# Crie uma lista com os seguintes números: [1, 2, 2, 3, 4, 4, 5, 1]. Use um conjunto para remover os números duplicados e imprima o resultado.
 
 # ======================================================================
 # EXERCÍCIO 29
 # ======================================================================
+"""
+Crie dois conjuntos: 
+
+- set_a = {1, 2, 3, 4}
+- set_b = {3, 4, 5, 6}
+
+Encontre e imprima a interseção entre os dois conjuntos (os elementos que estão em ambos).
+"""
 
 # ======================================================================
 # EXERCÍCIO 30
 # ======================================================================
+# Escreva um programa que peça ao usuário para digitar sua altura em metros (ex: 1.75) e seu peso em quilogramas (ex: 68.5). Calcule o Índice de Massa Corporal (IMC) usando a fórmula IMC = peso / (altura * altura) e imprima o resultado formatado com duas casas decimais.

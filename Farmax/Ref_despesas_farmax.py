@@ -101,6 +101,6 @@ def refresh_excel_blindado(caminho, timeout):
 
 
 if __name__ == "__main__":
-    refresh_excel_blindado(CAMINHO_EXCEL_NAO_RECORRENTE, 900)
-    refresh_excel_blindado(CAMINHO_EXCEL_AJUSTE_GERENCIAL, 900)
+    # refresh_excel_blindado(CAMINHO_EXCEL_NAO_RECORRENTE, 900)
+    # refresh_excel_blindado(CAMINHO_EXCEL_AJUSTE_GERENCIAL, 900)
     refresh_excel_blindado(CAMINHO_EXCEL_DESPESAS, 1200)
