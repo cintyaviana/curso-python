@@ -1,8 +1,5 @@
 # 01 Declaração de variáveis
-frase = "   Python é poderoso   "
+compras = ["arroz", "feijão", "macarrão", "carne"]
 
-frase = frase.replace('poderoso', 'incrível').strip().upper()
-
-# 02 Print da variável tratada
-print(
-    f"O número total de caracteres na string é {len(frase)}.")
+# 02 Print da variável
+print(f"{compras[2]}")
