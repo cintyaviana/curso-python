@@ -57,11 +57,8 @@ print(f"Divisão: {numero1 / numero2}")
 valor = 500.00
 saque = 200.25
 
-# 2.0 Calculo do saldo final
-saldo_final = valor - saque
-
 # 3.0 Print dos dados no terminal
-print(f"Seu saldo é de R$ {saldo_final:.2f}.")
+print(f"Seu saldo é de R$ {(valor - saque):.2f}.")
 
 
 # ======================================================================
@@ -73,7 +70,7 @@ print(f"Seu saldo é de R$ {saldo_final:.2f}.")
 tem_carteira_de_motorista = True
 
 # 02 Teste de hipótese
-if tem_carteira_de_motorista == True:
+if tem_carteira_de_motorista:
     print(f"Pode dirigir")
 
 else:
@@ -101,7 +98,6 @@ comparativo = idade_ana < idade_beto
 print(f"Ana é mais nova que Beto? {comparativo}")
 
 # Pode ser feito dessa forma também:
-
 print(idade_ana < idade_beto)
 
 
@@ -200,7 +196,6 @@ frase = "   Python é uma linguagem poderosa e estou aprendendo com a DSA   "
 # 02 Print da variável tratada
 print(f"{frase.strip().upper()}")
 
-
 # ======================================================================
 # EXERCÍCIO 13
 # ======================================================================
@@ -291,7 +286,7 @@ print(f"{compras}")
 lista = [1, 2, 3, 4, 5]
 
 # 02 Print da variável
-print(f"{len(lista)}")
+print(f"A lista tem {len(lista)} elementos")
 
 # ======================================================================
 # EXERCÍCIO 21
@@ -300,6 +295,9 @@ print(f"{len(lista)}")
 
 # 01 Declaração de variáveis
 tupla = ("Janeiro", "Fevereiro", "Março")
+
+# 02 Print da variável
+print(tupla)
 
 # ======================================================================
 # EXERCÍCIO 22
@@ -336,6 +334,9 @@ filme = {
     "diretor": "Francis Ford Coppola"
 }
 
+# 02 Print da variável
+print(filme)
+
 # ======================================================================
 # EXERCÍCIO 25
 # ======================================================================
@@ -350,7 +351,6 @@ filme = {
 
 # 02 Print da variável
 print(f"Ano do filme: {filme['ano']}.")
-
 
 # ======================================================================
 # EXERCÍCIO 26
@@ -396,7 +396,7 @@ lista = [1, 2, 2, 3, 4, 4, 5, 1]
 lista = set(lista)
 
 # 02 Print da variável
-print(F"{lista}")
+print(f"{lista}")
 
 # ======================================================================
 # EXERCÍCIO 29
