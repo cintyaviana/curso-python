@@ -6,6 +6,11 @@
 # As estruturas condicionais (if, elif, else) permitem que o programa execute diferentes blocos de código com base em certas condições.
 
 # Define a variável
+import dsaprincipal
+from modulodsa import dsa_saudacao, PI
+import modulodsa
+import random
+import math
 nota = 8.5
 
 # Agora checamos o valor da variável e tomamos decisões
@@ -131,19 +136,6 @@ Contagem regressiva:
 1
 """
 
-# -------------------------------------------------------------------------------------------------------------------------------------
-# Define a variável
-contador = 0
-
-# Imprime a mensagem
-print("Contagem regressiva:")
-
-# Loop
-while contador > 1:
-    print(contador)
-    contador -= 1
-
-
 """
 O for em Python é usado quando você já sabe sobre o que quer iterar (como uma lista, tupla, dicionário, string, range, etc.). Ele percorre cada elemento de uma sequência ou iterável de forma automática, sem que você precise gerenciar manualmente a condição de parada.
 
@@ -225,7 +217,7 @@ for numero in numeros:
     if numero == 5:
         print("Número 5 encontrado!")
         break  # Sai do loop
-    print(f"Verificando {numero}...")
+    print(f"Verificando {numero}...")  # Faz parte do for
 
 """
 Buscando pelo número 5...
@@ -346,16 +338,11 @@ Um generator em Python é um iterador especial que não armazena todos os valore
 # ====================================================================================================================================
 # Funções são blocos de código reutilizáveis que realizam uma tarefa específica.
 
+# -------------------------------------------------------------------------------------------------------------------------------------
 # Definindo uma função simples
 
 
 def dsa_saudacao():
-    """Esta 
-    função 
-    exibe 
-    uma 
-    saudação 
-    simples."""
     print("\nOlá! Bem-vindo ao Python.")
 
 
@@ -364,6 +351,7 @@ dsa_saudacao()
 
 # Olá! Bem-vindo ao Python.
 
+# -------------------------------------------------------------------------------------------------------------------------------------
 # Definindo uma função que retorna um valor
 
 
@@ -378,26 +366,31 @@ resultado = dsa_soma_numeros(5, 3)
 # Print
 print(f"O resultado da soma é: {resultado}")
 
+# O resultado da soma é: 8
+
 # =====================================================================================================================================
 # 7.0 PARÂMETROS E ARGUMENTOS DE FUNÇÕES
 # ====================================================================================================================================
 # Diferentes formas de passar informações para as funções.
 
+# -------------------------------------------------------------------------------------------------------------------------------------
 # Argumentos posicionais
 
 
 def dsa_apresentacao(nome, idade):
     print(f"Nome: {nome}, Idade: {idade}")
 
+# Pode usar os argemento em ordem, ou fora de ordem, mas sendo nomeados:
 
-# Chamando a função
+
+# Argumentos em ordem
 dsa_apresentacao("Ana", 25)
-
 
 # Argumentos nomeados
 dsa_apresentacao(idade=30, nome="Bob")
 
-# Parâmetros com valores padrão (default)
+# -------------------------------------------------------------------------------------------------------------------------------------
+# Parâmetros com valores padrão (default: valor padrão)
 
 
 def dsa_saudacao_completa(nome, saudacao="Olá"):
@@ -405,7 +398,211 @@ def dsa_saudacao_completa(nome, saudacao="Olá"):
 
 
 # Chamando a função
-dsa_saudacao_completa("Maria")
+dsa_saudacao_completa("Maria")  # pode ser passado em o 2º argumento.
 
 # Chamando a função
 dsa_saudacao_completa("Bob", "Bom dia")
+
+
+# =====================================================================================================================================
+# 7.1 TRABALHANDO COM NÚMERO VARIADO DE ARGUMENTOS EM FUNÇÃO PYTHON
+# ====================================================================================================================================
+
+"""
+Em Python, *args e **kwargs são formas de tornar funções mais flexíveis, permitindo receber um número variável de argumentos sem precisar definí-los todos na assinatura da função.
+
+*args – argumentos posicionais variáveis
+
+O asterisco (*) antes do nome indica que a função pode receber qualquer quantidade de argumentos posicionais. Esses valores chegam dentro da função como uma tupla.
+
+**kwargs – argumentos nomeados variáveis
+
+Os dois asteriscos (**) indicam que a função pode receber qualquer quantidade de argumentos nomeados (chave e valor). Esses valores chegam dentro da função como um dicionário.
+"""
+
+# -------------------------------------------------------------------------------------------------------------------------------------
+# Argumentos de tamanho variável (*args)
+
+
+def dsa_soma_numeros(*args):
+    """Soma um número variável de argumentos."""
+
+    total = 0
+
+    for numero in args:
+        total += numero
+
+    return total
+
+
+# Soma dos Números: 15
+print(f"Soma dos Números: {dsa_soma_numeros(1, 2, 3, 4, 5)}")
+
+print(f"Soma dos Números: {dsa_soma_numeros(1, 2, 3)}")  # Soma dos Números: 6
+
+# Soma dos Números: 530.3
+print(f"Soma dos Números: {dsa_soma_numeros(10, 400, 0.3, 120)}")
+
+# -------------------------------------------------------------------------------------------------------------------------------------
+# Argumentos de tamanho variável (**kwargs)
+
+
+def dsa_exibe_info_pessoa(**kwargs):
+    """Exibe informações passadas como pares chave-valor."""
+
+    print("\nInformações da Pessoa:\n")
+
+    for chave, valor in kwargs.items():
+        print(f"- {chave}: {valor}")
+
+
+# Chamando a função
+dsa_exibe_info_pessoa(nome="Carla",
+                      profissao="Engenheira de Dados",
+                      hobby="Leitura")
+
+"""
+Informações da Pessoa:
+
+- nome: Carla
+- profissao: Engenheira de Dados
+- hobby: Leitura
+"""
+# Chamando a função
+dsa_exibe_info_pessoa(nome="Bob", profissao="Cientista de Dados")
+
+"""
+Informações da Pessoa:
+
+- Bob: Cientista de Dados
+"""
+
+# =====================================================================================================================================
+# 8.0 FUNÇÕES ANÔNIMAS (EXPRESSÃO LAMBDA)
+# ====================================================================================================================================
+# São pequenas funções anônimas definidas com a palavra-chave lambda, que ocorre no tempo de execução do código.
+
+"""
+dobro = lambda x : x *2
+
+print(f"O dobro de 7 é: {dobro(7)}") 
+
+"""
+
+"""
+A grande vantagem de usar expressões lambda em Python é a simplicidade e concisão para criar funções pequenas, temporárias e sem nome (anônimas).
+
+Normalmente, quando você precisa de uma função, define com def. Mas às vezes a função é muito simples e usada apenas uma vez, dentro de outra operação (como um map, filter ou sorted). Nesses casos, a lambda evita código extra e deixa o fluxo mais direto.
+
+Você pode combinar uma expressão lambda com a função map() para aplicar uma operação a cada elemento da lista, por exemplo.
+"""
+
+# Lista de números
+numeros = [1, 2, 3, 4, 5]
+
+# Lambda que retorna o quadrado de cada elemento
+quadrados = list(map(lambda x: x ** 2, numeros))
+
+print(quadrados)  # [1, 4, 9, 16, 25]
+
+
+"""
+Aqui:
+
+- lambda x: x**2 define uma função anônima que calcula o quadrado.
+
+- map() aplica essa função a cada elemento da lista.
+
+- list() converte o resultado do map (um iterador) de volta para lista.
+
+👉 Também daria para fazer com list comprehension, mas aí não seria lambda.
+"""
+
+# Lista de números
+numeros = [1, 2, 3, 4, 5, 6]
+
+# Primeiro calculamos os quadrados com map + lambda
+quadrados = list(map(lambda x: x ** 2, numeros))
+
+# Agora filtramos apenas os pares com filter + lambda
+quadrados_pares = list(filter(lambda x: x % 2 == 0, quadrados))
+
+print("Quadrados:", quadrados)              # [1, 4, 9, 16, 25, 36]
+print("Quadrados pares:", quadrados_pares)  # [4, 16, 36]
+
+# =====================================================================================================================================
+# 9.0 MÓDULOS DA BIBLIOTECA PADRÃO PYTHON
+# ====================================================================================================================================
+#  Python vem com uma vasta biblioteca de módulos para todo tipo de tarefa. E se precisar de mais, visite o repositório oficial de pacotes da linguagem:
+
+# -------------------------------------------------------------------------------------------------------------------------------------
+# Usando o módulo 'math' para funções matemáticas
+
+# Calcula a raiz quadrada
+raiz_quadrada = math.sqrt(25)
+
+print(f"A raiz quadrada de 25 é: {raiz_quadrada}")
+
+# A raiz quadrada de 25 é: 5.0
+
+# -------------------------------------------------------------------------------------------------------------------------------------
+# Usando o módulo 'random' para gerar números aleatórios
+
+# Gera um inteiro entre 1 e 100
+numero_aleatorio = random.randint(1, 100)
+
+print(f"Um número aleatório entre 1 e 100: {numero_aleatorio}")
+
+# Um número aleatório entre 1 e 100: 95
+
+# -------------------------------------------------------------------------------------------------------------------------------------
+# Seleciona aleatoriamente uma cidade da lista
+cidade_aleatoria = random.choice(["Rio de Janeiro", "Salvador", "Curitiba"])
+
+# choice = escolha
+
+print(f"Cidade escolhida aleatoriamente: {cidade_aleatoria}")
+
+# Cidade escolhida aleatoriamente: Curitiba
+
+# =====================================================================================================================================
+# 10.0 CRIANDO E IMPORTANDO SEUS PRÓPRIOS MÓDULOS
+# ====================================================================================================================================
+# Você pode organizar seu código em arquivos (módulos) e importá-los em outros scripts.
+
+# Passo 1: Crie o arquivo do módulo modulodsa.py
+
+
+def dsa_saudacao(nome):
+    """Retorna uma saudação personalizada."""
+    return f"Olá, {nome}! Tudo bem?"
+
+
+PI = 3.14159
+
+
+# Passo 2: Crie o script principal para importar o módulo dsaprincipal.py
+
+"""import modulodsa"""
+
+# Usa a função e a variável do módulo
+mensagem = modulodsa.dsa_saudacao("Mundo")
+print(mensagem)
+print(f"O valor de PI do nosso módulo é: {modulodsa.PI}")
+
+# Outra forma: importando itens específicos
+
+"""from modulodsa import dsa_saudacao, PI"""
+
+mensagem_direta = dsa_saudacao("Aluno DSA")
+print(mensagem_direta)
+print(f"Valor de PI importado diretamente: {PI}")
+
+# Para executar, você rodaria o arquivo principal.py. O Python automaticamente encontraria e usaria o conteúdo de meu_modulo.py.
+
+"""
+Olá, Mundo! Tudo bem?
+O valor de PI do nosso módulo é: 3.14159
+Olá, Aluno DSA! Tudo bem?
+Valor de PI importado diretamente: 3.14159
+"""
