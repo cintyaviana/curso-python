@@ -1,6 +1,10 @@
-# 1.0 Input dos dados pelo usuário
-valor = 500.00
-saque = 200.25
 
-# 3.0 Print dos dados no terminal
-print(f"Seu saldo é de R$ {(valor - saque):.2f}.")
+gen = (x ** 2 for x in range(6))
+print(gen)
+
+
+# Convertendo em tupla
+quadrados_tuple = tuple(gen)
+print(quadrados_tuple)
+
+type(quadrados_tuple)

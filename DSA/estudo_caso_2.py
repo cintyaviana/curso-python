@@ -172,15 +172,16 @@ if __name__ == "__main__":
     print(f"\nShape do df: {df_vendas.shape}")
 
     # Exibe as 5 primeiras linhas do DataFrame se não for passdo outro argumento
-    print(f"\nPrimeiras 10 linhas do df:{df_vendas.head(10)}")
+    print(f"\nPrimeiras 10 linhas do df:{df_vendas.head(10)}")  # Soletra Red
 
     # Exibe as 5 últimas linhas do DataFrame
-    print(f"\nÚltima 10 linhas do df: {df_vendas.tail()}")
+    print(f"\nÚltima 10 linhas do df: {df_vendas.tail()}")  # Soletra Teiol
 
     # Exibe informações gerais sobre o DataFrame (tipos de dados, valores não nulos)
     print(f"\nInformações gerais do df: {df_vendas.info()}")
 
     # Resumo estatístico
+    # Só faz o resumo estatístico das colunas tipo numérico e tipo data
     print(f"\nResumo estatístico do fd: {df_vendas.describe()}")
 
     # Tipos de dados
@@ -204,193 +205,319 @@ if __name__ == "__main__":
     df_vendas['Status_Entrega'] = df_vendas['Estado'].apply(
         lambda estado: 'Rápida' if estado in ['SP', 'RJ', 'MG'] else 'Normal')
 
-    # Exibe informações gerais sobre o DataFrame (tipos de dados, valores não nulos)
-    df_vendas.info()
+    # O método .apply() permite que você "varra" uma coluna inteira e aplique uma lógica personalizada em cada linha, sem precisar usar um laço for manual (que seria muito mais lento).
 
-    # Exibe as 5 primeiras linhas novamente para ver as novas colunas
-    df_vendas.head()
     # ----------------------------------------------------------------------
     # Análise 1 - Top 10 Produtos Mais Vendidos
     # ----------------------------------------------------------------------
-
     #  Quais os top 10 produtos mais vendidos?
+
     # Agrupa por nome do produto, soma a quantidade e ordena para encontrar os mais vendidos
     top_10_produtos = df_vendas.groupby(
         'Nome_Produto')['Quantidade'].sum().sort_values(ascending=False).head(10)
+
+    """
+    . groupby > Aqui você está dizendo ao Pandas para reunir todos os registros que possuem o mesmo nome de produto. Imagine que você tem 500 vendas do "Produto A" espalhadas pela tabela; o groupby coloca todas elas em um único "balde" chamado "Produto A".
+
+    .sort_values > Nesta etapa, o Pandas organiza os resultados.
+
+    ascending=False > significa "ordem decrescente". Ou seja, o produto que vendeu mais fica no topo da lista.
+
+    .head > Por fim, como você só quer o "Top 10", esse método "corta" a lista e mantém apenas as 10 primeiras linhas
+    """
 
     print(top_10_produtos)
 
     # Define um estilo para os gráficos
     sns.set_style("whitegrid")
 
+    """
+    .set_style > pertence à biblioteca Seaborn
+
+    "darkgrid": Fundo cinza com linhas brancas (é o padrão do Seaborn).
+
+    "whitegrid": Fundo branco com linhas cinzas (o que você usou).
+
+    "dark": Fundo cinza sem linhas de grade.
+
+    "white": Fundo branco sem linhas de grade (estilo minimalista).
+
+    "ticks": Fundo branco com pequenos traços nos eixos.
+
+    """
+
     # Cria a figura e os eixos
     plt.figure(figsize=(12, 7))
+
+    """
+    Biblioteca matplotlib.pyplot > é o comando que define o tamanho da "folha de papel" (ou da tela) onde o seu gráfico será desenhado
+
+    O figsize (abreviação de figure size) aceita uma tupla com dois valores: (largura, altura).
+
+    12: É a largura da imagem em polegadas.
+
+    7: É a altura da imagem em polegadas.
+
+    Por que usar (12, 7)?
+    Essas medidas específicas são muito populares porque:
+
+    Proporção Widescreen: Cria um gráfico retangular (estilo 16:9), que cabe muito bem em telas de notebook e slides de apresentação.
+
+    Espaço para Texto: No seu caso do Top 10 Produtos, os nomes dos produtos costumam ser longos. Com width=12, você tem espaço de sobra para que esses nomes não fiquem batendo uns nos outros no eixo X.
+
+    Resolução: Quando você for salvar a imagem com plt.savefig(), uma figura maior garante que os detalhes não fiquem pixelados.
+    """
 
     # Cria o gráfico de barras horizontais
     top_10_produtos.sort_values(ascending=True).plot(
         kind='barh', color='skyblue')
 
+    """
+    .sort_values(ascending=True)
+    Você deve estar se perguntando: "Mas a gente já não tinha ordenado antes?". Sim, mas para gráficos de barras horizontais (barh), o Pandas começa a desenhar de baixo para cima.
+
+    Se deixarmos ascending=False (o maior valor primeiro), o produto número 1 ficaria na base do gráfico.
+
+    Ao usar ascending=True aqui, garantimos que o produto mais vendido fique no topo do gráfico, criando aquela escada visual bonita onde o maior valor é o primeiro que lemos.
+
+    kind='barh'> O parâmetro kind define o tipo do gráfico.
+
+    'bar' seria o gráfico de barras verticais clássico.
+
+    'barh': O 'h' vem de horizontal.
+
+    Vantagem: Gráficos horizontais são os melhores quando os nomes dos produtos são longos (ex: "Smartphone Samsung Galaxy S24 Ultra"), porque o texto fica na horizontal e é muito mais fácil de ler do que se estivesse inclinado ou em pé.
+
+    color='skyblue' 
+
+    Nome da Cor	Tom Visual	Quando usar?
+    skyblue	> Azul Claro >	Relatórios limpos e dashboards.
+    steelblue >	Azul Fechado >	Gráficos corporativos e sérios.
+    salmon >	Rosa Alaranjado >	Para dar destaque sem ser agressivo.
+    seagreen >	Verde Água >	Ótimo para dados financeiros ou positivos.
+    gold >	Dourado/Amarelo >	Chamar atenção para o "Campeão" do ranking.
+    indianred >	Vermelho Terroso >	Para indicar alertas ou perdas.
+    orchid >	Roxo Suave >	Diferenciar categorias específicas.
+    slategray >	Cinza Azulado >	Para dados secundários ou de fundo.
+
+    Dica: Usando Paletas do Seaborn
+    Em vez de uma cor só, você pode querer que cada barra tenha uma cor diferente (um degradê, por exemplo). O Seaborn facilita isso com o parâmetro palette:
+
+    import seaborn as sns
+    # Isso cria um degradê do azul para o verde automaticamente
+    sns.barplot(x=top_10_produtos.values, y=top_10_produtos.index, palette='viridis')
+
+    """
+
     # Adiciona títulos e labels
-    plt.title('Top 10 Produtos Mais Vendidos', fontsize=16)
+    plt.title('Top 10 Produtos Mais Vendidos', fontsize=16)  # Soletra Taito
     plt.xlabel('Quantidade Vendida', fontsize=12)
-    plt.ylabel('Produto', fontsize=12)
+    plt.ylabel('Produto', fontsize=12)  # Os nomes dos produtos
 
     # Exibe o gráfico
-    plt.tight_layout()
+    plt.tight_layout()  # Soletra Tait
     plt.show()
 
     # ----------------------------------------------------------------------
     # 7. Análise 2 - Faturamento Mensal
     # ----------------------------------------------------------------------
-
     # Qual foi o faturamento mensal?
 
-df_vendas.head()
+    # Cria uma coluna 'Mes' para facilitar o agrupamento mensal
+    df_vendas['Mes'] = df_vendas['Data_Pedido'].dt.to_period('M')  # 2026/01
 
-# Cria uma coluna 'Mes' para facilitar o agrupamento mensal
-df_vendas['Mes'] = df_vendas['Data_Pedido'].dt.to_period('M')
+    # Agrupa por mês e soma o faturamento
+    faturamento_mensal = df_vendas.groupby('Mes')['Faturamento'].sum()
 
-df_vendas.head()
+    # O resultado dessa operação no pandas é uma Series (uma única coluna de dados com um índice).
 
-# Agrupa por mês e soma o faturamento
-faturamento_mensal = df_vendas.groupby('Mes')['Faturamento'].sum()
+    # Converte o índice para string para facilitar a plotagem no gráfico
+    faturamento_mensal.index = faturamento_mensal.index.strftime('%Y-%m')
 
-# Converte o índice para string para facilitar a plotagem no gráfico
-faturamento_mensal.index = faturamento_mensal.index.strftime('%Y-%m')
+    """
+    strftime('%Y-%m') > O que faz: O método strftime (string format time) converte a data em um texto formatado.
 
-# Formata para duas casas decimais
-faturamento_mensal.map('R$ {:,.2f}'.format)
+    O padrão %Y-%m: Extrai apenas o Ano (Year) com 4 dígitos e o Mês (month).
 
-# Cria uma nova figura com tamanho de 12 por 6 polegadas
-plt.figure(figsize=(12, 6))
+    Resultado: Algo como 2023-01 (tipo data) vira apenas "2023-01" (tipo str).
+    """
 
-# Plota os dados de faturamento mensal em formato de linha
-faturamento_mensal.plot(kind='line', marker='o', linestyle='-', color='green')
+    # Formata para duas casas decimais
+    faturamento_mensal.map('R$ {:,.2f}'.format)
 
-# Define o título do gráfico com fonte de tamanho 16
-plt.title('Evolução do Faturamento Mensal', fontsize=16)
+    """
+    map(...): Aplica uma função a cada elemento da série ou coluna.
 
-# Define o rótulo do eixo X
-plt.xlabel('Mês', fontsize=12)
+    'R$ {:,.2f}': Isso é um template de string:
 
-# Define o rótulo do eixo Y
-plt.ylabel('Faturamento (R$)', fontsize=12)
+    R$: Adiciona o símbolo da nossa moeda.
 
-# Rotaciona os valores do eixo X em 45 graus para melhor visualização
-plt.xticks(rotation=45)
+    :,: Adiciona a vírgula como separador de milhar (padrão americano, cuidado aqui se precisar do padrão brasileiro com pontos).
 
-# Adiciona uma grade com estilo tracejado e linhas finas
-plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    .2f: Garante que o número sempre terá duas casas decimais (centavos), mesmo que seja zero.
 
-# Ajusta automaticamente os elementos para evitar sobreposição
-plt.tight_layout()
+    Resultado: O número 1500.5 vira a string "R$ 1,500.50".
 
-# Exibe o gráfico
-plt.show()
+    1. Por que funcionou sem indicar a coluna?
+    Quando você executou a primeira linha de código: faturamento_mensal = df_vendas.groupby('Mes')['Faturamento'].sum()
 
-# 8. Análise 3 - Vendas Por Estado
+    Você selecionou especificamente a coluna 'Faturamento'. O resultado dessa operação no pandas é uma Series (uma única coluna de dados com um índice).
 
-# Qual o total de vendas por estado?
+    Como a Series só tem uma coluna, o método .map() entende automaticamente que deve aplicar a função a todos os valores existentes nela. Não há ambiguidade para o Python resolver
 
-# Agrupa por estado e soma o faturamento
-vendas_estado = df_vendas.groupby(
-    'Estado')['Faturamento'].sum().sort_values(ascending=False)
+    2. E se tivesse mais de uma coluna?
+    Se você tivesse feito o agrupamento sem selecionar uma coluna específica, resultando em um DataFrame, o comportamento seria diferente.
 
-# Formata para duas casas decimais
-vendas_estado.map('R$ {:,.2f}'.format)
+    No DataFrame: O método .map() (ou o antigo .applymap()) tentaria aplicar a formatação em todas as colunas de uma vez.
 
-# Cria uma nova figura com tamanho de 12 por 7 polegadas
-plt.figure(figsize=(12, 7))
+    O Problema: Se uma dessas colunas fosse de texto ou data, a formatação 'R$ {:,.2f}' daria erro, pois ela só funciona em números.
 
-# Plota os dados de faturamento por estado em formato de gráfico de barras
-# Usando a paleta de cores "rocket" do Seaborn
-vendas_estado.plot(kind='bar', color=sns.color_palette("husl", 7))
+    Nesse caso, você precisaria indicar a coluna sim. Veja como ficaria a sintaxe:
 
-# Define o título do gráfico com fonte de tamanho 16
-plt.title('Faturamento Por Estado', fontsize=16)
+    # Se faturamento_mensal fosse um DataFrame com várias colunas:
+    faturamento_mensal['Faturamento'] = faturamento_mensal['Faturamento'].map('R$ {:,.2f}'.format)
 
-# Define o rótulo do eixo X
-plt.xlabel('Estado', fontsize=12)
+    """
 
-# Define o rótulo do eixo Y
-plt.ylabel('Faturamento (R$)', fontsize=12)
+    # Cria uma nova figura com tamanho de 12 por 6 polegadas
+    plt.figure(figsize=(12, 6))
 
-# Mantém os rótulos do eixo X na horizontal (sem rotação)
-plt.xticks(rotation=0)
+    # Plota os dados de faturamento mensal em formato de linha
+    faturamento_mensal.plot(kind='line', marker='o',
+                            linestyle='-', color='green')
 
-# Ajusta automaticamente os elementos do gráfico para evitar sobreposição
-plt.tight_layout()
+    """
+    kind='line': Define o tipo de gráfico. Aqui você escolheu o gráfico de linha, que é o ideal para mostrar evolução ao longo do tempo (tendências mensais).
 
-# Exibe o gráfico
-plt.show()
+    marker='o': Adiciona uma "bolinha" em cada ponto real do seu dado. Isso ajuda a identificar exatamente onde termina um mês e começa o outro, evitando que a linha pareça apenas um desenho abstrato.
 
-# 9. Análise 4 - Faturamento Por Categoria
+    linestyle='-': Define que a linha que conecta os pontos deve ser contínua. Você poderia usar -- para tracejada ou : para pontilhada.
 
-# Qual o faturamento total por categoria?
+    color='green': Define a cor da linha e dos marcadores. O verde costuma ser uma ótima escolha para faturamento, pois remete a lucro e crescimento.
+    """
 
-# Agrupa por categoria, soma o faturamento e formata como moeda para melhor leitura
-faturamento_categoria = df_vendas.groupby(
-    'Categoria')['Faturamento'].sum().sort_values(ascending=False)
+    # Define o título do gráfico com fonte de tamanho 16
+    plt.title('Evolução do Faturamento Mensal', fontsize=16)
 
-# O .map('{:,.2f}'.format) é opcional, mas deixa a visualização do número mais clara
-faturamento_categoria.map('R$ {:,.2f}'.format)
+    # Define o rótulo do eixo X
+    plt.xlabel('Mês', fontsize=12)
 
-# Importa a função FuncFormatter para formatar os eixos
+    # Define o rótulo do eixo Y
+    plt.ylabel('Faturamento (R$)', fontsize=12)
 
-# Ordena os dados para o gráfico ficar mais fácil de ler
-faturamento_ordenado = faturamento_categoria.sort_values(ascending=False)
+    # Rotaciona os valores do eixo X em 45 graus para melhor visualização
+    plt.xticks(rotation=45)
 
-# Cria a Figura e os Eixos (ax) com plt.subplots()
-# Isso nos dá mais controle sobre os elementos do gráfico.
-fig, ax = plt.subplots(figsize=(12, 7))
+    # Adiciona uma grade com estilo tracejado e linhas finas
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
 
-# Cria uma função para formatar os números
-# Esta função recebe um valor 'y' e o transforma em uma string no formato 'R$ XX K'
+    # Ajusta automaticamente os elementos para evitar sobreposição
+    plt.tight_layout()
 
+    # Exibe o gráfico
+    plt.show()
 
-def formatador_milhares(y, pos):
-    """Formata o valor em milhares (K) com o cifrão R$."""
-    return f'R$ {y/1000:,.0f}K'
+    # ----------------------------------------------------------------------
+    # 8. Análise 3 - Vendas Por Estado
+    # ----------------------------------------------------------------------
+    # Qual o total de vendas por estado?
 
+    # Agrupa por estado e soma o faturamento
+    vendas_estado = df_vendas.groupby(
+        'Estado')['Faturamento'].sum().sort_values(ascending=False)
 
-# Cria o objeto formatador
-formatter = FuncFormatter(formatador_milhares)
+    # Formata para duas casas decimais
+    vendas_estado.map('R$ {:,.2f}'.format)
 
-# Aplica o formatador ao eixo Y (ax.yaxis)
-ax.yaxis.set_major_formatter(formatter)
+    # Cria uma nova figura com tamanho de 12 por 7 polegadas
+    plt.figure(figsize=(12, 7))
 
-# Plota os dados usando o objeto 'ax'
-faturamento_ordenado.plot(kind='bar', ax=ax, color=sns.color_palette(
-    "viridis", len(faturamento_ordenado)))
+    # Plota os dados de faturamento por estado em formato de gráfico de barras
+    # Usando a paleta de cores "rocket" do Seaborn
+    vendas_estado.plot(kind='bar', color=sns.color_palette("husl", 7))
 
-# Adiciona títulos e labels usando 'ax.set_...'
-ax.set_title('Faturamento Por Categoria', fontsize=16)
-ax.set_xlabel('Categoria', fontsize=12)
-ax.set_ylabel('Faturamento', fontsize=12)
+    # Define o título do gráfico com fonte de tamanho 16
+    plt.title('Faturamento Por Estado', fontsize=16)
 
-# Ajusta a rotação dos rótulos do eixo X
-plt.xticks(rotation=45, ha='right')
+    # Define o rótulo do eixo X
+    plt.xlabel('Estado', fontsize=12)
 
-# Garante que tudo fique bem ajustado na imagem final
-plt.tight_layout()
+    # Define o rótulo do eixo Y
+    plt.ylabel('Faturamento (R$)', fontsize=12)
 
-# Exibe o gráfico
-plt.show()
+    # Mantém os rótulos do eixo X na horizontal (sem rotação)
+    plt.xticks(rotation=0)
 
-"""
-## 10. Conclusão e Entrega do Resultado
+    # Ajusta automaticamente os elementos do gráfico para evitar sobreposição
+    plt.tight_layout()
 
-Existem várias formas de entregar um projeto de análise de dados e a escolha depende do público, do contexto e dos objetivos. Três formas bastante utilizadas são:
+    # Exibe o gráfico
+    plt.show()
 
-**10.1. Relatório técnico ou executivo (PDF, DOCX, etc.)**
+    # ----------------------------------------------------------------------
+    # 9. Análise 4 - Faturamento Por Categoria
+    # ----------------------------------------------------------------------
+    # Qual o faturamento total por categoria?
 
-Essa forma é clássica e muito útil quando o público precisa de um documento formal para consulta. O relatório pode conter descrição da metodologia, exploração dos dados, gráficos, tabelas e conclusões. É comum separar a linguagem: uma versão mais técnica (com código, estatísticas detalhadas e testes) e outra mais executiva (com foco em insights, recomendações e storytelling de dados).
+    # Agrupa por categoria, soma o faturamento e formata como moeda para melhor leitura
+    faturamento_categoria = df_vendas.groupby(
+        'Categoria')['Faturamento'].sum().sort_values(ascending=False)
 
-**10.2. Dashboard interativo (Power BI, Tableau, Looker, Streamlit, Dash, etc.)**
+    # O .map('{:,.2f}'.format) é opcional, mas deixa a visualização do número mais clara
+    faturamento_categoria.map('R$ {:,.2f}'.format)
 
-Um dashboard permite que os usuários explorem os dados por conta própria, filtrando informações, ajustando períodos de tempo ou focando em variáveis específicas. Essa forma de entrega é muito valorizada em ambientes corporativos, pois facilita a tomada de decisão contínua e não exige conhecimentos técnicos avançados dos usuários finais.
+    # Ordena os dados para o gráfico ficar mais fácil de ler
+    faturamento_ordenado = faturamento_categoria.sort_values(ascending=False)
 
-**10.3. Apresentação (slides em PowerPoint, Google Slides, etc.)**
+    # Cria a Figura e os Eixos (ax) com plt.subplots()
+    # Isso nos dá mais controle sobre os elementos do gráfico.
+    fig, ax = plt.subplots(figsize=(12, 7))
 
-Ideal para reuniões de stakeholders, a entrega em formato de apresentação resume os principais pontos do projeto. Ela foca nas descobertas mais relevantes, nas implicações para o negócio e nas recomendações práticas, usando gráficos e visualizações impactantes. A ideia é contar a história dos dados de forma clara e direta, evitando sobrecarregar o público com detalhes técnicos.
-"""
+    # Cria uma função para formatar os números
+    # Esta função recebe um valor 'y' e o transforma em uma string no formato 'R$ XX K'
+
+    def formatador_milhares(y, pos):
+        """Formata o valor em milhares (K) com o cifrão R$."""
+        return f'R$ {y/1000:,.0f}K'
+
+    # Cria o objeto formatador
+    formatter = FuncFormatter(formatador_milhares)
+
+    # Aplica o formatador ao eixo Y (ax.yaxis)
+    ax.yaxis.set_major_formatter(formatter)
+
+    # Plota os dados usando o objeto 'ax'
+    faturamento_ordenado.plot(kind='bar', ax=ax, color=sns.color_palette(
+        "viridis", len(faturamento_ordenado)))
+
+    # Adiciona títulos e labels usando 'ax.set_...'
+    ax.set_title('Faturamento Por Categoria', fontsize=16)
+    ax.set_xlabel('Categoria', fontsize=12)
+    ax.set_ylabel('Faturamento', fontsize=12)
+
+    # Ajusta a rotação dos rótulos do eixo X
+    plt.xticks(rotation=45, ha='right')
+
+    # Garante que tudo fique bem ajustado na imagem final
+    plt.tight_layout()
+
+    # Exibe o gráfico
+    plt.show()
+
+    """
+    ## 10. Conclusão e Entrega do Resultado
+
+    Existem várias formas de entregar um projeto de análise de dados e a escolha depende do público, do contexto e dos objetivos. Três formas bastante utilizadas são:
+
+    **10.1. Relatório técnico ou executivo (PDF, DOCX, etc.)**
+
+    Essa forma é clássica e muito útil quando o público precisa de um documento formal para consulta. O relatório pode conter descrição da metodologia, exploração dos dados, gráficos, tabelas e conclusões. É comum separar a linguagem: uma versão mais técnica (com código, estatísticas detalhadas e testes) e outra mais executiva (com foco em insights, recomendações e storytelling de dados).
+
+    **10.2. Dashboard interativo (Power BI, Tableau, Looker, Streamlit, Dash, etc.)**
+
+    Um dashboard permite que os usuários explorem os dados por conta própria, filtrando informações, ajustando períodos de tempo ou focando em variáveis específicas. Essa forma de entrega é muito valorizada em ambientes corporativos, pois facilita a tomada de decisão contínua e não exige conhecimentos técnicos avançados dos usuários finais.
+
+    **10.3. Apresentação (slides em PowerPoint, Google Slides, etc.)**
+
+    Ideal para reuniões de stakeholders, a entrega em formato de apresentação resume os principais pontos do projeto. Ela foca nas descobertas mais relevantes, nas implicações para o negócio e nas recomendações práticas, usando gráficos e visualizações impactantes. A ideia é contar a história dos dados de forma clara e direta, evitando sobrecarregar o público com detalhes técnicos.
+    """

@@ -186,10 +186,10 @@ def abrir_pagina_Linkedin():
 
 
 if __name__ == "__main__":
-    refresh_powerbi()
+    # refresh_excel(CAMINHO_EXCEL_DESPESAS, 1200)
+    # refresh_powerbi()
     # refresh_excel(CAMINHO_EXCEL_NAO_RECORRENTE, 900)
     # refresh_excel(CAMINHO_EXCEL_AJUSTE_GERENCIAL, 900)
-    refresh_excel(CAMINHO_EXCEL_DESPESAS, 1200)
     abrir_pagina_BI_Adm()
     abrir_pagina_BI_OPEX()
     abrir_pagina_Linkedin()
